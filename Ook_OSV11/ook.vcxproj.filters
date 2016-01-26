@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Source Files\lib">
+      <UniqueIdentifier>{83ba6281-fa0b-484f-a87b-4331dbe8d97a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Domotic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Oregon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfZ1.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfZ2.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfZ3.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfZ4.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="header.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hz1.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hz2.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Z1Conf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Z1Eco.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="z2Conf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="z2eco.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="z3conf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="z3eco.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nouveau dossier\Domotic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libraries\HomeEasyTransmitter\HomeEasyTransmitter.cpp">
+      <Filter>Source Files\lib</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Domotic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OOKDecoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Oregon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Record.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="reportSerialAscii.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SerialRfmCmd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nouveau dossier\Domotic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libraries\HomeEasyTransmitter\HomeEasyTransmitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Ook_OSV11.ino">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

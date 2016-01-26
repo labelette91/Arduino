@@ -1,0 +1,47 @@
+#######################################
+# Syntax Coloring Map For MAX7219
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+DecodeModes	KEYWORD1
+DecodeMode_t	KEYWORD1
+Intensities	KEYWORD1
+Intensity_t	KEYWORD1
+ScanLimits	KEYWORD1
+ScanLimit_t	KEYWORD1
+ShutdownModes	KEYWORD1
+ShutdownMode_t	KEYWORD1
+DisplayTestModes	KEYWORD1
+DisplayTestMode_t	KEYWORD1
+Digits	KEYWORD1
+Digit_t	KEYWORD1
+Characters	KEYWORD1
+Character_t	KEYWORD1
+Segments	KEYWORD1
+Segment_t	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+initialize	KEYWORD2
+setDecodeMode	KEYWORD2
+setIntensity	KEYWORD2
+setScanLimit	KEYWORD2
+setShutdownMode	KEYWORD2
+setDisplayTestMode	KEYWORD2
+writeDigit	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+MAX7219	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+

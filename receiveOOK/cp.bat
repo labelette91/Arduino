@@ -1,0 +1,1 @@
+copy *.ino "C:\Documents and Settings\F206150\Mes documents\Downloads\arduino-1.0.5-r2-windows\arduino-1.0.5-r2\libraries\RFM69\Examples\receive"

@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lighting", "lighting.vcproj", "{D559BC14-A60C-47E7-B5D0-7C68FE9FB219}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D559BC14-A60C-47E7-B5D0-7C68FE9FB219}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D559BC14-A60C-47E7-B5D0-7C68FE9FB219}.Debug|Win32.Build.0 = Debug|Win32
+		{D559BC14-A60C-47E7-B5D0-7C68FE9FB219}.Release|Win32.ActiveCfg = Release|Win32
+		{D559BC14-A60C-47E7-B5D0-7C68FE9FB219}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
