@@ -9,6 +9,9 @@ class HomeEasyTransmitter
     //Constructor.
     //arg1 = pin to connected to 434Mhz transmitter
     HomeEasyTransmitter(short dataPin, short pclkPin , byte pLed );
+    
+    HomeEasyTransmitter(short dataPin,  byte pLed );
+
     //arg1 = true to turn switch on, false for off
     //arg2 = the 26 bit long transmitter ID as found by the Pete and Banarby's recevier code
     //arg3 = the 4 bit recipient code, seems to be on a dial for mains switches, 1010 (6 in decimal) for my light fittings
@@ -25,6 +28,8 @@ class HomeEasyTransmitter
     void sendBit(bool);
     void sendPair(bool);
     void rfm69_set_data(byte state);
+    void rfm69_set_data_without_clk(byte state);
+    void rfm69_set_data_with_clk(byte state);
 
 
 };

@@ -73,10 +73,22 @@
 
 void HomeEasyTransmitter::rfm69_set_data(byte state)
 {
+    if (clkPin>=0)
+        rfm69_set_data_with_clk(state) ;
+    else
+        rfm69_set_data_without_clk( state);
+}
+void HomeEasyTransmitter::rfm69_set_data_without_clk(byte state)
+{
+  digitalWrite(txPin, state);
+  if (ledPin) digitalWrite(ledPin, state);
+}
+
+void HomeEasyTransmitter::rfm69_set_data_with_clk(byte state)
+{
   /* data is sampled on the rising edge of dclk/dio1 */
 
   digitalWrite(clkPin, LOW);
-//  Serial.print(state); Serial.print(" ");
   digitalWrite(txPin, state);
   if (ledPin) digitalWrite(ledPin, state);
   rfm69_wait_t_data();
@@ -92,6 +104,13 @@ HomeEasyTransmitter::HomeEasyTransmitter(short dataPin, short pclkPin , byte pLe
   ledPin = pLed ;
 }
 
+//withou clock management
+HomeEasyTransmitter::HomeEasyTransmitter(short dataPin,  byte pLed )
+{
+  txPin  = dataPin;
+  clkPin = -1 ;
+  ledPin = pLed ;
+}
 
 //sends either an on/off signal to the main switch
 //always seems to work best if we send it twice..
