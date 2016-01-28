@@ -33,17 +33,25 @@
  * post back here with a link to your code so we can all enjoy.
  *
  */
+// DelayMicroseconds     : delay avec suspend
+// DelayMicrosecondsHard : delay polling timer  
+ 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include <stdio.h>
 #include <Arduino.h>
 #include <avr/pgmspace.h>
 #include <timer.h>
+#define DelayMicroseconds(VALUE)     delayMicroseconds(VALUE);
+#define DelayMicrosecondsHard(VALUE) delayMicroseconds(VALUE);
 #else
 #include <wiringPi.h>
 typedef unsigned char boolean;
 typedef unsigned char byte;
 #define cli() 
 #define sei()
+#define DelayMicroseconds(VALUE)     delayMicroseconds(VALUE);
+#define DelayMicrosecondsHard(VALUE) delayMicrosecondsHard(VALUE);
+extern "C" void delayMicrosecondsHard (unsigned int howLong);
 
 #endif
 #include "HomeEasyTransmitter.h"
@@ -60,7 +68,6 @@ typedef unsigned char byte;
 #define BIT_1_PULSE_LOW 1225
 
 //#define DelayMicroseconds(VALUE) delayMicroseconds(VALUE);Serial.println(VALUE); 
-#define DelayMicroseconds(VALUE) delayMicroseconds(VALUE);
 //#define DelayMicroseconds(VALUE) DelayMicros(VALUE);
 
 
@@ -144,12 +151,12 @@ void HomeEasyTransmitter::transmit(bool blnOn,unsigned long transmitterId, short
 
   // Do the latch sequence.. 
   rfm69_set_data( HIGH);
-  DelayMicroseconds(LATCH1_HIGH);     
+  DelayMicrosecondsHard(LATCH1_HIGH);     
   rfm69_set_data( LOW);
   DelayMicroseconds(LATCH1_LOW);     // low for 9900 for latch 1
   
   rfm69_set_data( HIGH);
-  DelayMicroseconds(LATCH2_HIGH);     
+  DelayMicrosecondsHard(LATCH2_HIGH);     
     rfm69_set_data( LOW);
   DelayMicroseconds(LATCH2_LOW);     // low for 2675 for latch 1
 
@@ -187,7 +194,7 @@ void HomeEasyTransmitter::transmit(bool blnOn,unsigned long transmitterId, short
     sendPair(false);*/
 
   rfm69_set_data( HIGH);   // high again (shut up)
-  DelayMicroseconds(LATCH2_HIGH);      // wait a moment
+  DelayMicrosecondsHard(LATCH2_HIGH);      // wait a moment
   rfm69_set_data( LOW);    // low again for 2675 - latch 2.
   DelayMicroseconds(LATCH2_LOW);      // wait a moment
   sei();
@@ -199,16 +206,16 @@ void HomeEasyTransmitter::sendBit(bool b)
   if (b)
   {
     rfm69_set_data( HIGH);
-    DelayMicroseconds(BIT_PULSE_HIGH);
+    DelayMicrosecondsHard(BIT_PULSE_HIGH);
     rfm69_set_data( LOW);
     DelayMicroseconds(BIT_1_PULSE_LOW);
   }
   else
   {
     rfm69_set_data( HIGH);
-    DelayMicroseconds(BIT_PULSE_HIGH);
+    DelayMicrosecondsHard(BIT_PULSE_HIGH);
     rfm69_set_data( LOW);
-    DelayMicroseconds(BIT_0_PULSE_LOW);
+    DelayMicrosecondsHard(BIT_0_PULSE_LOW);
   }
 }
 
