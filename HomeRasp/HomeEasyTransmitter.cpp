@@ -47,11 +47,13 @@
 #include <wiringPi.h>
 typedef unsigned char boolean;
 typedef unsigned char byte;
-#define cli() 
-#define sei()
+#define cli() scheduler_realtime()
+#define sei() scheduler_standard() 
 #define DelayMicroseconds(VALUE)     delayMicroseconds(VALUE);
 #define DelayMicrosecondsHard(VALUE) delayMicrosecondsHard(VALUE);
 extern "C" void delayMicrosecondsHard (unsigned int howLong);
+extern void scheduler_realtime() ;
+extern void scheduler_standard() ;
 
 #endif
 #include "HomeEasyTransmitter.h"

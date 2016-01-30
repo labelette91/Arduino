@@ -50,12 +50,12 @@ int main(int argc, char *argv[])
   HomeEasyTransmitter *easy = new HomeEasyTransmitter(TXPIN,0);
   easy->initPin();
 	
-	scheduler_realtime();    
+//	scheduler_realtime();    
     
   printf("esay init \n");
 
-	if ( piHiPri (99) !=0)
-		printf("error setting priority  \n");
+//	if ( piHiPri (99) !=0)
+//		printf("error setting priority  \n");
 
    digitalWrite (0, HIGH) ; 
   delayMicrosecondsHard (275);
@@ -71,6 +71,6 @@ int main(int argc, char *argv[])
 	printf("fin du programme");    // execution terminée.
 
 
-	scheduler_standard();
+//	scheduler_standard();
 }
 
