@@ -33,13 +33,28 @@
  * post back here with a link to your code so we can all enjoy.
  *
  */
-#ifdef _MSC_VER
-#include "portage.h"
-#else
+// DelayMicroseconds     : delay avec suspend
+// DelayMicrosecondsHard : delay polling timer  
+ 
+#if defined(ARDUINO) && ARDUINO >= 100
 #include <stdio.h>
 #include <Arduino.h>
 #include <avr/pgmspace.h>
 #include <timer.h>
+#define DelayMicroseconds(VALUE)     delayMicroseconds(VALUE);
+#define DelayMicrosecondsHard(VALUE) delayMicroseconds(VALUE);
+#else
+#include <wiringPi.h>
+typedef unsigned char boolean;
+typedef unsigned char byte;
+#define cli() scheduler_realtime()
+#define sei() scheduler_standard() 
+#define DelayMicroseconds(VALUE)     delayMicroseconds(VALUE);
+#define DelayMicrosecondsHard(VALUE) delayMicrosecondsHard(VALUE);
+extern "C" void delayMicrosecondsHard (unsigned int howLong);
+extern void scheduler_realtime() ;
+extern void scheduler_standard() ;
+
 #endif
 #include "HomeEasyTransmitter.h"
 
@@ -55,7 +70,6 @@
 #define BIT_1_PULSE_LOW 1225
 
 //#define DelayMicroseconds(VALUE) delayMicroseconds(VALUE);Serial.println(VALUE); 
-#define DelayMicroseconds(VALUE) delayMicroseconds(VALUE);
 //#define DelayMicroseconds(VALUE) DelayMicros(VALUE);
 
 
@@ -63,7 +77,7 @@
   void rfm69_wait_t_data(void)
 {
   /* t_data = 250ns = 4 insn at 16MHz */
-#ifndef _MSC_VER
+#if defined(ARDUINO) && ARDUINO >= 100
   __asm__ __volatile__ ("nop");
   __asm__ __volatile__ ("nop");
   __asm__ __volatile__ ("nop");
@@ -76,7 +90,7 @@ void HomeEasyTransmitter::rfm69_set_data(byte state)
     if (clkPin>=0)
         rfm69_set_data_with_clk(state) ;
     else
-        rfm69_set_data_without_clk( state);
+        rfm69_set_data_with_clk( state);
 }
 void HomeEasyTransmitter::rfm69_set_data_without_clk(byte state)
 {
@@ -135,19 +149,16 @@ void HomeEasyTransmitter::transmit(bool blnOn,unsigned long transmitterId, short
   int i;
 
   cli();
-
-  pinMode(txPin, OUTPUT);      // transmitter pin.
-  pinMode(clkPin, OUTPUT);      // transmitter pin.
-
+	initPin();
 
   // Do the latch sequence.. 
   rfm69_set_data( HIGH);
-  DelayMicroseconds(LATCH1_HIGH);     
+  DelayMicrosecondsHard(LATCH1_HIGH);     
   rfm69_set_data( LOW);
   DelayMicroseconds(LATCH1_LOW);     // low for 9900 for latch 1
   
   rfm69_set_data( HIGH);
-  DelayMicroseconds(LATCH2_HIGH);     
+  DelayMicrosecondsHard(LATCH2_HIGH);     
     rfm69_set_data( LOW);
   DelayMicroseconds(LATCH2_LOW);     // low for 2675 for latch 1
 
@@ -185,7 +196,7 @@ void HomeEasyTransmitter::transmit(bool blnOn,unsigned long transmitterId, short
     sendPair(false);*/
 
   rfm69_set_data( HIGH);   // high again (shut up)
-  DelayMicroseconds(LATCH2_HIGH);      // wait a moment
+  DelayMicrosecondsHard(LATCH2_HIGH);      // wait a moment
   rfm69_set_data( LOW);    // low again for 2675 - latch 2.
   DelayMicroseconds(LATCH2_LOW);      // wait a moment
   sei();
@@ -197,16 +208,16 @@ void HomeEasyTransmitter::sendBit(bool b)
   if (b)
   {
     rfm69_set_data( HIGH);
-    DelayMicroseconds(BIT_PULSE_HIGH);
+    DelayMicrosecondsHard(BIT_PULSE_HIGH);
     rfm69_set_data( LOW);
     DelayMicroseconds(BIT_1_PULSE_LOW);
   }
   else
   {
     rfm69_set_data( HIGH);
-    DelayMicroseconds(BIT_PULSE_HIGH);
+    DelayMicrosecondsHard(BIT_PULSE_HIGH);
     rfm69_set_data( LOW);
-    DelayMicroseconds(BIT_0_PULSE_LOW);
+    DelayMicrosecondsHard(BIT_0_PULSE_LOW);
   }
 }
 
@@ -227,10 +238,13 @@ void HomeEasyTransmitter::sendPair(bool b)
 
 
  void HomeEasyTransmitter::initPin()
- 	{
+    {
     pinMode(txPin, OUTPUT);      // transmitter pin.
-    pinMode(clkPin, OUTPUT);      // transmitter pin.
-    digitalWrite(clkPin, LOW);
     digitalWrite(txPin, LOW);    //no tx 
 
- 	}
+    if (clkPin>=0)
+		{
+    	pinMode(clkPin, OUTPUT);      
+    	digitalWrite(clkPin, LOW);
+		}
+    }
