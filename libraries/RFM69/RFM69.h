@@ -31,7 +31,14 @@
 // **********************************************************************************
 #ifndef RFM69_h
 #define RFM69_h
+#if defined(ARDUINO) && ARDUINO >= 100
 #include <Arduino.h>            //assumes Arduino IDE v1.0 or greater
+#else
+#include <stdio.h>
+#include <wiringPi.h>
+#include "Print.h"
+
+#endif
 
 #define RF69_MAX_DATA_LEN         61 // to take advantage of the built in AES/CRC we want to limit the frame size to the internal FIFO size (66 bytes - 3 bytes overhead)
 #define RF69_SPI_CS               SS // SS is the SPI slave select pin, for instance D10 on atmega328
