@@ -24,10 +24,13 @@
     <ClCompile Include="spi\SPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pi\rfm.cpp">
+    <ClCompile Include="rfmpi\rfm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rfmpi\rfm.cpp">
+    <ClCompile Include="rfmpi\rfmPrint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SPI.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

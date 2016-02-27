@@ -1,7 +1,7 @@
 all: rfm
 
-rfm: rfm.o 
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $+ -o $@ -lwiringPi
+rfm: rfm.o RFM69.o HomeEasyTransmitter.o
+	$(CXX) $(CXXFLAGS)  -I./ $(LDFLAGS) $+ -o $@ -lwiringPi
 
 clean:
 	$(RM) *.o rfm

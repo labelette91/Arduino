@@ -2,11 +2,9 @@
 #ifndef _SPI_H_INCLUDED
 #define _SPI_H_INCLUDED
 
-typedef unsigned char boolean;
-typedef unsigned char byte;
-typedef unsigned char uint8_t;
-typedef unsigned short uint16_t;
-typedef unsigned int   uint32_t;
+#include "Print.h"
+
+#include "deftype.h"
 
 #define noInterrupts()
 #define interrupts()

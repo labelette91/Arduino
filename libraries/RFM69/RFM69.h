@@ -36,7 +36,7 @@
 #else
 #include <stdio.h>
 #include <wiringPi.h>
-#include "Print.h"
+#include <wiringPiSPI.h>
 
 #endif
 

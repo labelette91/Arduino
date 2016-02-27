@@ -70,9 +70,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="examples\struct_send\Struct_send.cpp" />
-    <ClCompile Include="pi\rfm.cpp" />
     <ClCompile Include="RFM69.cpp" />
     <ClCompile Include="rfmpi\rfm.cpp" />
+    <ClCompile Include="rfmpi\rfmPrint.cpp" />
+    <ClCompile Include="SPI.c" />
     <ClCompile Include="spi\SPI.cpp" />
   </ItemGroup>
   <ItemGroup>

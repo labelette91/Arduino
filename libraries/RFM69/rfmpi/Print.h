@@ -23,11 +23,7 @@
 #include <stdio.h> // for int
 #include <string.h> // for int
 
-#ifndef uint8_t
-#define uint8_t unsigned char
-#define uint16_t unsigned short
-#define uint32_t unsigned int 
-#endif
+#include "deftype.h"
 
 
 #define DEC 10
@@ -35,28 +31,30 @@
 #define OCT 8
 #define BIN 2
 
-int PRINT (long mes , int base , bool lf)
-{
-    switch (base) {
-        case BIN : printf("%b",mes) ;
-        break;
-        case OCT:  printf("%o",mes) ;
-        break;
-        case DEC : printf("%d",mes) ;
-        break;
-        case HEX : printf("%X",mes) ;
-        break;
-        default  : printf("%d",mes) ;
-        break;
-    }
-    if (lf)printf("\n") ;
-		return 1;
-}
 class Print
 {
   public:
   
-    static int write(uint8_t mes ) {printf("%02X",mes) ; };
+	static int PRINT (long mes , int base , bool lf)
+	{
+			switch (base) {
+					case BIN : printf("%b",mes) ;
+					break;
+					case OCT:  printf("%o",mes) ;
+					break;
+					case DEC : printf("%d",mes) ;
+					break;
+					case HEX : printf("%X",mes) ;
+					break;
+					default  : printf("%d",mes) ;
+					break;
+			}
+			if (lf)printf("\n") ;
+			return 1;
+	}
+
+		
+		static int write(uint8_t mes ) {printf("%02X",mes) ; };
 
     static int write(const char *buffer, int size) {
       for (int i=0;i<size;i++) write(buffer[i]);
@@ -86,6 +84,6 @@ class Print
     static int println(void)																 {return printf("\n") ; };        
 };
 
-Print Serial ;
+extern Print Serial ;
 
 #endif
