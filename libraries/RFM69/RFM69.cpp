@@ -413,17 +413,12 @@ void RFM69::writeReg(byte addr, byte value)
   unselect();
 }
 #else
-#define	SPI_CHAN		1
 byte  RFM69::readReg(byte addr)
 {
 	  unsigned char myData[10] ;
 		myData[0]=addr ;
 		myData[1]=0  ;
-
-		if (wiringPiSPIDataRW (SPI_CHAN, myData, 2) == -1)
-		{
-		  printf ("SPI Read failure: \n") ;
-		}
+		SPI.transfer(myData, 2) ;
 		return(myData[1]);
 
 }
@@ -433,11 +428,7 @@ void  RFM69::writeReg(byte addr, byte value)
 	  unsigned char myData[10] ;
 		myData[0]=addr  | 0x80;
 		myData[1]=value  ;
-
-		if (wiringPiSPIDataRW (SPI_CHAN, myData, 2) == -1)
-		{
-		  printf ("SPI write failure: \n") ;
-		}
+	  SPI.transfer(myData, 2) ;	
 }
 
 

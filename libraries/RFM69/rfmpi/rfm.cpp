@@ -25,6 +25,8 @@
 #include <errno.h>
 #include <unistd.h>
 
+#include "SPI.h"
+
 extern "C" void delayMicrosecondsHard (unsigned int howLong);
 
 Print Serial ;
@@ -57,7 +59,7 @@ printf("Failed to switch to normal scheduler.");
 }
 }
 
-void spiSetup (int speed)
+void spiSetup (int channel , int speed)
 {
   if ((myFd = wiringPiSPISetup (SPI_CHAN, speed)) < 0)
   {
@@ -104,6 +106,8 @@ const byte CONFIG[][2] =
 
 int TXPIN = 5 ;
 
+SPIClass SPI;
+
 int main(int argc, char *argv[])
 {
 		byte vreg;
@@ -115,7 +119,14 @@ int main(int argc, char *argv[])
             printf("failed wiring pi\n");
         }	
 
-  spiSetup (  500000) ;
+//  spiSetup ( 1, 500000) ;
+  if (SPI.Setup (SPI_CHAN, 500000)) 
+  {
+    printf ( "Can't open the SPI bus: \n" ) ;
+   
+  }
+
+
   printf("spi init \n");
 /*
   for (int i=1 ; i<10;i++)
@@ -184,12 +195,17 @@ i=1;
 	printf("Easy Off\n");  
   easy->setSwitch(false,0x55,1);    // turn on device 0
 
+//	radio->setMode(RF69_MODE_SLEEP);
+//  PrintReg ( REG_OPMODE  ) ;
+
+  radio->setMode(RF69_MODE_RX);
+  PrintReg ( REG_OPMODE  ) ;
 
 	easy->deactivatePin();
 
 	printf("fin du programme");    // execution terminée.
-  close (myFd) ;
-
+//  close (myFd) ;
+	SPI.end();
 
 //	scheduler_standard();
 }
