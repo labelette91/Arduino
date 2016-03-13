@@ -203,6 +203,11 @@ i=1;
 
 	easy->deactivatePin();
 
+	for (int i=0;i<60;i++){
+		printf("RSI:%d \n",radio->readRSSI(false));    // execution terminée.
+		delay(1000);
+	}
+
 	printf("fin du programme");    // execution terminée.
 //  close (myFd) ;
 	SPI.end();
