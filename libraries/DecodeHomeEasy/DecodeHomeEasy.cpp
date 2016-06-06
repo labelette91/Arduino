@@ -48,12 +48,10 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
         switch(state)
         {
         case UNKNOWN :  /* test reception pulse high */
-                        if ( TEST_PULSE(width,PULSE_HIGH,TOLERANCE)  && (data==1) )
-                           state = T0 ;/* attente synchro */
-            break;
+                        //if ( TEST_PULSE(width,PULSE_HIGH,TOLERANCE)  && (data==1) )
         case T0      :  /* test reception pulse low synchro */
-                        if (  (width> PULSE_SYNCHRO) && (data==0) )
-                           state = T1 ;/*  synchro receive */
+											if (width> PULSE_SYNCHRO) 
+														state = T1 ;/*  synchro receive */
                        else
                            resetDecoder ();
             break;   
@@ -156,9 +154,9 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
             data[4 ] = (byte)(lastCode & 0x00000001) ; 
             lastCode = lastCode >> 1 ;
             //id 3FFFFFF
-            data[8]  = (byte)(lastCode & 0x0000000F) ;  lastCode = lastCode >> 4 ;
-            data[7]  = (byte)(lastCode & 0x0000000F) ;  lastCode = lastCode >> 4 ;
-            data[6]  = (byte)(lastCode & 0x0000000F) ;  lastCode = lastCode >> 4 ;
+            data[8]  = (byte)(lastCode & 0x000000FF) ;  lastCode = lastCode >> 8 ;
+            data[7]  = (byte)(lastCode & 0x000000FF) ;  lastCode = lastCode >> 8 ;
+            data[6]  = (byte)(lastCode & 0x000000FF) ;  lastCode = lastCode >> 8 ;
             data[5]  = (byte)(lastCode & 0x00000003) ;  
             pos = 9;
             return true;

@@ -72,6 +72,9 @@
     <ClCompile Include="..\libraries\HomeEasyTransmitter\HomeEasyTransmitter.cpp">
       <Filter>Source Files\lib</Filter>
     </ClCompile>
+    <ClCompile Include="..\libraries\RFM69\RFM69.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Domotic.h">
@@ -99,6 +102,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libraries\HomeEasyTransmitter\HomeEasyTransmitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libraries\RFM69\RFM69.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libraries\RFM69\RFM69registers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

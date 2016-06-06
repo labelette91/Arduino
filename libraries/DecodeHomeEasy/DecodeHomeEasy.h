@@ -4,12 +4,12 @@
 #include "deftype.h"
 
 #define NBBIT  32
-#define PULSE_HIGH 300
+#define PULSE_HIGH 400
 #define PULSE_ONE  1300
 #define PULSE_ZERO 300
 #define PULSE_SYNCHRO 2000
 
-#define TOLERANCE 100
+#define TOLERANCE 400
 
 #define HOMESWITCH_ID0 0x3B
 #define HOMESWITCH_ID1 0x80

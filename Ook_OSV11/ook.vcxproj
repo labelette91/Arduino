@@ -45,6 +45,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>C:\Users\jeux\Documents\Arduino\libraries\RFM69;C:\Users\jeux\Documents\Arduino\libraries\RFM69\pi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -69,6 +70,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\libraries\HomeEasyTransmitter\HomeEasyTransmitter.cpp" />
+    <ClCompile Include="..\libraries\RFM69\RFM69.cpp" />
     <ClCompile Include="ConfZ1.c" />
     <ClCompile Include="ConfZ2.c" />
     <ClCompile Include="ConfZ3.c" />
@@ -89,6 +91,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libraries\HomeEasyTransmitter\HomeEasyTransmitter.h" />
+    <ClInclude Include="..\libraries\RFM69\RFM69.h" />
+    <ClInclude Include="..\libraries\RFM69\RFM69registers.h" />
     <ClInclude Include="Domotic.h" />
     <ClInclude Include="hager.h" />
     <ClInclude Include="nouveau dossier\Domotic.h" />
