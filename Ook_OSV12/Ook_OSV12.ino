@@ -2,6 +2,7 @@
 #define OTIO_ENABLE 1
 #define OOK_ENABLE  1
 #define HAGER_ENABLE 1
+#define HOMEEASY_ENABLE 1
 
 #include <RFM69.h>
 #include <RFM69registers.h>
@@ -21,6 +22,9 @@ HagerDecoder    hager;
 /* OregonDecoderV3 orscV3; */
 
 //end oregon 
+
+#include "DecodeHomeEasy.h"
+DecodeHomeEasy HEasy ;
 
 //#include "C:\Users\jeux\Documents\Arduino\otio\decodeOTIO.h"
 //#include "C:\Documents and Settings\F206150\Mes documents\Arduino\otio\decodeOTIO.h"
@@ -112,6 +116,7 @@ void setup () {
 //    radio.writeReg(REG_OOKFIX,84 );
     //lna 50 h    
     radio.writeReg(REG_LNA, RF_LNA_ZIN_50);
+    HEasy.resetDecoder();
 }
 
 void PulseLed()
@@ -201,6 +206,18 @@ void loop () {
         	PulseLed();
         }
 #endif      	
+
+#ifdef HOMEEASY_ENABLE
+        if (HEasy.nextPulse(p,pinData )) {
+        #ifndef DOMOTIC
+           HEasy.ReportSerial();    
+        #else
+           reportDomoticHomeEasy ( HEasy.getData() , HEasy.getBytes ()  );
+        #endif
+        PulseLed();
+      	}
+
+#endif
 
     }
 

@@ -7,6 +7,7 @@
 
 #include "Oregon.h"
 #include "Types.h"
+#include "DecodeHomeEasy.h"
 
 #define VERSION 11
 
@@ -188,6 +189,10 @@ void reportDomotic ( const byte* data,byte size ){
   if (getSensorByte1(data)==CMR180_ID1)
     reportDomoticPower ( (byte*)data, size );
   else
+    //homeEasy sensor
+  if (getSensorByte1(data)==HOMESWITCH_ID0)
+    reportDomoticHomeEasy( (byte*)data, size );
+  else
     reportDomoticTempHum (temperatureint(data) , getHumidity(data) , getId(data),channel(data) );
 	
 }
@@ -295,4 +300,30 @@ void reportHagerDomotic ( const byte* data, byte pos ){
 	}	     
 
 
+}
+
+
+void reportDomoticHomeEasy ( const byte* data, byte pos ){
+  
+
+		Send.LIGHTING2.packetlength=11 + 4 ; //+2 debug 
+		Send.LIGHTING2.packettype = pTypeLighting2;   
+		Send.LIGHTING2.subtype    = sTypeHEU ;					
+		Send.LIGHTING2.seqnbr			= Seqnbr++ ;
+		Send.LIGHTING2.id1        = data[5];            /* id emetteur 0..3  */
+		Send.LIGHTING2.id2        = data[6];            /* id emetteur 0..FF */
+		Send.LIGHTING2.id3        = data[7];            /* id emetteur 0..FF */
+		Send.LIGHTING2.id4        = data[7];            /* id emetteur 0..FF */
+		Send.LIGHTING2.unitcode   = data[2];        		/* unit = zone 1..3  */
+		Send.LIGHTING2.level    = 0 ;   /* dim level 0..15   */
+		Send.LIGHTING2.rssi     = 0;
+//devbug
+		Send.LIGHTING2.data[0]  = data[3];   
+		Send.LIGHTING2.data[1]  = data[4];
+		Send.LIGHTING2.data[2]  = data[5];
+		Send.LIGHTING2.data[3]  = data[6];
+
+  	Send.LIGHTING2.cmnd     = data[3] ;         
+
+    Serial.write((byte*)&Send.LIGHTING2,Send.LIGHTING2.packetlength+1  );
 }

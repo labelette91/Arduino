@@ -221,5 +221,6 @@ extern void DomoticStatus();
 void reportHagerDomotic ( const byte* data, byte pos );
 void resetLastSensorValue();
 void reportDomotic ( const byte* data,byte size );
+void reportDomoticHomeEasy ( const byte* data, byte pos );
 
 
