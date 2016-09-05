@@ -1,7 +1,11 @@
 #ifndef _DecodeHomeEasy_
 #define _DecodeHomeEasy_
 
+#if defined(ARDUINO) && ARDUINO >= 100
+#include <Arduino.h>            //assumes Arduino IDE v1.0 or greater
+#else
 #include "deftype.h"
+#endif
 
 #define NBBIT  32
 #define PULSE_HIGH 400
