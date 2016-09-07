@@ -174,14 +174,14 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
   
 
   
-/*  void ReportSerial(){
+  void DecodeHomeEasy::ReportSerial(){
     Serial.print ("Home:");
     Serial.print (Code,HEX);
     Serial.print (" T:");
     Serial.print ('\n');
     Serial.print ('\r');
 
-  }*/
+  }
 
 
 

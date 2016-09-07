@@ -45,6 +45,7 @@ public:
     bool nextOnePulse (word pWidth , byte data)   ;
     
   bool nextPulse (word width , byte BitData)   ;
+  void ReportSerial();
  };
 
 #endif
