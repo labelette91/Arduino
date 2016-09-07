@@ -7,9 +7,9 @@
 #include "fifo.h"
 TFifo fifo;
 
-#include "DecodeMD230.h"
+#include "..\DecodeMD230.h"
 
-DecodeMD230 orscV2(2);
+DecodeMD230 orscV2(1);
 
 
 
@@ -94,7 +94,7 @@ void setup () {
 #define    BIT1  300 , 1300 ,300 , 300 ,
 
 
-byte result[] = {
+byte result1[] = {
 0xD1,
 0x24,
 0xF4,
@@ -187,9 +187,18 @@ int ConfZ1[]  =  {
     };
 
  int ConfZ2[]  = {
+1430,350 ,510 ,630 ,550 ,630 ,910 ,270 ,470 ,670 ,910 ,230 ,910 ,310 ,910 ,230 ,630 ,630 ,790 ,390 ,910 ,150 ,590 ,670 ,910 ,230 ,910 ,310 ,470 ,670 ,910 ,230 ,910 ,230 ,550 ,670 ,470 ,670 ,510 ,630 ,550 ,680 ,870 ,270 ,470 ,670 ,910 ,390 ,870 ,190 ,590 ,670 ,510 ,630 ,430 ,750 ,910 ,270 ,470 ,670 ,910 ,230 ,550 ,670 ,470 ,670 ,470 ,670 ,910 ,390 ,390 ,670 ,470 ,670 ,
 0
  };
+
+byte result2[] = {  0x2E,0xDB,0x0B,0x14,0x40, 
+0,
+0,
+0,
+};
+
  int ConfZ3[]  = {
+1640,150,590,670,510,630,910,270,510,670,910,230,910,230,910,310,470,670,910,230,910,390,390,670,910,230,910,350,430,750,830,350,790,350,430,750,510,670,470,680,510,630,910,270,510,670,910,230,910,230,550,670,470,670,550,710,790,390,390,670,910,350,430,710,430,750,510,670,910,230,550,630,510,670,
 000, 	
  	
  	};
@@ -198,8 +207,8 @@ int ConfZ1[]  =  {
 int iConf=0;
 int jConf=0;
 
-int * config[] = { ConfZ1, ConfZ1 , ConfZ1 , 0 };
-int * conf    = ConfZ1 ;
+int * config[] = { ConfZ2, ConfZ3 , 0 , 0 };
+int * conf    = config[0] ;
 byte data = 0;
 void setPulse()
 {
@@ -273,11 +282,11 @@ void loop () {
 
 					  printf (" Home: ");
             for (int j=0;j<SIZE_CODE;j++)
-					    printf ("%02x",orscV2.Code[j]);
+					    printf ("%02X ",orscV2.Code[j]);
             printf("\n");
 
 						Serial.println();
-						if (TEST_CODE(result,orscV2.Code) )
+						if (TEST_CODE(result2,orscV2.Code) )
 							Serial.println(" OK");
 						else
 						Serial.println(" KO");

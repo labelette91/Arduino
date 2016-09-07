@@ -12,10 +12,11 @@
 #define PULSE_ONE  1300
 #define PULSE_ZERO 300
 
-#define PULSE_SYNCHRO_LOW  3840
-#define PULSE_SYNCHRO_HIGH 330 
+#define PULSE_SYNCHRO_LOW  1000
+#define PULSE_SYNCHRO_HIGH_MIN 140 
+#define PULSE_SYNCHRO_HIGH_HIGH 390 
 
-#define TOLERANCE 200
+#define TOLERANCE 400
 
 #define MD230_ID0 0x3C
 #define MD230_ID1 0x80
@@ -24,18 +25,32 @@
 
 /*  36 bit */
 /* begin with low synchro pulse of  PULSE_SYNCHRO followed by high pulse 330탎
-/* bit 1 : pulse 0 250 탎 pulse 1 750 탎 */
-#define PULSE_ONE_LOW  250
-#define PULSE_ONE_HIGH 750
+/* bit 1 : pulse 0  750..950 850+-100 탎   탎 pulse 1 220..400 = 310+-90*/
+//#define PULSE_ONE_LOW  850
+#define PULSE_ONE_LOW_MIN  750
+#define PULSE_ONE_LOW_MAX  950
 
-/* bit 0 : pulse 0 660 탎 pulse 1 330 탎 */
-#define PULSE_ZERO_LOW  660
-#define PULSE_ZERO_HIGH 330
+//#define PULSE_ONE_HIGH 310
+#define PULSE_ONE_HIGH_MIN 150
+#define PULSE_ONE_HIGH_MAX 400
+
+/* bit 0 : pulse 0 380..640=510+-130    탎 pulse 1 590..760 s */
+//#define PULSE_ZERO_LOW  510
+#define PULSE_ZERO_LOW_MIN  380
+#define PULSE_ZERO_LOW_MAX  640
+
+
+//#define PULSE_ZERO_HIGH 330
+#define PULSE_ZERO_HIGH_MIN 590
+#define PULSE_ZERO_HIGH_MAX 760
 
 
 #define SIZE_CODE 5 
 
-#define TEST_PULSE(WIDTH,PULSE_LEN,TOL)((WIDTH> (PULSE_LEN-TOL))&&(WIDTH<(PULSE_LEN+TOL)))
+#define TEST_PULSE_TOL(WIDTH,PULSE_LEN,TOL)((WIDTH>= (PULSE_LEN-TOL))&&(WIDTH<=(PULSE_LEN+TOL)))
+
+#define TEST_PULSE_WINDOW(WIDTH,PULSE_MIN,PULSE_MAX)((WIDTH>= (PULSE_MIN))&&(WIDTH<=(PULSE_MAX)))
+
 
 #define COPY_CODE(dest,src) dest[0]=src[0];\
                             dest[1]=src[1];\
@@ -77,7 +92,8 @@ public:
     
   bool nextPulse (word width , byte BitData)   ;
   void ReportSerial();
-
+  void done ();
+ virtual void gotBit (byte value) ;
  };
 
 #endif

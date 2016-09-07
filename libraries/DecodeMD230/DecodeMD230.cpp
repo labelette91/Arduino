@@ -12,9 +12,6 @@
 /* bit 0 : |-|_    : short Pulse One / short Pulse Low  */
 
 
-#define TEST_PULSE(WIDTH,PULSE_LEN,TOL)((WIDTH> (PULSE_LEN-TOL))&&(WIDTH<(PULSE_LEN+TOL)))
-
-
 const byte* DecodeMD230::getData (byte& count) const {
         count = pos;
         return data; 
@@ -50,22 +47,22 @@ const byte* DecodeMD230::getData (byte& count) const {
         switch(state)
         {
         case UNKNOWN :  /* test reception pulse high */
-                        if ( TEST_PULSE(width,PULSE_SYNCHRO_LOW,TOLERANCE) )
+                        if ( width>PULSE_SYNCHRO_LOW) 
                           state = T0; 
 
             break;   
         case T0      :  /* test reception pulse high synchro */
-											if ( TEST_PULSE(width,PULSE_SYNCHRO_HIGH,150) )
+											if ( TEST_PULSE_WINDOW(width,PULSE_SYNCHRO_HIGH_MIN,PULSE_SYNCHRO_HIGH_HIGH) )
 														state = T1 ;/*  synchro receive */
                        else
                            resetDecoder ();
             break;   
         case T1      : //reception data bit pulse low
-            if ( TEST_PULSE(width,PULSE_ONE_LOW,TOLERANCE)  ){
+            if      ( TEST_PULSE_WINDOW(width,PULSE_ONE_LOW_MIN,PULSE_ONE_LOW_MAX)  ){
                 lastBit=1;
                 state = T2 ;
             }
-            else if ( TEST_PULSE(width,PULSE_ZERO_LOW,TOLERANCE)  ){
+            else if ( TEST_PULSE_WINDOW(width,PULSE_ZERO_LOW_MIN,PULSE_ZERO_LOW_MAX)  ){
                 lastBit=0;
                 state = T2 ;
             }
@@ -76,7 +73,7 @@ const byte* DecodeMD230::getData (byte& count) const {
             state = T1 ;
             pos =total_bits/8 ;
             total_bits++;
-            if ( TEST_PULSE(width,PULSE_ONE_HIGH,TOLERANCE)  )
+            if ( TEST_PULSE_WINDOW(width,PULSE_ONE_HIGH_MIN,PULSE_ONE_HIGH_MAX)  )
             {
                     //the previus bit shall be 1 
                     if (lastBit==1)
@@ -88,7 +85,7 @@ const byte* DecodeMD230::getData (byte& count) const {
                     else
                         resetDecoder ();
             }
-            else  if ( TEST_PULSE(width,PULSE_ZERO_HIGH,TOLERANCE)  )
+            else  if ( TEST_PULSE_WINDOW(width,PULSE_ZERO_HIGH_MIN,PULSE_ZERO_HIGH_MAX)  )
             {
                     //the previus bit shall be 0
                     if (lastBit==0)
@@ -110,6 +107,7 @@ const byte* DecodeMD230::getData (byte& count) const {
         if (total_bits==NBBIT)
         {
             //update code
+            done();
             COPY_CODE(tmpCode , CurCode );
             resetDecoder ();
             return true;
@@ -174,5 +172,19 @@ void DecodeMD230::ReportSerial(){
 
   }
 
+void DecodeMD230::done () {
+        while (total_bits%8)
+            gotBit(0); // padding
+        state = DONE;
+    }
+
+// add one bit to the packet data buffer
+
+void DecodeMD230::gotBit (byte value) {
+    pos =total_bits/8 ;
+    total_bits++;
+    CurCode[pos] <<= 1;
+    CurCode[pos] |=  value ;
+}
 
 
