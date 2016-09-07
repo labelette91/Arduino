@@ -1,3 +1,4 @@
+#define VERSION 12
 
 typedef union tRBUF {
 //domotic structure
@@ -222,5 +223,6 @@ void reportHagerDomotic ( const byte* data, byte pos );
 void resetLastSensorValue();
 void reportDomotic ( const byte* data,byte size );
 void reportDomoticHomeEasy ( const byte* data, byte pos );
+void reportDomoticMD230(const byte* data, byte pos);
 
 

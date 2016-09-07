@@ -2,7 +2,8 @@
 #define OTIO_ENABLE 1
 #define OOK_ENABLE  1
 #define HAGER_ENABLE 1
-#define HOMEEASY_ENABLE 1
+//#define HOMEEASY_ENABLE 1
+//#define MD230_ENABLE 1
 
 #include <RFM69.h>
 #include <RFM69registers.h>
@@ -25,6 +26,10 @@ HagerDecoder    hager;
 
 #include "DecodeHomeEasy.h"
 DecodeHomeEasy HEasy ;
+
+#include "DecodeMD230.h"
+DecodeMD230 MD230(1) ;
+
 
 //#include "C:\Users\jeux\Documents\Arduino\otio\decodeOTIO.h"
 //#include "C:\Documents and Settings\F206150\Mes documents\Arduino\otio\decodeOTIO.h"
@@ -117,6 +122,12 @@ void setup () {
     //lna 50 h    
     radio.writeReg(REG_LNA, RF_LNA_ZIN_50);
     HEasy.resetDecoder();
+	  MD230.resetDecoder();
+#ifndef DOMOTIC
+    Serial.print("Version ");
+    Serial.println(VERSION);
+#endif     
+   
 }
 
 void PulseLed()
@@ -191,21 +202,6 @@ void loop () {
         PulseLed();
       	}
 #endif      	
-#ifdef HAGER_ENABLE        
-      	//si pulse bas on enleve 100micros sinon on ajoute 100micros
-        //pour compenser etat haut tronquer
-        if (pinData==1) p -=100; else p +=100 ;
-
-        if (hager.nextPulse(p)) {
-          #ifndef DOMOTIC
-             hager.reportSerial();    
-          #else
-             reportHagerDomotic ( hager.getData (),hager.pos );
-          #endif
-          hager.resetDecoder();		
-        	PulseLed();
-        }
-#endif      	
 
 #ifdef HOMEEASY_ENABLE
         if (HEasy.nextPulse(p,pinData )) {
@@ -216,8 +212,35 @@ void loop () {
         #endif
         PulseLed();
       	}
-
 #endif
+
+#ifdef MD230_ENABLE
+		if (MD230.nextPulse(p, pinData)) {
+#ifndef DOMOTIC
+			MD230.ReportSerial();
+#else
+			reportDomoticMD230(MD230.getData(), MD230.getBytes());
+#endif
+			PulseLed();
+		}
+#endif
+
+#ifdef HAGER_ENABLE        
+        //si pulse bas on enleve 100micros sinon on ajoute 100micros
+        //pour compenser etat haut tronquer
+        if (pinData==1) p -=100; else p +=100 ;
+
+        if (hager.nextPulse(p)) {
+          #ifndef DOMOTIC
+             hager.reportSerial();    
+          #else
+             reportHagerDomotic ( hager.getData (),hager.pos );
+          #endif
+          hager.resetDecoder();   
+          PulseLed();
+        }
+#endif        
+
 
     }
 
@@ -292,3 +315,4 @@ void reportTemperatureToDomotic()
 #endif
 
 }
+

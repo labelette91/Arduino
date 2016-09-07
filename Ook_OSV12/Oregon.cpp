@@ -147,7 +147,7 @@ data [5..8] total power : 4 byte watt /s
 
 */
 /**
- * \brief    power instantané en watt
+ * \brief    power instantanÃ© en watt
  * \param    data       Oregon message
  * \param    power     
  */
@@ -180,4 +180,5 @@ byte getPowerPacketType(byte* data)
   return data[2];
 }
  
+
 

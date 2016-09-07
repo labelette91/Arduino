@@ -155,3 +155,4 @@ const byte ConfZ2[] PROGMEM= {
 0  ,	//150 : 1 / 0
 0  ,	//151 : 0 / 0
 };
+

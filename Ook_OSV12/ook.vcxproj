@@ -72,6 +72,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\libraries\DecodeMD230\DecodeMD230.cpp" />
     <ClCompile Include="..\libraries\HomeEasyTransmitter\HomeEasyTransmitter.cpp" />
     <ClCompile Include="..\libraries\RFM69\RFM69.cpp" />
     <ClCompile Include="ConfZ1.c" />
@@ -83,7 +84,6 @@
     <ClCompile Include="header.c" />
     <ClCompile Include="Hz1.c" />
     <ClCompile Include="Hz2.c" />
-    <ClCompile Include="nouveau dossier\Domotic.cpp" />
     <ClCompile Include="Oregon.cpp" />
     <ClCompile Include="Z1Conf.c" />
     <ClCompile Include="Z1Eco.c" />
@@ -93,6 +93,7 @@
     <ClCompile Include="z3eco.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\libraries\DecodeMD230\DecodeMD230.h" />
     <ClInclude Include="..\libraries\HomeEasyTransmitter\HomeEasyTransmitter.h" />
     <ClInclude Include="..\libraries\RFM69\RFM69.h" />
     <ClInclude Include="..\libraries\RFM69\RFM69registers.h" />
@@ -106,7 +107,7 @@
     <ClInclude Include="SerialRfmCmd.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Ook_OSV11.ino" />
+    <None Include="Ook_OSV12.ino" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

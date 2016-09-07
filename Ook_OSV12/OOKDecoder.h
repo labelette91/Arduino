@@ -48,7 +48,7 @@ Oregon-WTGR800	0xFAB8	Outside Temp-Hygro
 Oregon-THGR918	0x1A3D	Outside Temp-Hygro
 Oregon-THGRN228NX		
 Oregon-THGN500		
-Huger – BTHR918	0x5A5D	Inside Temp-Hygro-Baro
+Huger â€“ BTHR918	0x5A5D	Inside Temp-Hygro-Baro
 Oregon-BTHR918N	0x5A6D	Inside Temp-Hygro-Baro
 Oregon-BTHR968		
 Oregon-RGR126	0x2A1D	Rain Gauge
@@ -191,7 +191,7 @@ public:
         /*compute size of paxket */
         if(pos == 2)
         {
-          // Taille de trame par défaut (utilisée dans la majorité des sondes)
+          // Taille de trame par dÃ©faut (utilisÃ©e dans la majoritÃ© des sondes)
           max_bits = 160;
  
           // Exceptions :
@@ -328,3 +328,4 @@ public:
 };
 
 */
+

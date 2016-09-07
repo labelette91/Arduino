@@ -25,3 +25,4 @@ int  getPower(byte *data);
 
 #define getSensorByte0(data)(data[0])
 #define getSensorByte1(data)(data[1])
+
