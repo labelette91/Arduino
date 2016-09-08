@@ -52,7 +52,7 @@ const byte* DecodeMD230::getData (byte& count) const {
 
             break;   
         case T0      :  /* test reception pulse high synchro */
-											if ( TEST_PULSE_WINDOW(width,PULSE_SYNCHRO_HIGH_MIN,PULSE_SYNCHRO_HIGH_HIGH) )
+											if ( TEST_PULSE_WINDOW(width,PULSE_SYNCHRO_HIGH_MIN,PULSE_SYNCHRO_HIGH_MAX) )
 														state = T1 ;/*  synchro receive */
                        else
                            resetDecoder ();
@@ -162,11 +162,11 @@ const byte* DecodeMD230::getData (byte& count) const {
   
 void DecodeMD230::ReportSerial(){
     Serial.print ("MD230:");
-    Serial.print (Code[0],HEX);
-    Serial.print (Code[1],HEX);
-    Serial.print (Code[2],HEX);
-    Serial.print (Code[3],HEX);
-    Serial.print (Code[4],HEX);
+    Serial.print (Code[0],HEX);Serial.print(' ');
+    Serial.print (Code[1],HEX);Serial.print(' ');
+    Serial.print (Code[2],HEX);Serial.print(' ');
+    Serial.print (Code[3],HEX);Serial.print(' ');
+    Serial.print (Code[4],HEX);Serial.print(' ');
     Serial.print ('\n');
     Serial.print ('\r');
 

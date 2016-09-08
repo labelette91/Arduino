@@ -9,7 +9,7 @@
 #define NETWORKID   100
 #define FREQUENCY   RF69_433MHZ //Match this with the version of your Moteino! (others: RF69_433MHZ, RF69_868MHZ)
 #define LED         9
-#define SERIAL_BAUD 38400
+#define SERIAL_BAUD 115200
 
 #define PDATA 3 //pin for data input/output
 #define PCLK  4 //pin for clk  input/output
@@ -21,14 +21,15 @@ RFM69 radio;
 // pin 3 : data pin
 // pin 4 : clk  pin
 
+#define NBPULSE 1024
 
-word Pulse[256];
+byte Pulse[NBPULSE];
 
 byte          Pin ;
 byte          lastPin ;
 unsigned long LastPulseTime ;
 unsigned long pulse ;
-byte 					NbPulse  ;
+word 					NbPulse  ;
 
 static unsigned long  last;
 
@@ -37,8 +38,8 @@ void ext_int_1(void) {
     pulse = micros() - last;
 //    last += pulse;
     last = micros() ;
-    if (NbPulse<255){
-      Pulse[NbPulse++]=pulse;
+    if (NbPulse<NBPULSE){
+      Pulse[NbPulse++]=pulse/10;
     }
 }
 
@@ -88,17 +89,29 @@ Serial.print(' ');
 
 void loop() {
 
-
+  if(NbPulse>=NBPULSE)
+  {
+      Serial.print(NbPulse);
+      for (word i=0;i<NbPulse;i++){
+        if (i%32==0)
+          Serial.println();
+        print(Pulse[i] )    ;
+      }
+        Serial.println();
+        NbPulse=0;
+        
+  
+  }
   //process any serial input
   if (Serial.available() > 0)
   {
     char input = Serial.read();
     if (input == 'p') { //print pulse 
       Serial.print(NbPulse);
-      for (byte i=0;i<NbPulse;i++){
+      for (word i=0;i<NbPulse;i++){
         if (i%32==0)
           Serial.println();
-      	print(Pulse[i]/100 )   	;
+      	print(Pulse[i] )   	;
       }
       	NbPulse=0;
       	Serial.println();
