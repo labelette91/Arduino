@@ -28,13 +28,16 @@ HagerDecoder    hager;
 DecodeHomeEasy HEasy ;
 
 #include "DecodeMD230.h"
-DecodeMD230 MD230(1) ;
+DecodeMD230 MD230(2) ;
 
 
 //#include "C:\Users\jeux\Documents\Arduino\otio\decodeOTIO.h"
 //#include "C:\Documents and Settings\F206150\Mes documents\Arduino\otio\decodeOTIO.h"
 #include <DecodeOTIO.h>
 DecodeOTIO Otio(3);  
+
+#include "Fifo.h"
+TFifo  fifo;
 
 #define PORT 2
 #define ledPin  9
@@ -63,7 +66,7 @@ void ext_int_1(void) {
     pulse = micros() - last;
     last += pulse;
 //    last = micros() ;
-    
+    fifo.put(pulse);
 }
 #include "Oregon.h"
 
@@ -141,10 +144,12 @@ void PulseLed()
   long int 	Last ;
 
 void loop () {
-    cli();
+/*    cli();
     word p = pulse;
     pulse = 0;
     sei();
+*/
+    word p = fifo.get();
 
 /*     Dt = (millis() - LastReceive)/1000;
      if (Dt==5)
