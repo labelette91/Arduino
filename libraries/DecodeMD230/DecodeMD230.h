@@ -8,9 +8,6 @@
 #endif
 
 #define NBBIT  36
-#define PULSE_HIGH 400
-#define PULSE_ONE  1300
-#define PULSE_ZERO 300
 
 #define PULSE_SYNCHRO_LOW  1000
 #define PULSE_SYNCHRO_HIGH_MIN 140 
@@ -47,9 +44,12 @@
 
 #define SIZE_CODE 5 
 
+//valeur for the division of pulse width
+#define WIDTH_DIVIDER 10
+
 #define TEST_PULSE_TOL(WIDTH,PULSE_LEN,TOL)((WIDTH>= (PULSE_LEN-TOL))&&(WIDTH<=(PULSE_LEN+TOL)))
 
-#define TEST_PULSE_WINDOW(WIDTH,PULSE_MIN,PULSE_MAX)((WIDTH>= (PULSE_MIN))&&(WIDTH<=(PULSE_MAX)))
+#define TEST_PULSE_WINDOW(WIDTH,PULSE_MIN,PULSE_MAX,DIVIDER)((WIDTH>= (PULSE_MIN/DIVIDER))&&(WIDTH<=(PULSE_MAX/DIVIDER)))
 
 
 #define COPY_CODE(dest,src) dest[0]=src[0];\
