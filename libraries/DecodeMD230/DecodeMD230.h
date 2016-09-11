@@ -74,7 +74,7 @@
 
 class DecodeMD230 {
 public:
-    byte total_bits, state, MaxCode , NbCodeOk , lastBit , pos, data[10]; ;
+    byte total_bits, state, MaxCode , NbCodeOk , lastBit , pos ;
     byte CurCode[SIZE_CODE] , Code[SIZE_CODE] , tmpCode[SIZE_CODE], lastCode[SIZE_CODE];
     unsigned long LastReceived ; 
 

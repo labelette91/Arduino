@@ -38,7 +38,7 @@ const byte* DecodeMD230::getData (byte& count) const {
     /* T0 : attente bit de synchro */
 
     /* result in CurCode */
-    bool DecodeMD230::nextOnePulse (word pWidth , byte data)   {
+    bool DecodeMD230::nextOnePulse (word pWidth , byte pdata)   {
         //pulse lsb wil be 10 micros to save computation time
         byte Swidth = pWidth/WIDTH_DIVIDER ;
 
@@ -129,20 +129,6 @@ const byte* DecodeMD230::getData (byte& count) const {
             //set final value
             COPY_CODE(Code , lastCode );
             LastReceived = millis();
-            data[0] = MD230_ID0 ;
-            data[1] = MD230_ID1 ;
-            //unit code 
-            data[2]  = (byte)(lastCode [4] ); 
-            //switch value 
-            data[3 ] = (byte)(lastCode [4]) ; 
-            //group value 
-            data[4 ] = (byte)(lastCode [4]) ; 
-            //id 3FFFFFF
-            data[8]  = (byte)(lastCode[0] ) ;  
-            data[7]  = (byte)(lastCode[1] ) ;  
-            data[6]  = (byte)(lastCode[2] ) ;  
-            data[5]  = (byte)(lastCode[3] ) ;  
-            pos = 9;
             return true;
           }
           //report only if new value has not been report since 2 min

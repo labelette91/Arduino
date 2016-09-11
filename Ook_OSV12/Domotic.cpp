@@ -329,25 +329,28 @@ void reportDomoticHomeEasy ( const byte* data, byte pos ){
 
 void reportDomoticMD230(const byte* data, byte pos) {
 
+//  MD230:2E DB 0B 44 10   //ok
+//	MD230 : 2E DB 0B 04 50    //alarm 1
+//	MD230 : 2E DB 0B 14 40   //alarm 2
+//	MD230 : 2E DB 0B 14 40
+//	MD230 : 2E DB 0B 54 00
 
-	Send.LIGHTING2.packetlength = 11 + 4; //+2 debug 
+	Send.LIGHTING2.packetlength = 11 ; 
 	Send.LIGHTING2.packettype = pTypeLighting2;
 	Send.LIGHTING2.subtype = sTypeHEU;
 	Send.LIGHTING2.seqnbr = Seqnbr++;
-	Send.LIGHTING2.id1 = data[5];            /* id emetteur 0..3  */
-	Send.LIGHTING2.id2 = data[6];            /* id emetteur 0..FF */
-	Send.LIGHTING2.id3 = data[7];            /* id emetteur 0..FF */
-	Send.LIGHTING2.id4 = data[7];            /* id emetteur 0..FF */
-	Send.LIGHTING2.unitcode = data[2];        		/* unit = zone 1..3  */
+	Send.LIGHTING2.id1 = 0 ;                 /* id emetteur 0..3  */
+	Send.LIGHTING2.id2 = data[0];            /* id emetteur 0..FF */
+	Send.LIGHTING2.id3 = data[1];            /* id emetteur 0..FF */
+	Send.LIGHTING2.id4 = data[2];            /* id emetteur 0..FF */
+	Send.LIGHTING2.unitcode = 1;         	 /* unit = zone 1..3  */
 	Send.LIGHTING2.level = 0;   /* dim level 0..15   */
-	Send.LIGHTING2.rssi = 0;
-	//devbug
-	Send.LIGHTING2.data[0] = data[3];
-	Send.LIGHTING2.data[1] = data[4];
-	Send.LIGHTING2.data[2] = data[5];
-	Send.LIGHTING2.data[3] = data[6];
-
-	Send.LIGHTING2.cmnd = data[3];
+	Send.LIGHTING2.rssi  = 0;
+	
+	if ( (data[3]==0x14 ) && (data[4] == 0x40) )
+		Send.LIGHTING2.cmnd = 0;
+	else
+		Send.LIGHTING2.cmnd = 1;
 
 	Serial.write((byte*)&Send.LIGHTING2, Send.LIGHTING2.packetlength + 1);
 }

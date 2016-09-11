@@ -3,7 +3,7 @@
 #define OOK_ENABLE  1
 #define HAGER_ENABLE 1
 //#define HOMEEASY_ENABLE 1
-//#define MD230_ENABLE 1
+#define MD230_ENABLE 1
 
 #include <RFM69.h>
 #include <RFM69registers.h>
@@ -28,7 +28,7 @@ HagerDecoder    hager;
 DecodeHomeEasy HEasy ;
 
 #include "DecodeMD230.h"
-DecodeMD230 MD230(2) ;
+DecodeMD230 MD230(4) ;
 
 
 //#include "C:\Users\jeux\Documents\Arduino\otio\decodeOTIO.h"
