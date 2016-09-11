@@ -1,13 +1,5 @@
 #include "DecodeMD230.h"
-#if defined(ARDUINO) && ARDUINO >= 100
-#include <Arduino.h>            //assumes Arduino IDE v1.0 or greater
-#else
-#include <stdio.h>
-#include <wiringPi.h>
-//#include <wiringPiSPI.h>
-#include <print.h>
 
-#endif
 /* bit 1 : |-|____ : short Pulse One / long  Pulse Low  */
 /* bit 0 : |-|_    : short Pulse One / short Pulse Low  */
 

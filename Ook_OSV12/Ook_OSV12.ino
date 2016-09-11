@@ -28,7 +28,7 @@ HagerDecoder    hager;
 DecodeHomeEasy HEasy ;
 
 #include "DecodeMD230.h"
-DecodeMD230 MD230(4) ;
+DecodeMD230 MD230(2) ;
 
 
 //#include "C:\Users\jeux\Documents\Arduino\otio\decodeOTIO.h"

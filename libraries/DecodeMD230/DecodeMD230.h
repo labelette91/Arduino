@@ -1,11 +1,7 @@
 #ifndef _DecodeMD230_
 #define _DecodeMD230_
 
-#if defined(ARDUINO) && ARDUINO >= 100
 #include <Arduino.h>            //assumes Arduino IDE v1.0 or greater
-#else
-#include "deftype.h"
-#endif
 
 #define NBBIT  36
 
