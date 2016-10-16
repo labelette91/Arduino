@@ -64,8 +64,22 @@ void loop() {
     if (serverClients && serverClients.connected()){
       if(serverClients.available()){
         //get data from the telnet client and push it to the UART
-        Serial.println();
-        while(serverClients.available()) { Serial.print(serverClients.read(),HEX); Serial.print(' ');};
+//        Serial.println();
+//        while(serverClients.available()) { Serial.print(serverClients.read(),HEX); Serial.print(' ');};
+          if (DomoticReceive())
+          {
+            //start receive cmd
+            for (i=0;i<Cmd.LIGHTING2.packetlength+1;i++){
+              Serial.print(Cmd.Buffer[i],HEX); Serial.print(' ');
+            }
+            Serial.println();
+            if ( (Cmd.ICMND.packettype == 0)&& (Cmd.ICMND.cmnd==cmdStartRec) ) {  
+              DomoticStartReceive();
+            }
+            else if ( (Cmd.ICMND.packettype == 0)&& (Cmd.ICMND.cmnd==cmdSTATUS) ) {  
+              DomoticStatus();
+            }
+          }
       }
   }
   //check UART for data
