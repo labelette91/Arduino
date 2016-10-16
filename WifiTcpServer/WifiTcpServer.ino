@@ -19,6 +19,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include <ESP8266WiFi.h>
+#include "Domotic.h"
 
 //how many clients should be able to telnet to this ESP8266
 const char* ssid = "Livebox-BC43";
@@ -74,8 +75,10 @@ void loop() {
     Serial.readBytes(sbuf, len);
     //push UART data to all connected telnet clients
       if (serverClients && serverClients.connected()){
-        serverClients.write(sbuf, len);
+//        serverClients.write(sbuf, len);
         delay(1);
+        reportDomoticTempHum ( 201 , 90, 55 , 55 );
+
       }
   }
 }
