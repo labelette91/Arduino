@@ -21,12 +21,11 @@
 #include <ESP8266WiFi.h>
 
 //how many clients should be able to telnet to this ESP8266
-#define MAX_SRV_CLIENTS 3
 const char* ssid = "Livebox-BC43";
 const char* password = "C03294468E618A316C6759A245";
 
 WiFiServer server(23);
-WiFiClient serverClients[MAX_SRV_CLIENTS];
+WiFiClient serverClients;
 
 void setup() {
   Serial.begin(74880);
@@ -53,28 +52,20 @@ void loop() {
   uint8_t i;
   //check if there are any new clients
   if (server.hasClient()){
-    for(i = 0; i < MAX_SRV_CLIENTS; i++){
       //find free/disconnected spot
-      if (!serverClients[i] || !serverClients[i].connected()){
-        if(serverClients[i]) serverClients[i].stop();
-        serverClients[i] = server.available();
-        Serial.print("New client: "); Serial.println(i);
-        break;
+      if (serverClients!=0 ){
+         serverClients.stop();
       }
-    }
-    //no free/disconnected spot so reject
-    //WiFiClient serverClient = server.available();
-    //serverClient.stop();
+      serverClients = server.available();
+      Serial.println("New client: ");
   }
   //check clients for data
-  for(i = 0; i < MAX_SRV_CLIENTS; i++){
-    if (serverClients[i] && serverClients[i].connected()){
-      if(serverClients[i].available()){
+    if (serverClients && serverClients.connected()){
+      if(serverClients.available()){
         //get data from the telnet client and push it to the UART
-        Serial.print("client: "); Serial.println(i);
-        while(serverClients[i].available()) { Serial.print(serverClients[i].read(),HEX); Serial.print(' ');};
+        Serial.println();
+        while(serverClients.available()) { Serial.print(serverClients.read(),HEX); Serial.print(' ');};
       }
-    }
   }
   //check UART for data
   if(Serial.available()){
@@ -82,11 +73,9 @@ void loop() {
     uint8_t sbuf[len];
     Serial.readBytes(sbuf, len);
     //push UART data to all connected telnet clients
-    for(i = 0; i < MAX_SRV_CLIENTS; i++){
-      if (serverClients[i] && serverClients[i].connected()){
-        serverClients[i].write(sbuf, len);
+      if (serverClients && serverClients.connected()){
+        serverClients.write(sbuf, len);
         delay(1);
       }
-    }
   }
 }
