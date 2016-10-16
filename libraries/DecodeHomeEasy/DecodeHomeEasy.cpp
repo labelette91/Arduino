@@ -50,11 +50,11 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
         case UNKNOWN :  /* test reception pulse high */
                         //if ( TEST_PULSE(width,PULSE_HIGH,TOLERANCE)  && (data==1) )
         case T0      :  /* test reception pulse low synchro */
-											if (width> PULSE_SYNCHRO) 
-														state = T1 ;/*  synchro receive */
-                       else
-                           resetDecoder ();
-            break;   
+//						if (width> PULSE_SYNCHRO) 
+//							state = T1 ;/*  synchro receive */
+//                       else
+//                           resetDecoder ();
+//            break;   
         case T1      : //reception data bit pulse high
             if ( TEST_PULSE(width,PULSE_HIGH,TOLERANCE)  )
                 state = T2 ;
