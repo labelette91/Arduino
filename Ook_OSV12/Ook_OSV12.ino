@@ -202,7 +202,7 @@ void loop () {
         #ifndef DOMOTIC
            Otio.ReportSerial();    
         #else
-           reportDomoticTemp ( Otio.getTemperature() , Otio.getId()  , 0  );
+           reportDomoticTemp ( Otio.getTemperature() , Otio.getId()  , 0 , Otio.getBatteryLevel());
         #endif
         PulseLed();
       	}
@@ -316,7 +316,7 @@ void reportTemperatureToDomotic()
        Serial.print  ("T:");
        Serial.println(temperature,DEC);
 #else
-       reportDomoticTemp ( temperature , 0x45  , 0  );
+       reportDomoticTemp ( temperature , 0x45  , 0 ,15 );
 #endif
 
 }

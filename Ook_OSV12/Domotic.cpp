@@ -93,8 +93,8 @@ bool DomoticReceive()
 tRBUF Send ;
 
 //envoi temperature : humudit a domotic
-
-void reportDomoticTemp ( int temp , byte id1 , byte id2 ){
+//, byte bateryLevel : 0..15 0 = batteri low
+void reportDomoticTemp ( int temp , byte id1 , byte id2 ,  byte bateryLevel){
 
 		Send.Temp.packetlength = 8;
 		Send.Temp.packettype   = 0x50;
@@ -109,17 +109,17 @@ void reportDomoticTemp ( int temp , byte id1 , byte id2 ){
 		else
 			Send.Temp.tempsign     = 1   ;
 		Send.Temp.temperaturel   = temp & 0xff;
-		Send.Temp.battery_level  = 6;
+		Send.Temp.battery_level  = bateryLevel ;
 		Send.Temp.rssi           = 9 ;
             
     Serial.write((byte*)&Send.Temp,9);
 }
 void reportDomoticTemp ( const byte* data){
-	reportDomoticTemp ( temperatureint(data) , 0x48  , 0x00 );
+	reportDomoticTemp ( temperatureint(data) , 0x48  , 0x00 , battery(data) );
 	
 }
 
-void reportDomoticTempHum ( int temp , byte hum , byte id1 , byte id2 ){
+void reportDomoticTempHum ( int temp , byte hum , byte id1 , byte id2, byte bateryLevel){
 	
 	
 	//test if as changed
@@ -138,7 +138,7 @@ void reportDomoticTempHum ( int temp , byte hum , byte id1 , byte id2 ){
   else
   	Send.Temp_Hum.tempsign     = 1   ;
   Send.Temp_Hum.temperaturel   = temp & 0xff;
-  Send.Temp_Hum.battery_level  = 6;
+  Send.Temp_Hum.battery_level  = bateryLevel ;
   Send.Temp_Hum.rssi           = 9 ;
   Send.Temp_Hum.humidity       = hum ;
   Send.Temp_Hum.humidity_status= 0  ;
@@ -181,8 +181,6 @@ tlong.Long= getTotalPower(data);
 
 
 void reportDomotic ( const byte* data,byte size ){
-//	reportDomoticTempHum (temperatureint(data) , getHumidity(data) , 0x47 , 0x00 );
-//	reportDomoticTempHum (temperatureint(data) , getHumidity(data) , data[3] ,data[2] );
 
 	//id1 = sensor id id2 = channel pour oregon
   if (getSensorByte1(data)==CMR180_ID1)
@@ -192,7 +190,7 @@ void reportDomotic ( const byte* data,byte size ){
   if (getSensorByte1(data)==HOMESWITCH_ID0)
     reportDomoticHomeEasy( (byte*)data, size );
   else
-    reportDomoticTempHum (temperatureint(data) , getHumidity(data) , getId(data),channel(data) );
+    reportDomoticTempHum (temperatureint(data) , getHumidity(data) , getId(data),channel(data), battery(data));
 	
 }
 

@@ -135,9 +135,12 @@ BIT 3 2 1 0 9 8 7 6   5     4 3 2 1 0 9 8   7 6 5 4   3 2 1 0
   byte getId(){
     return (Temp >> 16) ;        
   }
-//return 1 if batterie OK  
-  byte getBatteryOk(){
-    return ( (Temp &  0x80 )!= 0 ) ;
+//return 15 if batterie OK  
+  byte getBatteryLevel(){
+	  if ((Temp & 0x80) != 0)
+		  return 15;
+	else
+		return 0;
   }
   
   void ReportSerial(){
@@ -152,7 +155,7 @@ BIT 3 2 1 0 9 8 7 6   5     4 3 2 1 0 9 8   7 6 5 4   3 2 1 0
     Serial.print (" Id:");
     Serial.print (getId(),HEX);
     Serial.print (" Bat:");
-    Serial.print (getBatteryOk());
+    Serial.print (getBatteryLevel());
     Serial.print ('\n');
     Serial.print ('\r');
 

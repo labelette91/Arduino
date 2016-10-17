@@ -94,10 +94,10 @@ byte getHumidity(const byte* data)
     return (data[7]&0xF) * 10 + ((data[6]&0xF0) >> 4);
 }
 
-// Ne retourne qu'un apercu de l'etat de la baterie : 10 = faible
+// Ne retourne qu'un apercu de l'etat de la baterie : 0 = faible 15= 100%
 byte battery(const byte* data)
 {
-    return (data[4] & 0x4) ? 10 : 90;
+    return (data[4] & 0x4) ? 0 : 15;
 }
  
 byte channel(const byte* data)
