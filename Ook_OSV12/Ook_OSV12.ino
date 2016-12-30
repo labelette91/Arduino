@@ -49,7 +49,7 @@ volatile word pulse;
 long int 	LastReceive ;
 
 //last packet data received ident
-byte data0,data1,data2;
+byte data0,data1,data2,data3;
 
 int 		NbReceive;
 word 		Dt;
@@ -167,7 +167,7 @@ void loop () {
 					if (checksum(orscV2.getData(),orscV2.pos-1) )
           {
             Dt = (millis() - LastReceive)/1000;
-            if ( (Dt!=0) || (data0!=orscV2.data[0]) || ( data1!=orscV2.data[1]) || (data2!=orscV2.data[2] ) ) {
+            if (  (data3 != orscV2.data[3]) || (data0!=orscV2.data[0]) || ( data1!=orscV2.data[1]) || (data2!=orscV2.data[2] ) ) {
               PulseLed();
 //              digitalWrite(ledPin, HIGH);  
 #ifdef OOK_ENABLE        
@@ -176,6 +176,7 @@ void loop () {
 							data0=orscV2.data[0];
 							data1=orscV2.data[1];
 							data2=orscV2.data[2];
+							data3=orscV2.data[3];
 
             }
             LastReceive = millis() ;

@@ -44,7 +44,10 @@ void reportSerialAscii (const char* s, const byte* data,byte pos) {
        Serial.print(temperatureFrac(data));
 
        Serial.print(" ");
-       Serial.print(getHumidity(data));
+	   Serial.print(temperatureint(data));
+
+	   Serial.print(" ");
+	   Serial.print(getHumidity(data));
        Serial.print("% bat:");
        Serial.print(battery(data));
     }

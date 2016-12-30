@@ -103,11 +103,13 @@ void reportDomoticTemp ( int temp , byte id1 , byte id2 ,  byte bateryLevel){
 		Send.Temp.id1          = id1 ;
 		Send.Temp.id2          = id2 ;
 		
-		Send.Temp.temperatureh = temp >>8   ;
 		if (temp>=0)
 			Send.Temp.tempsign     = 0   ;
-		else
-			Send.Temp.tempsign     = 1   ;
+		else {
+			Send.Temp.tempsign = 1;
+			temp = -temp;
+		}
+		Send.Temp.temperatureh = temp >> 8;
 		Send.Temp.temperaturel   = temp & 0xff;
 		Send.Temp.battery_level  = bateryLevel ;
 		Send.Temp.rssi           = 9 ;
@@ -119,6 +121,7 @@ void reportDomoticTemp ( const byte* data){
 	
 }
 
+//temp = temperature * 10 
 void reportDomoticTempHum ( int temp , byte hum , byte id1 , byte id2, byte bateryLevel){
 	
 	
@@ -132,11 +135,14 @@ void reportDomoticTempHum ( int temp , byte hum , byte id1 , byte id2, byte bate
   Send.Temp_Hum.id1          = id1;
   Send.Temp_Hum.id2          = id2;
   
-  Send.Temp_Hum.temperatureh = temp >>8    ;
   if (temp>=0)
   	Send.Temp_Hum.tempsign     = 0   ;
-  else
-  	Send.Temp_Hum.tempsign     = 1   ;
+  else {
+	Send.Temp_Hum.tempsign = 1;
+	temp = -temp;
+  }
+
+  Send.Temp_Hum.temperatureh = temp >> 8;
   Send.Temp_Hum.temperaturel   = temp & 0xff;
   Send.Temp_Hum.battery_level  = bateryLevel ;
   Send.Temp_Hum.rssi           = 9 ;
