@@ -1,0 +1,35 @@
+#include "h\deftype.h"
+#include "h\Print.h"
+#define strcasecmp strcmp
+#define strncasecmp strncmp
+
+
+
+unsigned long  strtoul(char*, int, int);
+int millis();
+int micros();
+int delayMicroseconds(int);
+void digitalWrite(int,int);
+
+void noInterrupts();
+void interrupts();
+void delay(int);
+void pinMode(int, int);
+
+
+int * portInputRegister(int);
+int digitalPinToBitMask(int);
+int digitalPinToPort(int);
+bool isprint(char);
+
+
+#define HIGH 1
+#define LOW  0
+#define OUTPUT  1
+#define INPUT_PULLUP  1
+#define INPUT  0
+
+
+
+#define F(var) var
+#include "RFLink.ino"

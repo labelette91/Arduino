@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0362E9BD-E81D-4C78-BA8A-2548FAB5810B}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <DisableSpecificWarnings>4996;4018</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="config\Config_01.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="rflink.cppp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </ClCompile>
+    <None Include="RFLink.ino" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Base.h" />
+    <ClInclude Include="h\deftype.h" />
+    <ClInclude Include="Misc.h" />
+    <ClInclude Include="Plugin.h" />
+    <ClInclude Include="Plugins\Plugin_001.h" />
+    <ClInclude Include="Plugins\Plugin_002.h" />
+    <ClInclude Include="Plugins\Plugin_003.h" />
+    <ClInclude Include="Plugins\Plugin_004.h" />
+    <ClInclude Include="Plugins\Plugin_005.h" />
+    <ClInclude Include="Plugins\Plugin_006.h" />
+    <ClInclude Include="Plugins\Plugin_007.h" />
+    <ClInclude Include="Plugins\Plugin_008.h" />
+    <ClInclude Include="Plugins\Plugin_009.h" />
+    <ClInclude Include="Plugins\Plugin_010.h" />
+    <ClInclude Include="Plugins\Plugin_011.h" />
+    <ClInclude Include="Plugins\Plugin_012.h" />
+    <ClInclude Include="Plugins\Plugin_013.h" />
+    <ClInclude Include="Plugins\Plugin_014.h" />
+    <ClInclude Include="Plugins\Plugin_015.h" />
+    <ClInclude Include="Plugins\Plugin_030.h" />
+    <ClInclude Include="Plugins\Plugin_031.h" />
+    <ClInclude Include="Plugins\Plugin_032.h" />
+    <ClInclude Include="Plugins\Plugin_033.h" />
+    <ClInclude Include="Plugins\Plugin_034.h" />
+    <ClInclude Include="Plugins\Plugin_035.h" />
+    <ClInclude Include="Plugins\Plugin_040.h" />
+    <ClInclude Include="Plugins\Plugin_041.h" />
+    <ClInclude Include="Plugins\Plugin_042.h" />
+    <ClInclude Include="Plugins\Plugin_043.h" />
+    <ClInclude Include="Plugins\Plugin_044.h" />
+    <ClInclude Include="Plugins\Plugin_045.h" />
+    <ClInclude Include="Plugins\Plugin_046.h" />
+    <ClInclude Include="Plugins\Plugin_048.h" />
+    <ClInclude Include="Plugins\Plugin_060.h" />
+    <ClInclude Include="Plugins\Plugin_061.h" />
+    <ClInclude Include="Plugins\Plugin_062.h" />
+    <ClInclude Include="Plugins\Plugin_063.h" />
+    <ClInclude Include="Plugins\Plugin_070.h" />
+    <ClInclude Include="Plugins\Plugin_071.h" />
+    <ClInclude Include="Plugins\Plugin_072.h" />
+    <ClInclude Include="Plugins\Plugin_073.h" />
+    <ClInclude Include="Plugins\Plugin_074.h" />
+    <ClInclude Include="Plugins\Plugin_075.h" />
+    <ClInclude Include="Plugins\Plugin_080.h" />
+    <ClInclude Include="Plugins\Plugin_081.h" />
+    <ClInclude Include="Plugins\Plugin_082.h" />
+    <ClInclude Include="Plugins\Plugin_090.h" />
+    <ClInclude Include="Plugins\Plugin_100.h" />
+    <ClInclude Include="Plugins\Plugin_101.h" />
+    <ClInclude Include="Plugins\Plugin_254.h" />
+    <ClInclude Include="RawSignal.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
