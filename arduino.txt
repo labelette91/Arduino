@@ -1,0 +1,7 @@
+tiny 85 
+http://digistump.com/package_digistump_index.json
+https://digistump.com/wiki/digispark/tutorials/connecting
+
+
+esp8266
+http://arduino.esp8266.com/stable/package_esp8266com_index.json
