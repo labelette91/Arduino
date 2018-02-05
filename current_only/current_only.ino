@@ -58,10 +58,23 @@ void ManageSerial()
           Serial.println("Clear Total Power"); 
           TotalPower=0;
         }
-        if (b='d')
+        if (b=='d')
+        {
+          if (DEBUG==0) DEBUG=2;else  DEBUG=0;
+          if (DEBUG)
+            Serial.println("Debug all On "); 
+           else
+            Serial.println("Debug all Off "); 
+           
+        }
+        if (b=='D')
         {
           if (DEBUG==0) DEBUG=1;else  DEBUG=0;
-          Serial.println("Debug On/off "); 
+          if (DEBUG)
+            Serial.println("Debug min On "); 
+           else
+            Serial.println("Debug min Off "); 
+           
         }
         
   }      
@@ -70,6 +83,7 @@ void ManageSerial()
 void setup()
 {  
   Serial.begin(115200);
+  Serial.println("version 1.2" );  
   
   emon1.current(1, 111.1/2);             // Current: input pin, calibration.
   emon1.calibrate( 2000 ) ;							//calcul OffsetI
@@ -82,7 +96,7 @@ void setup()
   EEPROM.get(0,TotalPower);
 
   //PrintMessage((byte*)TotalPower,8);
-  Serial.println(TotalPower); 
+  Serial.print("TotalPower:"); Serial.println(TotalPower); 
 
  emon1.calcI (50*10,1000);  
   Serial.print("IZero ");
@@ -111,7 +125,7 @@ void loop()
   TotalPower+=Power ;
   //power instantaner moyene sur 1 min
   Power /= DELTA_SEND;
-  if (DEBUG)
+  if (DEBUG>=1)
     PrintIrms ();
   emon1.calcIrms(5000); 
   min++;

@@ -214,7 +214,7 @@ Serial.print(sumI);Serial.println(' ');
 
   double I_RATIO = ICAL *((SupplyVoltage/1000.0) / (ADC_COUNTS));
   Irms = I_RATIO * sqrt(sumI / Number_of_Samples); 
-if ( DEBUG ){
+if ( DEBUG > 1 ){
 Serial.print("VCC:");Serial.print(SupplyVoltage);     
 Serial.print(" OFSI:");Serial.print(offsetI);
 Serial.print(" NBSP:");Serial.print(Number_of_Samples);      
@@ -430,7 +430,7 @@ Serial.flush();
 
   double I_RATIO = ICAL *((SupplyVoltage/1000.0) / (ADC_COUNTS));
   Irms = I_RATIO * sqrt((double)sumI / (double)Number_of_Samples); 
-if ( DEBUG ){
+if ( DEBUG > 1 ){
 Serial.print("VCC:");Serial.print(SupplyVoltage);     
 Serial.print(" OFSI:");Serial.print(offsetI);
 Serial.print(" NBSP:");Serial.print(Number_of_Samples);      
