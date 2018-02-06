@@ -11,7 +11,7 @@ sendOregon OregonMessageBuffer(3);
 #define DELTA_SEND 60
 
 EnergyMonitor emon1;                   // Create an instance
-//total power en Watt/s
+//total power en Watt/h
 //curent power en Watt/s
 double TotalPower ;  
 double Power  ;  
@@ -42,9 +42,7 @@ void PrintIrms ()
   Serial.print(" ");
   Serial.print(Power);         // Apparent power
   Serial.print(" ");
-  Serial.print(TotalPower);    //Ws : What seconde
-  Serial.print(" ");
-  Serial.print  (TotalPower/3600); 
+  Serial.print  (TotalPower); 
   Serial.println("Wh");
 }
 
@@ -92,10 +90,8 @@ void setup()
   //ClearTotalPowerInEEP();
 
   //restaure last Total power from eeprom
-  //  TotalPower = ReadTotalPowerInEEP ();
   EEPROM.get(0,TotalPower);
 
-  //PrintMessage((byte*)TotalPower,8);
   Serial.print("TotalPower:"); Serial.println(TotalPower); 
 
  emon1.calcI (50*10,1000);  
@@ -122,7 +118,8 @@ void loop()
     Power += emon1.Irms*Tension ;
     ManageSerial();
   }
-  TotalPower+=Power ;
+  //en watt heure
+  TotalPower+=(Power/3600) ;
   //power instantaner moyene sur 1 min
   Power /= DELTA_SEND;
   if (DEBUG>=1)
@@ -133,7 +130,6 @@ void loop()
   if (min>=60)
   {
     min = 0 ;
-	//    WriteTotalPowerInEEP(TotalPower);
   	EEPROM.put(0,TotalPower);
   }
 
@@ -142,7 +138,7 @@ void loop()
  
    setTotalPower(OregonMessageBuffer.Data(),0x12345678 );
    setPower(OregonMessageBuffer.Data(),0x1234 );
-   setTotalPower(OregonMessageBuffer.Data(),  (long)(TotalPower*223.666/3600) );//domoticz divise par 223.666 : unite Watt Heure
+   setTotalPower(OregonMessageBuffer.Data(),  (long)(TotalPower*223.666 ) );//domoticz divise par 223.666 : unite Watt Heure
    setPower(OregonMessageBuffer.Data(),(int)Power );
 
    OregonMessageBuffer.CalculateAndSetChecksum(10);
