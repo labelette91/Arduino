@@ -75,6 +75,9 @@
     <ClCompile Include="..\libraries\DecodeMD230\DecodeMD230.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="fifo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Domotic.h">

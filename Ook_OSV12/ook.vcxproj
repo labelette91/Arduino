@@ -80,6 +80,7 @@
     <ClCompile Include="ConfZ3.c" />
     <ClCompile Include="ConfZ4.c" />
     <ClCompile Include="Domotic.cpp" />
+    <ClCompile Include="fifo.cpp" />
     <ClCompile Include="hager.cpp" />
     <ClCompile Include="header.c" />
     <ClCompile Include="Hz1.c" />

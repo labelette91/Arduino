@@ -4,6 +4,8 @@
 #define HAGER_ENABLE 1
 //#define HOMEEASY_ENABLE 1
 #define MD230_ENABLE 1
+#define RUBICSON_ENABLE 1
+
 
 #include <RFM69.h>
 #include <RFM69registers.h>
@@ -17,9 +19,12 @@
 #include "OOKDecoder.h"
 #include <HagerDecoder.h>
 #include <HomeEasyTransmitter.h>
+#include "rubicson.h"
 
 OregonDecoderV2 orscV2;
 HagerDecoder    hager;
+DecodeRubicson  Rubicson;
+
 /* OregonDecoderV3 orscV3; */
 
 //end oregon 
@@ -151,101 +156,110 @@ void loop () {
 */
     word p = fifo.get();
 
-/*     Dt = (millis() - LastReceive)/1000;
-     if (Dt==5)
-         digitalWrite(ledPin, LOW);  
-
-    if (Dt==1){
-    }    */
-    if (p != 0) {
-        NbPulse++;
-        if (orscV2.nextPulse(p))
-        {
-          //data valide checksum
-//          if (checksum2(orscV2.getData()) ) // test checksul pour len = 10
+		if (p != 0) {
+			NbPulse++;
+			if (orscV2.nextPulse(p))
+			{
 					// -1 : on retire le byte de postambule
-					if (checksum(orscV2.getData(),orscV2.pos-1) )
-          {
-            Dt = (millis() - LastReceive)/1000;
-            if (  (data3 != orscV2.data[3]) || (data0!=orscV2.data[0]) || ( data1!=orscV2.data[1]) || (data2!=orscV2.data[2] ) ) {
-              PulseLed();
-//              digitalWrite(ledPin, HIGH);  
+				if (checksum(orscV2.getData(), orscV2.pos - 1))
+				{
+					Dt = (millis() - LastReceive) / 1000;
+					if ((data3 != orscV2.data[3]) || (data0 != orscV2.data[0]) || (data1 != orscV2.data[1]) || (data2 != orscV2.data[2])) {
+						PulseLed();
 #ifdef OOK_ENABLE        
-              reportSerial("OSV2", orscV2);  
+						reportSerial("OSV2", orscV2);
 #endif
-							data0=orscV2.data[0];
-							data1=orscV2.data[1];
-							data2=orscV2.data[2];
-							data3=orscV2.data[3];
+						data0 = orscV2.data[0];
+						data1 = orscV2.data[1];
+						data2 = orscV2.data[2];
+						data3 = orscV2.data[3];
 
-            }
-            LastReceive = millis() ;
-    	    NbReceive ++ ;     
-    	    	if (NbReceive>25 ) 
-    	    	{ 
-    	    		resetLastSensorValue();
-    	    		NbReceive=0;
-    	    	}
+					}
+					LastReceive = millis();
+					NbReceive++;
+					if (NbReceive > 25)
+					{
+						resetLastSensorValue();
+						NbReceive = 0;
+					}
 
-            NbPulse=0 ;
-          }
-          else
-          {
+					NbPulse = 0;
+				}
+				else
+				{
 #ifndef DOMOTIC
-           Serial.println("Bad checksum");
-           reportSerial("OSV2", orscV2);  
+					Serial.println("Bad checksum");
+					reportSerial("OSV2", orscV2);
 #endif     
-          }
-          orscV2.resetDecoder();		
-        }
+				}
+				orscV2.resetDecoder();
+			}
 #ifdef OTIO_ENABLE        
-        if (Otio.nextPulse(p,pinData )) {
-        #ifndef DOMOTIC
-           Otio.ReportSerial();    
-        #else
-           reportDomoticTemp ( Otio.getTemperature() , Otio.getId()  , 0 , Otio.getBatteryLevel());
-        #endif
-        PulseLed();
-      	}
+			if (Otio.nextPulse(p, pinData)) {
+#ifndef DOMOTIC
+				Otio.ReportSerial();
+#else
+				reportDomoticTemp(Otio.getTemperature(), Otio.getId(), 0, Otio.getBatteryLevel());
+#endif
+				PulseLed();
+			}
 #endif      	
 
 #ifdef HOMEEASY_ENABLE
-        if (HEasy.nextPulse(p,pinData )) {
-        #ifndef DOMOTIC
-           HEasy.ReportSerial();    
-        #else
-           reportDomoticHomeEasy ( HEasy.getData() , HEasy.getBytes ()  );
-        #endif
-        PulseLed();
-      	}
+			if (HEasy.nextPulse(p, pinData)) {
+#ifndef DOMOTIC
+				HEasy.ReportSerial();
+#else
+				reportDomoticHomeEasy(HEasy.getData(), HEasy.getBytes());
+#endif
+				PulseLed();
+			}
 #endif
 
 #ifdef MD230_ENABLE
-		if (MD230.nextPulse(p, pinData)) {
+			if (MD230.nextPulse(p, pinData)) {
 #ifndef DOMOTIC
-			MD230.ReportSerial();
+				MD230.ReportSerial();
 #else
-			reportDomoticMD230(MD230.getData(), MD230.getBytes());
+				reportDomoticMD230(MD230.getData(), MD230.getBytes());
 #endif
-			PulseLed();
-		}
+				PulseLed();
+			}
 #endif
 
 #ifdef HAGER_ENABLE        
-        //si pulse bas on enleve 100micros sinon on ajoute 100micros
-        //pour compenser etat haut tronquer
-        if (pinData==1) p -=100; else p +=100 ;
+			//si pulse bas on enleve 100micros sinon on ajoute 100micros
+			//pour compenser etat haut tronquer
+			if (pinData == 1) p -= 100; else p += 100;
 
-        if (hager.nextPulse(p)) {
-          #ifndef DOMOTIC
-             hager.reportSerial();    
-          #else
-             reportHagerDomotic ( hager.getData (),hager.pos );
-          #endif
-          hager.resetDecoder();   
-          PulseLed();
-        }
+			if (hager.nextPulse(p)) {
+#ifndef DOMOTIC
+				hager.reportSerial();
+#else
+				reportHagerDomotic(hager.getData(), hager.pos);
+#endif
+				hager.resetDecoder();
+				PulseLed();
+			}
 #endif        
+
+
+#ifdef RUBICSON_ENABLE        
+			if (Rubicson.nextPulse(p, pinData)) {
+
+				if ((data3 != Rubicson.data[3]) || (data0 != Rubicson.data[0]) || (data1 != Rubicson.data[1]) || (data2 != Rubicson.data[2])) {
+
+#ifndef DOMOTIC
+					Rubicson.ReportSerial();
+#else
+					reportDomoticTemp(Rubicson.getTemperature(), Rubicson.getId(), Rubicson.getChannel(), Rubicson.getBatteryLevel());
+#endif
+					data0 = Rubicson.data[0];	data1 = Rubicson.data[1];	data2 = Rubicson.data[2];	data3 = Rubicson.data[3];
+
+					PulseLed();
+				}
+			}
+#endif      	
 
 
     }
