@@ -60,12 +60,19 @@ int 		NbReceive;
 word 		Dt;
 long int 	NbPulse  ;
 byte            pinData;
+//etat du pulse
+byte            PulsePinData;
 
 //le signal du RFM69 entre sur int ext    d3 : int1
 
 void ext_int_1(void) {
     static unsigned long  last;
     pinData=digitalRead(PDATA);
+		//calcul etat du pulse que l'on mesure
+		if (pinData == 1)
+			PulsePinData = 0;
+		else
+			PulsePinData = 1;
 
     // determine the pulse length in microseconds, for either polarity
     pulse = micros() - last;
@@ -245,7 +252,7 @@ void loop () {
 
 
 #ifdef RUBICSON_ENABLE        
-			if (Rubicson.nextPulse(p, pinData)) {
+			if (Rubicson.nextPulse(p, PulsePinData)) {
 
 				if ((data3 != Rubicson.data[3]) || (data0 != Rubicson.data[0]) || (data1 != Rubicson.data[1]) || (data2 != Rubicson.data[2])) {
 
