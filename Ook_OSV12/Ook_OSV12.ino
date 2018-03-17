@@ -1,4 +1,8 @@
-#define DOMOTIC 1
+//si = 1 : report serial forma domoticz (binaire)
+//si = 0 : report serial format text 
+
+// #define DOMOTIC 1
+
 #define OTIO_ENABLE 1
 #define OOK_ENABLE  1
 #define HAGER_ENABLE 1
@@ -263,6 +267,7 @@ void loop () {
 #endif
 					data0 = Rubicson.data[0];	data1 = Rubicson.data[1];	data2 = Rubicson.data[2];	data3 = Rubicson.data[3];
 
+					Rubicson.resetDecoder();
 					PulseLed();
 				}
 			}

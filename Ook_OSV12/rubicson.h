@@ -82,14 +82,22 @@ public:
 
 		word width = TO(pWidth);
 
-		//pulse to long
-		if ((width>TO(550)) && (data == 1))   return -1;
+		//pulse to high = 500us
+		if (data == 1)
+		{
+			if ((width > TO(300)) && (width < TO(700)))
+				return 0;
+			 else
+				 return -1;
+		}
 
 		//pulse low
 		if (data == 0)
 		{
-      if (width > TO(5000)) {
-        //if end of frame : pulse = 9000us
+      //if end pulse : 9200us
+			if ((width > TO(8600)) && (width < TO(9800)))
+			{
+        //if end of frame : pulse = 9200us
         if (total_bits == 36){ 
           LastReceived = millis();         
           return 1;
@@ -97,21 +105,22 @@ public:
         else
           return -1;
       }
-        
 
-			if (width > TO(3000))
+			//if one  pulse : 3800us
+			if ((width > TO(3200)) && (width < TO(4400)))
 			{
 				gotBit(1);
+				return 0;
 			}
-			else
+
+			//if 0  pulse : 1900 us
+			if ((width > TO(1600)) && (width < TO(2200)))
 			{
-				if ( (width > TO(1500))  && (width < TO(2100)) )
 					gotBit(0);
-				else
-					return -1;
+					return 0;
 			}
 		}
-		return 0;
+		return -1;
   }
 
 	/*Message Format : (9 nibbles, 36 bits) :
