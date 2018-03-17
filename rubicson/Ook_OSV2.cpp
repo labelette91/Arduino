@@ -105,9 +105,7 @@ ISR(ANALOG_COMP_vect) {
     last = micros() ;
 }
 
-void reportSerial( char* s, class DecodeOOK& decoder) {
-    byte pos;
-    const byte* data = decoder.getData(pos);
+void reportSerial( char* s, byte * data, byte pos ) {
     Serial.print(s);
     Serial.print(' ');
     Serial.print(" Np:");
@@ -345,7 +343,7 @@ void loop () {
         if (orscV2.nextPulse(p,level))
         {
         printState();    
-            reportSerial("OSV2", orscV2);  
+            reportSerial("OSV2", orscV2.data,orscV2.pos);  
 			orscV2.ReportSerial();
             LastReceive = millis() ;
     	    NbReceive ++ ;     

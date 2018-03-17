@@ -1,4 +1,67 @@
-class DecodeRubicson : public DecodeOOK {
+class DecodeOOKV2 {
+public:
+	byte total_bits, bits, state, pos, data[25];
+
+	virtual char decode(word width, byte level) { return -1; };
+
+public:
+
+	enum { UNKNOWN, T0, T1, T2, T3, OK, DONE };
+
+	DecodeOOKV2() { resetDecoder(); }
+
+	bool nextPulse(word width, byte level) {
+		if (state != DONE)
+
+			switch (decode(width, level)) {
+			case -1: resetDecoder(); break;
+			case 1:  done(); break;
+			}
+		return isDone();
+	}
+
+	bool isDone() const { return state == DONE; }
+
+	const byte* getData(byte& count) const {
+		count = pos;
+		return data;
+	}
+	const byte* getData() const {
+		return data;
+	}
+
+	void resetDecoder() {
+		total_bits = bits = pos = 0;
+		state = UNKNOWN;
+	}
+
+	// add one bit to the packet data buffer
+
+	virtual void gotBit(char value) {
+		total_bits++;
+		byte *ptr = data + pos;
+		*ptr = (*ptr << 1) | (value);
+
+		if (++bits >= 8) {
+			bits = 0;
+			if (++pos >= sizeof data) {
+				resetDecoder();
+				return;
+			}
+		}
+		state = OK;
+	}
+
+
+	void done() {
+		while (bits)
+			gotBit(0); // padding
+		state = DONE;
+	}
+};
+
+
+class DecodeRubicson : public DecodeOOKV2 {
 public:
 	long LastReceived;
 public:
@@ -19,14 +82,22 @@ public:
 
 		word width = TO(pWidth);
 
-		//pulse to long
-		if ((width>TO(550)) && (data == 1))   return -1;
+		//pulse to high = 500탎
+		if (data == 1)
+		{
+			if ((width > TO(300)) && (width < TO(700)))
+				return 0;
+			 else
+				 return -1;
+		}
 
 		//pulse low
 		if (data == 0)
 		{
-      if (width > TO(5000)) {
-        //if end of frame : pulse = 9000us
+      //if end pulse : 9200탎
+			if ((width > TO(8600)) && (width < TO(9800)))
+			{
+        //if end of frame : pulse = 9200us
         if (total_bits == 36){ 
           LastReceived = millis();         
           return 1;
@@ -34,21 +105,22 @@ public:
         else
           return -1;
       }
-        
 
-			if (width > TO(3000))
+			//if one  pulse : 3800탎
+			if ((width > TO(3200)) && (width < TO(4400)))
 			{
 				gotBit(1);
+				return 0;
 			}
-			else
+
+			//if 0  pulse : 1900 탎
+			if ((width > TO(1600)) && (width < TO(2200)))
 			{
-				if ( (width > TO(1500))  && (width < TO(2100)) )
 					gotBit(0);
-				else
-					return -1;
+					return 0;
 			}
 		}
-		return 0;
+		return -1;
   }
 
 	/*Message Format : (9 nibbles, 36 bits) :
