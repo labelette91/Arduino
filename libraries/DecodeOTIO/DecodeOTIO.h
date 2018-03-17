@@ -144,7 +144,9 @@ BIT 3 2 1 0 9 8 7 6   5     4 3 2 1 0 9 8   7 6 5 4   3 2 1 0
   }
   
   void ReportSerial(){
-    Serial.print ("Otio:");
+    Serial.print ("OTIO ");
+		Serial.print(millis() / 1000);
+		Serial.print(" ");
     Serial.print (Temp,HEX);
     Serial.print (" T:");
     int t = getTemperature();
