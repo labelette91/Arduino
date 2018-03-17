@@ -64,6 +64,9 @@ public:
 class DecodeRubicson : public DecodeOOKV2 {
 public:
 	long LastReceived;
+	//last packet data received ident
+	byte lastdata[4] ;
+
 public:
 	enum { UNKNOWN, T0, T1, T2, T3, OK, DONE };
 
@@ -220,6 +223,20 @@ Each (group) of numbers has a specific meaning:
 	  Serial.print('\r');
 
   }
+
+//return true si new packet		
+	bool newPacket()
+	{
+		if ((lastdata[3] != data[3]) || (lastdata[0] != data[0]) || (lastdata[1] != data[1]) || (lastdata[2] != data[2])) {
+			lastdata[3] = data[3];
+			lastdata[0] = data[0];
+			lastdata[1] = data[1];
+			lastdata[2] = data[2];
+			return true;
+		}
+		return false ;
+
+	}
 };
 
 

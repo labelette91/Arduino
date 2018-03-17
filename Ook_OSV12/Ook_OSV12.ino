@@ -258,18 +258,16 @@ void loop () {
 #ifdef RUBICSON_ENABLE        
 			if (Rubicson.nextPulse(p, PulsePinData)) {
 
-				if ((data3 != Rubicson.data[3]) || (data0 != Rubicson.data[0]) || (data1 != Rubicson.data[1]) || (data2 != Rubicson.data[2])) {
+				if (Rubicson.newPacket() ) {
 
 #ifndef DOMOTIC
 					Rubicson.ReportSerial();
 #else
 					reportDomoticTemp(Rubicson.getTemperature(), Rubicson.getId(), Rubicson.getChannel(), Rubicson.getBatteryLevel());
 #endif
-					data0 = Rubicson.data[0];	data1 = Rubicson.data[1];	data2 = Rubicson.data[2];	data3 = Rubicson.data[3];
-
-					Rubicson.resetDecoder();
 					PulseLed();
 				}
+				Rubicson.resetDecoder();
 			}
 #endif      	
 
