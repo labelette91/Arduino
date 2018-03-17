@@ -72,13 +72,6 @@ public:
 
 DecodeRubicson orscV2;
  
-#define PORT 2
-
-#define ledPin  13
-
-//pin number for AIN1
-#define AIN1 7
-
 volatile word pulse;
 
 long int 	LastReceive ;
@@ -86,33 +79,12 @@ int 		NbReceive;
 word 		Dt;
 long int 	NbPulse  ;
 
-
-//si definit     : le signal entre sur int ext    d3 : int1
-//si pas definit : le signal entre sur Analog ext d7 : AIN1
-
-#define INT_EXTERNE 
-#define DOMOTIC 1
-
-#ifdef  INT_EXTERNE
-void ext_int_1(void) {
-#else
-ISR(ANALOG_COMP_vect) {
-#endif
-    static unsigned long  last;
-    // determine the pulse length in microseconds, for either polarity
-    pulse = micros() - last;
-//    last += pulse;
-    last = micros() ;
-}
-
 void reportSerial( char* s, byte * data, byte pos ) {
     Serial.print(s);
     Serial.print(' ');
     Serial.print(" Np:");
     Serial.print(NbPulse);
     Serial.print(' ');
-
-
 
     for (byte i = 0; i < pos; ++i) {
         Serial.print(data[i] >> 4, HEX);
@@ -145,13 +117,6 @@ void reportSerial( char* s, byte * data, byte pos ) {
 void setup () {
 	  LastReceive = 0 ;
 	  NbReceive   = 0;
-    
-    Serial.begin(38400);
-//    Serial.println("\n[ookDecoder]");
-    
-   // initialize the LED pin as an output:
-    pinMode(ledPin, OUTPUT);       
-    
     pulse=0;
 }
 
@@ -332,7 +297,7 @@ void loop () {
     if (p != 0) {
 
 		NbPulse++;
-        level = (NbPulse&1)==1 ;
+    level = (NbPulse&1)==1 ;
 
 		Serial.print("(");
 		Serial.print(p, 10);
@@ -342,13 +307,13 @@ void loop () {
 
         if (orscV2.nextPulse(p,level))
         {
-        printState();    
-            reportSerial("OSV2", orscV2.data,orscV2.pos);  
-			orscV2.ReportSerial();
-            LastReceive = millis() ;
+					printState();    
+          reportSerial("OSV2", orscV2.data,orscV2.pos);  
+					orscV2.ReportSerial();
+          LastReceive = millis() ;
     	    NbReceive ++ ;     
-            NbPulse=0 ;
-           orscV2.resetDecoder();		
+          NbPulse=0 ;
+          orscV2.resetDecoder();		
                 
         }
         printState();    
