@@ -4,6 +4,8 @@
 
 #if _MSC_VER 
 
+#include <string>
+
 #pragma once
 
 #define _CRT_SECURE_NO_WARNINGS
@@ -97,4 +99,7 @@ extern bool digitalRead(int);
 extern int micros();
 extern void cli();
 extern void sei();
+
+ void Split ( char * ptligne , char * separateur , char * concatenator , bool AllowDuplicateSeparator , std::string list[] );
+
 #endif
