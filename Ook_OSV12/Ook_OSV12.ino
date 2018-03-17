@@ -1,7 +1,7 @@
-//si = 1 : report serial forma domoticz (binaire)
-//si = 0 : report serial format text 
+//si = define  : report serial forma domoticz (binaire)
+//si =  : report serial format text 
 
-// #define DOMOTIC 1
+#define DOMOTIC 1
 
 #define OTIO_ENABLE 1
 #define OOK_ENABLE  1

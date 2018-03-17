@@ -1,14 +1,49 @@
+void printBinary ( byte * data , byte pos)
+{
+	for (byte i = 0; i < pos; ++i)
+	{
+		byte bt = data[i];
+		for (byte b = 0; b < 8; b++)
+		{
+			if (bt & 0x80)
+				Serial.print('1');
+			else
+				Serial.print('0');
+			bt = bt << 1;
+			if (b == 3) Serial.print(' ');
+			if (b == 7) Serial.print(' ');
+
+		}
+	}
+}
+
+void printTab(byte tab, byte n)
+{
+	tab = tab - n;
+	while (tab>0 ) {
+		Serial.print(' ');
+		tab--;
+	}
+
+}
+
 void reportSerialAscii (const char* s, const byte* data,byte pos) {
+	  byte nb;
     Serial.print(s);
     Serial.print(' ');
     Serial.print(millis() / 1000);
     Serial.print(" Dt:");
-    Serial.print(Dt);
-    Serial.print(" Nb:");
-    Serial.print(NbReceive);
-    Serial.print(" Np:");
-    Serial.print(NbPulse);
-    Serial.print(' ');
+		nb = Serial.print(Dt);
+		printTab(2, nb);
+		
+		Serial.print(" Nb:");
+		nb = Serial.print(NbReceive);
+		printTab(3, nb);
+		
+		Serial.print(" Np:");
+    nb=Serial.print(NbPulse);
+		printTab(6, nb);
+		Serial.print(' ');
 
 
 //sump binaire

@@ -1,3 +1,4 @@
+void printBinary(byte * data, byte pos); 
 class DecodeOOKV2 {
 public:
 	byte total_bits, bits, state, pos, data[25];
@@ -63,7 +64,7 @@ public:
 
 class DecodeRubicson : public DecodeOOKV2 {
 public:
-	long LastReceived;
+	unsigned long LastSend ;
 	//last packet data received ident
 	byte lastdata[4] ;
 
@@ -73,7 +74,7 @@ public:
 	//pMaxTemp : the number of successive received equal value to return the current temperature
 	//OTIO send 20 frames with the 24 bits value */
 
-	DecodeRubicson() { LastReceived = 0; resetDecoder(); }
+	DecodeRubicson() { LastSend = 0; resetDecoder(); }
 
 
 #define TO(VALUE)(VALUE)
@@ -102,7 +103,6 @@ public:
 			{
         //if end of frame : pulse = 9200us
         if (total_bits == 36){ 
-          LastReceived = millis();         
           return 1;
         }
         else
@@ -204,7 +204,9 @@ Each (group) of numbers has a specific meaning:
   }
 
   void ReportSerial() {
-	  Serial.print("Rubicson:");
+	  Serial.print("RUBI ");
+		Serial.print(millis() / 1000);
+
 	  Serial.print(" T:");
 	  int t = getTemperature();
 	  Serial.print(t / 10);
@@ -219,6 +221,10 @@ Each (group) of numbers has a specific meaning:
 	  Serial.print(getBatteryLevel());
 	  Serial.print(" Hum:");
 	  Serial.print(gethumidity());
+
+		Serial.print(' ');
+		printBinary(data, pos);
+
 	  Serial.print('\n');
 	  Serial.print('\r');
 
@@ -227,13 +233,21 @@ Each (group) of numbers has a specific meaning:
 //return true si new packet		
 	bool newPacket()
 	{
+		//send at least every 2min
+		if (  (millis() - LastSend) > 120000  )
+		{
+			lastdata[3] = 0;
+		}
 		if ((lastdata[3] != data[3]) || (lastdata[0] != data[0]) || (lastdata[1] != data[1]) || (lastdata[2] != data[2])) {
 			lastdata[3] = data[3];
 			lastdata[0] = data[0];
 			lastdata[1] = data[1];
 			lastdata[2] = data[2];
+			LastSend = millis();
+
 			return true;
 		}
+
 		return false ;
 
 	}
