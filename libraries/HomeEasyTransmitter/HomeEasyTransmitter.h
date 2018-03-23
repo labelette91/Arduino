@@ -31,7 +31,11 @@ class HomeEasyTransmitter
     void rfm69_set_data_without_clk(byte state);
     void rfm69_set_data_with_clk(byte state);
 		void deactivatePin();
- 
+
+    void SetTransmitBuffer(word* buffer,bool blnOn,unsigned long transmitterId, short recipient);
+    void SetSendBit(word* buffer, bool b);
+    void SetSendPair(word* buffer, bool b);
+
 
 };
 

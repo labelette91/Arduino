@@ -47,6 +47,7 @@
 #include <wiringPi.h>
 typedef unsigned char boolean;
 typedef unsigned char byte;
+typedef unsigned short word;
 #define cli() scheduler_realtime()
 #define sei() scheduler_standard() 
 #define DelayMicroseconds(VALUE)     delayMicroseconds(VALUE);
@@ -140,8 +141,6 @@ void HomeEasyTransmitter::setSwitch(bool on, unsigned long transmitterId, short 
   delay(10);
   transmit(on, transmitterId, recipient);
   delay(10);
-	transmit(on, transmitterId, recipient);
-	delay(10);
 	deactivatePin();
 }
 
@@ -259,3 +258,104 @@ void HomeEasyTransmitter::deactivatePin()
     	pinMode(clkPin, INPUT);      
 		}
 }
+
+
+
+//macro for writting a delay value in output buffer
+#define SetDelay(DELAY)*buffer++=DELAY;
+
+
+void HomeEasyTransmitter::SetSendBit(word* buffer, bool b)
+{
+  if (b)
+  {
+    //rfm69_set_data( HIGH);
+    SetDelay(BIT_PULSE_HIGH);
+    //rfm69_set_data( LOW);
+    SetDelay(BIT_1_PULSE_LOW);
+  }
+  else
+  {
+    //rfm69_set_data( HIGH);
+    SetDelay(BIT_PULSE_HIGH);
+    //rfm69_set_data( LOW);
+    SetDelay(BIT_0_PULSE_LOW);
+  }
+}
+
+void HomeEasyTransmitter::SetSendPair(word* buffer, bool b)
+{
+  // Send the Manchester Encoded data 01 or 10, never 11 or 00
+  if(b)
+  {
+    SetSendBit(buffer,true);
+    buffer= buffer+2 ;
+    SetSendBit(buffer,false);
+  }
+  else
+  {
+    SetSendBit(buffer,false);
+    buffer= buffer+2 ;
+    SetSendBit(buffer,true);
+  }
+}
+
+
+//construct the buffer with pulse length in us
+//begin with high pulse / low pulse shall be paire
+//end with 0
+void HomeEasyTransmitter::SetTransmitBuffer(word* buffer,bool blnOn,unsigned long transmitterId, short recipient)
+{
+  char i;
+  
+  // Do the latch sequence.. 
+  //rfm69_set_data( HIGH);
+  SetDelay(LATCH1_HIGH);     
+  //rfm69_set_data( LOW);
+  SetDelay(LATCH1_LOW);     // low for 9900 for latch 1
+  
+  //rfm69_set_data( HIGH);
+  SetDelay(LATCH2_HIGH);     
+  //  rfm69_set_data( LOW);
+  SetDelay(LATCH2_LOW);     // low for 2675 for latch 1
+
+
+  // Send HE Device Address..
+  // This is a 26 bit code. 
+  // Start at MSB and iterate through to the lowest
+  for(i=25; i>=0; i--)
+  {
+    //The typecasting seems a bit overkill, but 26 bits needs a long and the arduino compiler seems to love trying to 
+    //convert everything to an standard int.
+    //creates bitmask of only relevant bit. Check and send a 1 or 0 as applicable.
+    bool bitToSend = (unsigned long)(transmitterId & ((unsigned long)1 << i)) != 0;
+    SetSendPair(buffer,bitToSend);
+    buffer= buffer+4 ; 
+
+  }
+
+  // Send 26th bit - group 1/0
+  SetSendPair(buffer,false);
+  buffer= buffer+4 ; 
+
+  // Send 27th bit - on/off 1/0
+  SetSendPair(buffer,blnOn);
+  buffer= buffer+4 ; 
+
+  // last 4 bits - recipient   -- button 1 on the HE300 set to 
+  // slider position I in this example:
+  for(i=3; i>=0; i--)
+  {
+    bool bitToSend = ( byte)(recipient & ((byte )1 << i)) != 0;
+    SetSendPair(buffer,bitToSend);
+    buffer= buffer+4 ; 
+ }
+
+  //rfm69_set_data( HIGH);   // high again (shut up)
+  SetDelay(LATCH2_HIGH);      // wait a moment
+  //rfm69_set_data( LOW);    // low again for 2675 - latch 2.
+  SetDelay(LATCH2_LOW);      // wait a moment
+
+  SetDelay(0);
+}
+
