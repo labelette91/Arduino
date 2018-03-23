@@ -140,6 +140,8 @@ void HomeEasyTransmitter::setSwitch(bool on, unsigned long transmitterId, short 
   delay(10);
   transmit(on, transmitterId, recipient);
   delay(10);
+	transmit(on, transmitterId, recipient);
+	delay(10);
 	deactivatePin();
 }
 

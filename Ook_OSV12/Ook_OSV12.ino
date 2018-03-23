@@ -287,12 +287,14 @@ void loop () {
     }
     else
     {
-	    detachInterrupt(1);
+			//attente une secone max pour emetre si emission en cours -80--> -70
+			radio.WaitCanSend(-70);
+			
+			detachInterrupt(1);
 	    easy.initPin();
 	    radio.setMode(RF69_MODE_TX);
-	    //attente une secone max pour emetre si emission en cours -80--> -70
-	    radio.WaitCanSend(-70);
-	    {
+			delay(10);
+			{
 	    	
 	      if (Cmd.LIGHTING2.packettype==pTypeLighting2) {  //
 		      if (Cmd.LIGHTING2.subtype==sTypeHEU) 	         //if home easy protocol : subtype==1
@@ -301,8 +303,8 @@ void loop () {
 		      else if (Cmd.LIGHTING2.subtype==sTypeAC) 	         //if hager protocol : subtype==0
 		        ManageHager();
           //acknoledge 
-					// Cmd.LIGHTING2.subtype==sTypeKambrook;
-					// Serial.write((byte*)&Cmd.LIGHTING2,Cmd.LIGHTING2.packetlength+1  );
+					//Cmd.LIGHTING2.subtype==sTypeKambrook;
+					//Serial.write((byte*)&Cmd.LIGHTING2,Cmd.LIGHTING2.packetlength+1  );
 	    	}
 	    }
 	
