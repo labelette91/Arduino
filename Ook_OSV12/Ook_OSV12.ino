@@ -55,14 +55,15 @@ TFifo  fifo;
 
 volatile word pulse;
 
-long int 	LastReceive ;
+word  	LastReceive ;
 
 //last packet data received ident
 byte data0,data1,data2,data3;
 
-int 		NbReceive;
+word 		NbReceive;
 word 		Dt;
-long int 	NbPulse  ;
+word 	NbPulse  ;
+word 	NbPulsePerSec ;
 byte            pinData;
 //etat du pulse
 byte            PulsePinData;
@@ -170,6 +171,13 @@ void loop () {
 
 		if (p != 0) {
 			NbPulse++;
+			Dt = millis() / 1000;
+			if (Dt != LastReceive)
+			{
+					LastReceive = Dt ;
+					NbPulsePerSec = NbPulse;
+					NbPulse = 0;
+			}
 			if (orscV2.nextPulse(p))
 			{
 					// -1 : on retire le byte de postambule
@@ -187,7 +195,6 @@ void loop () {
 						data3 = orscV2.data[3];
 
 					}
-					LastReceive = millis();
 					NbReceive++;
 					if (NbReceive > 25)
 					{
@@ -195,7 +202,6 @@ void loop () {
 						NbReceive = 0;
 					}
 
-					NbPulse = 0;
 				}
 				else
 				{
@@ -318,9 +324,13 @@ void loop () {
 
 			//acknoledge 
 			Cmd.LIGHTING2.packettype = pTypeUndecoded;
-			Cmd.LIGHTING2.packetlength = 5;
+			Cmd.LIGHTING2.packetlength = 7;
 			Cmd.LIGHTING2.id1 = rssi >> 8;
 			Cmd.LIGHTING2.id2 = rssi & 0x00ff ;
+			Cmd.LIGHTING2.id3 = NbPulsePerSec >> 8;
+			Cmd.LIGHTING2.id4 = NbPulsePerSec & 0x00ff;
+
+			
 
 			Serial.write((byte*)&Cmd.LIGHTING2, Cmd.LIGHTING2.packetlength + 1);
 
