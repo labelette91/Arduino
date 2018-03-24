@@ -59,16 +59,18 @@ extern void scheduler_standard() ;
 #endif
 #include "HomeEasyTransmitter.h"
 
+#define DELTA 0 
+
 //temps en µs
-#define LATCH1_HIGH  270
-#define LATCH1_LOW   9900
-#define LATCH2_HIGH  270
-#define LATCH2_LOW   2675
+#define LATCH1_HIGH  275-DELTA
+#define LATCH1_LOW   9900-DELTA
+#define LATCH2_HIGH  275-DELTA
+#define LATCH2_LOW   2675-DELTA
 
 
-#define BIT_PULSE_HIGH  275
-#define BIT_0_PULSE_LOW 275
-#define BIT_1_PULSE_LOW 1225
+#define BIT_PULSE_HIGH  275-DELTA
+#define BIT_0_PULSE_LOW 240-DELTA
+#define BIT_1_PULSE_LOW 1300-DELTA
 
 //#define DelayMicroseconds(VALUE) delayMicroseconds(VALUE);Serial.println(VALUE); 
 //#define DelayMicroseconds(VALUE) DelayMicros(VALUE);

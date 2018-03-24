@@ -5,7 +5,7 @@
 
 #define OTIO_ENABLE 1
 #define OOK_ENABLE  1
-#define HAGER_ENABLE 1
+//#define HAGER_ENABLE 1
 //#define HOMEEASY_ENABLE 1
 #define MD230_ENABLE 1
 #define RUBICSON_ENABLE 1
@@ -294,19 +294,31 @@ void loop () {
 	    easy.initPin();
 	    radio.setMode(RF69_MODE_TX);
 			delay(10);
-			{
 	    	
-	      if (Cmd.LIGHTING2.packettype==pTypeLighting2) {  //
-		      if (Cmd.LIGHTING2.subtype==sTypeHEU) 	         //if home easy protocol : subtype==1
-		        easy.setSwitch(Cmd.LIGHTING2.cmnd,getLightingId (),Cmd.LIGHTING2.unitcode);    // turn on device 0
+	    if (Cmd.LIGHTING2.packettype==pTypeLighting2) 
+			{  //
+				if (Cmd.LIGHTING2.subtype == sTypeHEU) 	         //if home easy protocol : subtype==1
+				{
+					easy.setSwitch(Cmd.LIGHTING2.cmnd, getLightingId(), Cmd.LIGHTING2.unitcode);    // turn on device 0
+					Cmd.LIGHTING2.subtype = 1;
+				}
+				else if (Cmd.LIGHTING2.subtype == sTypeAC) 	         //if hager protocol : subtype==0
+				{
+					ManageHager();
+					Cmd.LIGHTING2.subtype = 0;
+				}
+				else
+					Cmd.LIGHTING2.subtype = 2;
 
-		      else if (Cmd.LIGHTING2.subtype==sTypeAC) 	         //if hager protocol : subtype==0
-		        ManageHager();
-          //acknoledge 
-					//Cmd.LIGHTING2.subtype==sTypeKambrook;
-					//Serial.write((byte*)&Cmd.LIGHTING2,Cmd.LIGHTING2.packetlength+1  );
-	    	}
 	    }
+			else
+				Cmd.LIGHTING2.subtype = 3;
+
+			//acknoledge 
+			Cmd.LIGHTING2.packettype = pTypeUndecoded;
+			Cmd.LIGHTING2.packetlength = 3;
+			Serial.write((byte*)&Cmd.LIGHTING2, Cmd.LIGHTING2.packetlength + 1);
+
 	
 	    pinMode(PDATA, INPUT);
 	    attachInterrupt(1, ext_int_1, CHANGE);

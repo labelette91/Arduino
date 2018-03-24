@@ -72,11 +72,17 @@ bool DomoticReceive()
 {
     if (Serial.available()){
         byte b = Serial.read();
-        if ( (millis()-lastTime) > 500 ) {
+        if ( (millis()-lastTime) > 1000 ) {
                 receiveLength = 0 ;
                 Cmd.LIGHTING2.packetlength  =0;
         }
         lastTime = millis();
+				if (receiveLength >= sizeof(_tRBUF)) {
+					receiveLength = 0;
+					Cmd.LIGHTING2.packetlength = 0;
+				}
+
+
         if (receiveLength<Cmd.LIGHTING2.packetlength+1) 
             Cmd.Buffer[receiveLength++]=b;
         /* si paquet recu en entier */
