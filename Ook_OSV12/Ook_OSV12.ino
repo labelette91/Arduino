@@ -3,7 +3,7 @@
 
 #define DOMOTIC 1
 
-#define OTIO_ENABLE 1
+//#define OTIO_ENABLE 1
 #define OOK_ENABLE  1
 //#define HAGER_ENABLE 1
 //#define HOMEEASY_ENABLE 1
@@ -40,10 +40,10 @@ DecodeHomeEasy HEasy ;
 DecodeMD230 MD230(2) ;
 
 
-//#include "C:\Users\jeux\Documents\Arduino\otio\decodeOTIO.h"
-//#include "C:\Documents and Settings\F206150\Mes documents\Arduino\otio\decodeOTIO.h"
+#ifdef OTIO_ENABLE        
 #include <DecodeOTIO.h>
 DecodeOTIO Otio(3);  
+#endif
 
 #include "Fifo.h"
 TFifo  fifo;
@@ -72,18 +72,22 @@ byte            PulsePinData;
 
 void ext_int_1(void) {
     static unsigned long  last;
-    pinData=digitalRead(PDATA);
-		//calcul etat du pulse que l'on mesure
-		if (pinData == 1)
-			PulsePinData = 0;
-		else
-			PulsePinData = 1;
 
     // determine the pulse length in microseconds, for either polarity
     pulse = micros() - last;
     last += pulse;
-//    last = micros() ;
-    fifo.put(pulse);
+
+		pinData = digitalRead(PDATA);
+		
+		//calcul etat du pulse que l'on mesure
+		if (pinData == 1)
+			//tranistion 0--1 : etat pulse = 0 : bit 0 = 0
+			pulse &=0xFFFE ;
+		else
+			//tranistion 1--0 : etat pulse = 1 : bit 0 = 1
+			pulse |= 1 ;
+
+		fifo.put(pulse);
 }
 #include "Oregon.h"
 
@@ -170,6 +174,9 @@ void loop () {
     word p = fifo.get();
 
 		if (p != 0) {
+			//get pinData
+			PulsePinData = p & 1;
+
 			NbPulse++;
 			Dt = millis() / 1000;
 			if (Dt != LastReceive)
@@ -268,9 +275,17 @@ void loop () {
 				if (Rubicson.newPacket() ) {
 
 #ifndef DOMOTIC
-					Rubicson.ReportSerial();
+					if (Rubicson.isOtio())
+						Rubicson.ReportSerialOtio();
+					else
+						Rubicson.ReportSerial();
 #else
-					reportDomoticTemp(Rubicson.getTemperature(), Rubicson.getId(), Rubicson.getChannel(), Rubicson.getBatteryLevel());
+					if (Rubicson.isOtio())
+						reportDomoticTemp(Rubicson.getTemperatureOtio(), Rubicson.getIdOtio(), 0           , Rubicson.getBatteryLevelOtio());
+					else
+//  					reportDomoticTemp(Rubicson.getTemperature(), Rubicson.getId(), Rubicson.getChannel(), Rubicson.getBatteryLevel());
+					  reportDomoticTempHum (Rubicson.getTemperature(), Rubicson.gethumidity(), Rubicson.getId(), Rubicson.getChannel(), Rubicson.getBatteryLevel());
+
 #endif
 					PulseLed();
 				}

@@ -1,3 +1,4 @@
+void printHexa(byte * data, byte pos);
 void printBinary(byte * data, byte pos); 
 class DecodeOOKV2 {
 public:
@@ -99,13 +100,18 @@ public:
 		if (data == 0)
 		{
       //if end pulse : 9200us
-			if ((width > TO(8600)) && (width < TO(9800)))
+			if ((width > TO(7000)) && (width < TO(9800)))
 			{
         //if end of frame : pulse = 9200us
         if (total_bits == 36){ 
+					//rubicson
           return 1;
         }
-        else
+				else if (total_bits == 24) {
+					//otio
+					return 1;
+				}
+				else
           return -1;
       }
 
@@ -251,10 +257,78 @@ Each (group) of numbers has a specific meaning:
 		return false ;
 
 	}
+
+//otio
+/*
+frame  0 = short pulse = 2ms
+1 = long  pulse = 4ms
+2 = end   pulse = 8ms
+--IDENT-------    SIGN- -----TEMP---    -BAT---   --FRAC-    End Temp
+2 2 2 2 1 1 1 1   1     1 1 1 1 1 0 0   0 0 0 0   0 0 0 0
+              0                     1                   2   
+7 6 5 4 3 2 1 0   7     6 5 4 3 2 1 0   7 6 5 4   3 2 1 0  
+1 0 0 1 0 1 0 1   1     0 0 0 1 0 1 1   0 0 0 0   0 0 1 0    2  -11.2
+1 0 0 1 0 1 0 1   1     0 0 0 0 0 0 0   0 0 0 0   0 0 1 0    2  -0.2
+1 0 0 1 0 1 0 1   0     0 0 0 0 0 0 1   0 0 0 0   0 0 1 0    2  01.2
+1 0 0 1 0 1 0 1   0     0 0 0 1 0 0 0   0 0 0 0   0 0 1 0    2  08.2
+1 0 0 1 0 1 0 1   0     0 0 0 1 0 1 0   0 0 0 0   0 1 0 1    2  10.5
+*/
+/* temperature in Lsb = 0.1 degrec C */
+	int getTemperatureOtio() {
+		byte frac = data[2]  & 0xF;
+
+		byte signe = data[1]  & 0x80;
+
+		/* partie entiere */
+		byte ent = data[1]  & 0x7F;
+
+		int temp  = ent  * 10;
+		temp = temp + frac;
+		if (signe)
+			temp = -temp;
+		return temp ;
+
+	}
+	//return identification 0x00 to 0xff
+	byte getIdOtio() {
+		return (data[0] );
+	}
+	//return 15 if batterie OK  
+	byte getBatteryLevelOtio() {
+		if ((data[2] & 0x80) != 0)
+			return 15;
+		else
+			return 0;
+	}
+
+	void ReportSerialOtio() {
+		Serial.print("OTIO ");
+		Serial.print(millis() / 1000);
+		Serial.print(" ");
+		printHexa( data, 3 );
+
+		Serial.print(" T:");
+		int t = getTemperatureOtio();
+		Serial.print(t / 10);
+		Serial.print('.');
+		t = t % 10; if (t<0)t = -t;
+		Serial.print(t);
+		Serial.print(" Id:");
+		Serial.print(getIdOtio(), HEX);
+		Serial.print(" Bat:");
+		Serial.print(getBatteryLevelOtio());
+		Serial.print('\n');
+		Serial.print('\r');
+
+	}
+
+	bool isOtio()
+	{
+		if (total_bits == 24)
+			return true;
+		else
+			return false;
+	}
 };
-
-
-
-
 
 

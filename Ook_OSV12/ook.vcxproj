@@ -72,6 +72,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\libraries\DecodeHomeEasy\DecodeHomeEasy.cpp" />
     <ClCompile Include="..\libraries\DecodeMD230\DecodeMD230.cpp" />
     <ClCompile Include="..\libraries\HomeEasyTransmitter\HomeEasyTransmitter.cpp" />
     <ClCompile Include="..\libraries\RFM69\RFM69.cpp" />

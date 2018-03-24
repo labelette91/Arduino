@@ -17,6 +17,16 @@ void printBinary ( byte * data , byte pos)
 	}
 }
 
+//sump hex
+void printHexa (byte * data, byte pos)
+{
+
+for (byte i = 0; i < pos; ++i) {
+	Serial.print(data[i] >> 4, HEX);
+	Serial.print(data[i] & 0x0F, HEX);
+}
+}
+
 void printTab(byte tab, byte n)
 {
 	tab = tab - n;
@@ -32,14 +42,14 @@ void reportSerialAscii (const char* s, const byte* data,byte pos) {
     Serial.print(s);
     Serial.print(' ');
     Serial.print(millis() / 1000);
-    Serial.print(" Dt:");
+/*    Serial.print(" Dt:");
 		nb = Serial.print(Dt);
 		printTab(2, nb);
 		
 		Serial.print(" Nb:");
 		nb = Serial.print(NbReceive);
 		printTab(3, nb);
-		
+*/	
 		Serial.print(" Np:");
     nb=Serial.print(NbPulse);
 		printTab(6, nb);
