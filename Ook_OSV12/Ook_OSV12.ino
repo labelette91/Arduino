@@ -165,6 +165,7 @@ void loop () {
     pulse = 0;
     sei();
 */
+	word rssi;
     word p = fifo.get();
 
 		if (p != 0) {
@@ -289,6 +290,7 @@ void loop () {
     {
 			//attente une secone max pour emetre si emission en cours -80--> -70
 			radio.WaitCanSend(-70);
+			rssi = radio.readRSSI();
 			
 			detachInterrupt(1);
 	    easy.initPin();
@@ -316,7 +318,10 @@ void loop () {
 
 			//acknoledge 
 			Cmd.LIGHTING2.packettype = pTypeUndecoded;
-			Cmd.LIGHTING2.packetlength = 3;
+			Cmd.LIGHTING2.packetlength = 5;
+			Cmd.LIGHTING2.id1 = rssi >> 8;
+			Cmd.LIGHTING2.id2 = rssi & 0x00ff ;
+
 			Serial.write((byte*)&Cmd.LIGHTING2, Cmd.LIGHTING2.packetlength + 1);
 
 	
