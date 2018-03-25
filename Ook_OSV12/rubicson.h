@@ -100,7 +100,8 @@ public:
 		if (data == 0)
 		{
       //if end pulse : 9200us
-			if ((width > TO(7000)) && (width < TO(9800)))
+			if ((width > TO(8600)) && (width < TO(9800)))
+			//if ((width > TO(7000)) && (width < TO(9800)))
 			{
         //if end of frame : pulse = 9200us
         if (total_bits == 36){ 
@@ -109,7 +110,7 @@ public:
         }
 				else if (total_bits == 24) {
 					//otio
-					return 1;
+					return -1;
 				}
 				else
           return -1;

@@ -3,7 +3,7 @@
 
 #define DOMOTIC 1
 
-//#define OTIO_ENABLE 1
+#define OTIO_ENABLE 1
 #define OOK_ENABLE  1
 //#define HAGER_ENABLE 1
 //#define HOMEEASY_ENABLE 1
