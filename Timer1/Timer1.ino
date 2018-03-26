@@ -16,29 +16,96 @@ word  Buffer[256] ;
 byte  pin;
 
 word * ptbuf ;
+
+
+void printBuffer()
+{
+  word  i=0 ;
+
+  while(Buffer[i]!=0)
+  {
+    if ( (i%4)==0 ) {
+      Serial.println();
+      Serial.print(i/4);
+      Serial.print(':' ) ;
+      
+    }
+    Serial.print(Buffer[i] );
+    Serial.print(' ' ) ;
+    i++;
+    
+  }
+
+}
+
 void setupCTC ()
 {
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, LOW );
   pinMode(PDATA, OUTPUT);
+  Serial.begin(38400);
   
+  easy.SetTransmitBuffer(Buffer,1,0x555555,1);
+
+  delay(100);
+
+	printBuffer();
+
+}
+
+ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
+{
+  word time ;
+  if (pin==0)
+  {
+    digitalWrite(PDATA, 1);
+    pin=1;
+  }
+  else 
+  {
+    digitalWrite(PDATA, 0);
+    pin=0;
+  }
+  time = (*ptbuf) ;
+  time *= 2 ;
+	OCR1A = time  ;           // compare match register 
+
+  digitalWrite(ledPin, digitalRead(ledPin) ^ 1);
+
+  ptbuf = ptbuf+1;
+  if (*ptbuf==0){
+		//stop timer
+    TCCR1A = 0;
+    TCCR1B = 0;
+    TCNT1 = 0  ;            
+    TIMSK1 = 0 ;
+    
+  }
+
+}
+
+void loopCTC()
+{
+  ptbuf = Buffer;
+  pin=0;
+  digitalWrite(PDATA, 0 );
+
   // initialize timer1 
   noInterrupts();           // disable all interrupts
   TCCR1A = 0;
   TCCR1B = 0;
   TCNT1  = 0;
 
-  OCR1A = 30000*2 ;            // compare match register 
+  OCR1A = 300*2 ;           // compare match register 
   TCCR1B |= (1 << WGM12);   // CTC mode
   TCCR1B |= (1 << CS11);    // 8  prescaler : 0.5 us
   TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
   interrupts();             // enable all interrupts
-}
 
-ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
-{
-  digitalWrite(ledPin, digitalRead(ledPin) ^ 1);   // toggle LED pin
-  digitalWrite(ledPin, digitalRead(ledPin) ^ 1);   // toggle LED pin
+
+
+  delay(1000);
+
 }
 
 #define MICROS(delay)(65536 - (delay)*2)
@@ -67,19 +134,6 @@ void setupOVF()
 
   delay(100);
 
-  while(Buffer[i]!=0)
-  {
-    if ( (i%4)==0 ) {
-      Serial.println();
-      Serial.print(i/4);
-      Serial.print(' ' ) ;
-      
-    }
-    Serial.print(Buffer[i] );
-    Serial.print(' ' ) ;
-    i++;
-    
-  }
 }
 
 ISR(TIMER1_OVF_vect)        // interrupt service routine that wraps a user defined function supplied by attachInterrupt
@@ -129,11 +183,13 @@ void loopOVF()
 
 void setup()
 {
-	setupOVF() ;
+	setupCTC() ;
+//	setupOVF() ;
 
 }
 void loop()
 {
-	loopOVF() ;
+	loopCTC() ;
+//	loopOVF() ;
 
 }
