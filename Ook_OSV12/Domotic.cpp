@@ -19,6 +19,9 @@ byte    LastSensorValue[256] ;
 
 byte    Seqnbr ;
 
+//true if packet as been received and not treated
+bool    DomoticPacketReceived;
+
 typedef union tPAR {
 byte Byte[4] ;
 unsigned long Long;
@@ -65,36 +68,45 @@ LastZoneValue[1];
 LastZoneValue[2];
 LastZoneValue[3];
 Seqnbr=0;
+DomoticPacketReceived = false;
 
 }
 //reception d'une commande de send domotic
-bool DomoticReceive()
+void DomoticReceive()
 {
-    if (Serial.available()){
+	//si paquet en cours de traitement 
+	if (DomoticPacketReceived )
+		return;
+
+	byte nbCar = Serial.available();
+	if (nbCar)
+	{
         byte b = Serial.read();
-        if ( (millis()-lastTime) > 1000 ) {
+        if ( (millis()-lastTime) > 10000 ) {
                 receiveLength = 0 ;
-                Cmd.LIGHTING2.packetlength  =0;
         }
         lastTime = millis();
 				if (receiveLength >= sizeof(_tRBUF)) {
 					receiveLength = 0;
-					Cmd.LIGHTING2.packetlength = 0;
 				}
+        Cmd.Buffer[receiveLength++]=b;
 
+				//if packet len not valid , wait valid
+				if (    (Cmd.LIGHTING2.packetlength != 13 )
+					   && (Cmd.LIGHTING2.packetlength != 11)
+					)
+					receiveLength = 0;
 
-        if (receiveLength<Cmd.LIGHTING2.packetlength+1) 
-            Cmd.Buffer[receiveLength++]=b;
-        /* si paquet recu en entier */
-        if (receiveLength>=Cmd.LIGHTING2.packetlength+1) {
-            receiveLength = 0 ;
-            return true;
-        }
+				/* si paquet recu en entier */
+				if (receiveLength >= Cmd.LIGHTING2.packetlength + 1) {
+					DomoticPacketReceived=  true;
+					receiveLength = 0;
+				}
+				else
+					DomoticPacketReceived=  false;
+
     }
-    return false ;
 }    
-
-
 
 tRBUF Send ;
 
@@ -270,7 +282,7 @@ extern byte GetZone(const byte* data);
 void reportHagerDomoticSerial ( const byte* data, byte pos ){
   
 
-		Send.LIGHTING2.packetlength=11 + 4 ; //+2 debug 
+		Send.LIGHTING2.packetlength=11  ; 
 		Send.LIGHTING2.packettype = pTypeLighting2;   
 		Send.LIGHTING2.subtype    = sTypeANSLUT ;							//AC
 		Send.LIGHTING2.seqnbr			= Seqnbr++ ;
@@ -282,11 +294,13 @@ void reportHagerDomoticSerial ( const byte* data, byte pos ){
 		Send.LIGHTING2.level    =0 ;   /* dim level 0..15   */
 		Send.LIGHTING2.rssi     = 0;
 //devbug
-		Send.LIGHTING2.data[0]  = data[3];   
+/*
+    Send.LIGHTING2.packetlength = 11 + 4; //+4 debug 
+		Send.LIGHTING2.data[0]  = data[3];
 		Send.LIGHTING2.data[1]  = data[4];
 		Send.LIGHTING2.data[2]  = data[5];
 		Send.LIGHTING2.data[3]  = data[6];
-
+*/
 
 		if ( GetMode(data)== CONFOR)
 				Send.LIGHTING2.cmnd       = 1 ;         
@@ -315,7 +329,7 @@ void reportHagerDomotic ( const byte* data, byte pos ){
 void reportDomoticHomeEasy ( const byte* data, byte pos ){
   
 
-		Send.LIGHTING2.packetlength=11 + 4 ; //+2 debug 
+		Send.LIGHTING2.packetlength=11  ; 
 		Send.LIGHTING2.packettype = pTypeLighting2;   
 		Send.LIGHTING2.subtype    = sTypeHEU ;					
 		Send.LIGHTING2.seqnbr			= Seqnbr++ ;
@@ -327,11 +341,13 @@ void reportDomoticHomeEasy ( const byte* data, byte pos ){
 		Send.LIGHTING2.level    = 0 ;   /* dim level 0..15   */
 		Send.LIGHTING2.rssi     = 0;
 //devbug
-		Send.LIGHTING2.data[0]  = data[3];   
+/*
+		Send.LIGHTING2.packetlength = 11 + 4; //+2 debug 
+		Send.LIGHTING2.data[0]  = data[3];
 		Send.LIGHTING2.data[1]  = data[4];
 		Send.LIGHTING2.data[2]  = data[5];
 		Send.LIGHTING2.data[3]  = data[6];
-
+*/
   	Send.LIGHTING2.cmnd     = data[3] ;         
 
     Serial.write((byte*)&Send.LIGHTING2,Send.LIGHTING2.packetlength+1  );

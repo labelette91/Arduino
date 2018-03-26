@@ -48,7 +48,7 @@ struct  T_LIGHTING2{
 		byte	cmnd;           /* 0 : off 1:On      */
 		byte	level;          /* dim level 0..15   */
 		byte	rssi ;
-		byte	data[2] ;
+//		byte	data[2] ;
 		
 	} LIGHTING2;
 
@@ -209,8 +209,9 @@ struct {	//response on a mode command from the application
 
 
 extern  tRBUF Cmd ;
+extern bool DomoticPacketReceived;
 
-extern bool DomoticReceive();
+extern void DomoticReceive();
 extern void reportDomoticTemp ( const byte* data);
 extern void reportDomoticTempHum ( const byte* data);
 extern unsigned long getLightingId ();

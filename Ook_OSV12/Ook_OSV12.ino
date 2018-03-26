@@ -296,8 +296,20 @@ void loop () {
 
     }
 
-//check domotic send command reception
-  if (DomoticReceive())
+	//read serial input & fill receive buffe(
+	DomoticReceive();
+
+	//check domotic send command reception
+	//attente une secone max pour emetre si emission en cours -80--> -70
+	//pas de reception en cours
+	if (   (DomoticPacketReceived)
+		  && (radio.canSend(-70)   )
+		  && (Otio.total_bits ==0)
+		  && (orscV2.total_bits == 0)
+		  && (Rubicson.total_bits == 0)
+//		  && (HEasy.total_bits == 0)
+//		  && (MD230.total_bits == 0)
+		)
   {
   	digitalWrite(ledPin,HIGH);
     //start receive cmd
@@ -309,8 +321,6 @@ void loop () {
     }
     else
     {
-			//attente une secone max pour emetre si emission en cours -80--> -70
-			radio.WaitCanSend(-70);
 			rssi = radio.readRSSI();
 			
 			detachInterrupt(1);
@@ -355,6 +365,7 @@ void loop () {
 	    radio.setMode(RF69_MODE_RX);
     }
   	digitalWrite(ledPin,LOW);
+		DomoticPacketReceived = false;
     
   }
 
