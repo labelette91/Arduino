@@ -35,33 +35,31 @@ void setup ()
 
 
 #define GET_TIMER1(value)   cli();  value = TCNT1;   sei();
+word T1, T2;
 
+void test(word del )
+{
+  GET_TIMER1(T1);
+  cli();
+  delayMicroseconds(del);
+  sei();
+  GET_TIMER1(T2);
+  Serial.println( (T2 - T1 )/2   );
+  
+}
 void loop()
 {
   pin=0;
-	word T1, T2;
+	
 
   digitalWrite(PDATA, 0 );
 
   delay(1000);
 	
-	cli();
-	T1 = TCNT1;
-	sei();
-
-	delayMicroseconds(300);
-
-	cli();
-	T2 = TCNT1;
-	sei();
-
-//	Serial.println( (T2 - T1 )/2  );
-  if (T2 < T1 ){
-  
-  Serial.println( (T1 - T2 )  );
-  Serial.println( (T2 - T1 )   );
-  }
-  
+test (300);
+test (1000);
+test (1700);
+ 
 
 
 }
