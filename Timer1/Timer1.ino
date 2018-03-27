@@ -13,6 +13,7 @@
 HomeEasyTransmitter easy(PDATA,0,0);
 
 
+
 void printBuffer()
 {
   word  i=0 ;
@@ -32,7 +33,8 @@ void printBuffer()
   }
 
 }
-
+extern void ManageHager( byte,byte,byte ) ;
+void HagerPrint();
 void setup ()
 {
   pinMode(ledPin, OUTPUT);
@@ -54,7 +56,12 @@ void setup ()
 
 void loop()
 {
-timer1Transmitter.StartTransmission(4); 
+//timer1Transmitter.StartTransmission(4); 
+  delay(1000);
+  digitalWrite(PDATA, LOW);
+	ManageHager(0x55,1,0 ) ;
+	 digitalWrite(PDATA, LOW);
+	 HagerPrint();
   delay(1000);
 
 }
