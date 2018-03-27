@@ -26,7 +26,6 @@ void    sei();
 
 void Timer1Transmitter::SetPin(byte PDATA , byte PLED  )
 {
-  pin = 0 ;
   ptbuf = Buffer ;
   NbTransmit = 0 ;
   PinDATA    = PDATA ;
@@ -62,17 +61,17 @@ void Timer1Transmitter::StartTimer1(void )
 void Timer1Transmitter::Timer1Intr(void)
 {
   word time ;
-  if (pin==0)
+  byte pin;
+  time = (*ptbuf) ;
+  pin = time & 1 ;
+  if (pin)
   {
     digitalWrite(PinDATA, 1);
-    pin=1;
   }
   else 
   {
     digitalWrite(PinDATA, 0);
-    pin=0;
   }
-  time = (*ptbuf) ;
   time *= 2 ;       //prescaler = *.5 us
 	cli();
   OCR1A = time  ;   // compare match register 
@@ -92,7 +91,6 @@ void Timer1Transmitter::Timer1Intr(void)
     {
       //retransmit
       ptbuf = Buffer;
-      pin=0;
     }
   }
 
@@ -101,7 +99,6 @@ void Timer1Transmitter::Timer1Intr(void)
 void Timer1Transmitter::StartTransmission(byte pNbTransmit) 
 {
   ptbuf = Buffer;
-  pin=0;
   digitalWrite(PinDATA, 0 );
   NbTransmit = pNbTransmit ;
 

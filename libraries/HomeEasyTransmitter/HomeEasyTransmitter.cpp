@@ -62,10 +62,11 @@ extern void scheduler_standard() ;
 #define DELTA 0 
 
 //temps en µs
+//bit0 = valeur pin
 #define LATCH1_HIGH  275-DELTA
 #define LATCH1_LOW   9900-DELTA
 #define LATCH2_HIGH  275-DELTA
-#define LATCH2_LOW   2675-DELTA
+#define LATCH2_LOW   2674-DELTA
 
 
 #define BIT_PULSE_HIGH  275-DELTA

@@ -43,7 +43,7 @@ void setup ()
   
   timer1Transmitter.SetPin(PDATA,ledPin);
   
-  easy.SetTransmitBuffer(timer1Transmitter.Buffer,1,0x555555,1);
+  easy.SetTransmitBuffer(timer1Transmitter.Buffer,1,0x55555555,1);
 
   delay(1000);
 
