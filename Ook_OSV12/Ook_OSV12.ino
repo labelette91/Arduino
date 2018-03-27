@@ -337,7 +337,7 @@ void loop () {
 				}
 				else if (Cmd.LIGHTING2.subtype == sTypeAC) 	         //if hager protocol : subtype==0
 				{
-					ManageHager();
+					ManageHager(Cmd.LIGHTING2.id4, Cmd.LIGHTING2.unitcode, Cmd.LIGHTING2.cmnd);
 					Cmd.LIGHTING2.subtype = 0;
 				}
 				else

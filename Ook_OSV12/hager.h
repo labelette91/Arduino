@@ -1,4 +1,5 @@
 
-extern void ManageHager( );
+extern void ManageHager(byte id4, byte unitcode, byte cmnd);
+
 
 

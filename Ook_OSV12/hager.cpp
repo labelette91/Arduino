@@ -1,5 +1,4 @@
 #include "arduino.h"
-#include "domotic.h"
 #include <avr/pgmspace.h>
 
 #include <timer.h>
@@ -191,31 +190,31 @@ void ManageHager(byte id4 , byte cmnd)
 //unit code = 1 : cmnd = 0 eco   1: confor
 //unit code = 2 : cmnd = 0 hgel  1: confor
 //unit code = 3 : cmnd = 0 arret 1: confor
-void ManageHager( )
+void ManageHager( byte id4 , byte unitcode , byte cmnd )
 {
 	//unit code = 0 : configuration
-	if (Cmd.LIGHTING2.unitcode==16)
-		ManageHager(Cmd.LIGHTING2.id4,4);
+	if (unitcode==16)
+		ManageHager(id4,4);
 	//unit code = 1 : cmnd = 0 eco   1: confor
-	else if(Cmd.LIGHTING2.unitcode==1)
-		ManageHager(Cmd.LIGHTING2.id4,Cmd.LIGHTING2.cmnd);
+	else if(unitcode==1)
+		ManageHager(id4,cmnd);
 	//unit code = 2 : cmnd = 0 hgel  1: confor
-	else if(Cmd.LIGHTING2.unitcode==2)
+	else if(unitcode==2)
 	{
-		if (Cmd.LIGHTING2.cmnd==0)
-			ManageHager(Cmd.LIGHTING2.id4,CMD_HGEL);
+		if (cmnd==0)
+			ManageHager(id4,CMD_HGEL);
 		else
 			//confor
-			ManageHager(Cmd.LIGHTING2.id4,Cmd.LIGHTING2.cmnd);
+			ManageHager(id4,cmnd);
 	}	
 	//unit code = 3 : cmnd = 0 arret 1: confor
-	else if(Cmd.LIGHTING2.unitcode==3)
+	else if(unitcode==3)
 	{
-		if (Cmd.LIGHTING2.cmnd==0)
-			ManageHager(Cmd.LIGHTING2.id4,CMD_ARRET);
+		if (cmnd==0)
+			ManageHager(id4,CMD_ARRET);
 		else
 			//confor
-			ManageHager(Cmd.LIGHTING2.id4,Cmd.LIGHTING2.cmnd);
+			ManageHager(id4,cmnd);
 	}		
 }
 
