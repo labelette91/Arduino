@@ -16,6 +16,7 @@
 
 #include "hagerdomo.h"
 
+#include "Timer1Transmitter.h"
 
 
 //comand 
@@ -127,7 +128,7 @@ void HagerSetPinData(byte data , word delay)
 {
 digitalWrite(pData, data);
 DelayMicroseconds(delay)  ;
-
+timer1Transmitter.PutBuffer(delay | data );
 }
 //0 to 1 transition
 //send 1
@@ -275,6 +276,7 @@ byte SynchroPulse[] = {
 };
 void HagerSend1 ( byte * addr , byte cmnd )
 {
+  timer1Transmitter.InitBuffer();
   cli();
   HagerSendBytes(synchro , 2  ) ;
   
@@ -312,7 +314,7 @@ void HagerSend1 ( byte * addr , byte cmnd )
 	HagerSendByte(HagerChk);
   HagerSetPinData(LOW ,HAGER_SYNCHRO_DELAY);
   sei();
-
+	timer1Transmitter.PutBuffer(0 );
 }
 
 void HagerSends1(byte id4, byte cmnd, byte NbTime)

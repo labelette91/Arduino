@@ -17,6 +17,8 @@ class Timer1Transmitter
   void StopTimer1(void );
   void StartTimer1(void );
   void StartTransmission(byte pNbTransmit) ;
+	void InitBuffer();
+	void PutBuffer(word value);
 
 };
 extern Timer1Transmitter timer1Transmitter ;

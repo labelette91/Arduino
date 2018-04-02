@@ -113,3 +113,11 @@ ISR(TIMER1_COMPA_vect)
 {
   timer1Transmitter.Timer1Intr();
 }
+void Timer1Transmitter::InitBuffer()
+{
+	ptbuf = Buffer;
+}
+void Timer1Transmitter::PutBuffer(word value)
+{
+	*ptbuf++ = value;
+}

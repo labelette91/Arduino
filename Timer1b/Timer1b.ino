@@ -45,13 +45,17 @@ void setup ()
   
   timer1Transmitter.SetPin(PDATA,ledPin);
   
-  easy.SetTransmitBuffer(timer1Transmitter.Buffer,1,0x55555555,1);
+  //easy.SetTransmitBuffer(timer1Transmitter.Buffer,1,0x55555555,1);
 
   delay(1000);
 
-	printBuffer();
+	//printBuffer();
 
   HagerSetPin (PDATA,ledPin );
+  HagerSends1(0x01,1,1 ) ;
+  printBuffer();
+  HagerPrint();
+  delay(5000);
 
 }
 
@@ -59,15 +63,18 @@ void setup ()
 void loop()
 {
 //timer1Transmitter.StartTransmission(4); 
-  delay(1000);
-  digitalWrite(PDATA, LOW);
+//  delay(1000);
 //	HagerSends(0x01,1,1 ) ;
-	digitalWrite(PDATA, LOW);
 //	 HagerPrint();
+//  delay(1000);
+//  HagerSends1(0x01,1,1 ) ;
+//  HagerPrint();
   delay(1000);
-  HagerSends1(0x01,1,1 ) ;
-  HagerPrint();
+  timer1Transmitter.StartTransmission(1);
   delay(1000);
+   
+
+  
 
 }
 
