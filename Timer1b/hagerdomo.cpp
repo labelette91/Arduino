@@ -239,6 +239,7 @@ void HagerSend ( byte * addr , byte cmnd )
 	HagerChk = ~HagerChk + 1 ;
 		
 	HagerSendByte(HagerChk);
+  HagerSetPinData(LOW ,HAGER_SYNCHRO_DELAY);
   sei();
 
 }
@@ -275,9 +276,10 @@ byte SynchroPulse[] = {
 void HagerSend1 ( byte * addr , byte cmnd )
 {
   cli();
+  HagerSendBytes(synchro , 2  ) ;
+  
   HagerChk=0;
   IdCmd=0;
-  HagerSendBytes(synchro , 2  ) ;
 
   // synchro pulse 630 / 210 / 630 /210 us
   HagerSetPinData(HIGH,HAGER_SYNCHRO_DELAY);
@@ -308,6 +310,7 @@ void HagerSend1 ( byte * addr , byte cmnd )
 	HagerChk = ~HagerChk + 1 ;
 		
 	HagerSendByte(HagerChk);
+  HagerSetPinData(LOW ,HAGER_SYNCHRO_DELAY);
   sei();
 
 }
@@ -322,4 +325,17 @@ void HagerSends1(byte id4, byte cmnd, byte NbTime)
     delay(10);
   }
 }
+
+void HagerPrint()
+{
+    //print
+  for (byte i=0;i<8;i++) 
+  {
+    if (i%4==0)Serial.print(' ');
+    if (HagerCmd[i]<16) Serial.print('0');
+    Serial.print(HagerCmd[i],HEX);  
+  } 
+  Serial.println();  
+}
+
 

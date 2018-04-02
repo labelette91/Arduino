@@ -61,11 +61,12 @@ void loop()
 //timer1Transmitter.StartTransmission(4); 
   delay(1000);
   digitalWrite(PDATA, LOW);
-	HagerSends(0x55,1,1 ) ;
-	 digitalWrite(PDATA, LOW);
+//	HagerSends(0x01,1,1 ) ;
+	digitalWrite(PDATA, LOW);
 //	 HagerPrint();
   delay(1000);
-//  HagerSends1(0x55,1,1 ) ;
+  HagerSends1(0x01,1,1 ) ;
+  HagerPrint();
   delay(1000);
 
 }
