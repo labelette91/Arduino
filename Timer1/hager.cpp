@@ -158,6 +158,7 @@ void HagerSend ( byte * addr , byte cmnd )
 	HagerChk = ~HagerChk + 1 ;
 		
 	HagerSendByte(HagerChk);
+  digitalWrite(pData, LOW);
   sei();
 
 }
@@ -174,7 +175,7 @@ void HagerPrint()
   }	
   Serial.println();  
 }
-void ManageHager(byte id4 , byte cmnd)
+void HagerSends(byte id4 , byte cmnd)
 {
 	
 	//set adresse
@@ -194,27 +195,27 @@ void ManageHager( byte id4 , byte unitcode , byte cmnd )
 {
 	//unit code = 0 : configuration
 	if (unitcode==16)
-		ManageHager(id4,4);
+		HagerSends(id4,4);
 	//unit code = 1 : cmnd = 0 eco   1: confor
 	else if(unitcode==1)
-		ManageHager(id4,cmnd);
+		HagerSends(id4,cmnd);
 	//unit code = 2 : cmnd = 0 hgel  1: confor
 	else if(unitcode==2)
 	{
 		if (cmnd==0)
-			ManageHager(id4,CMD_HGEL);
+			HagerSends(id4,CMD_HGEL);
 		else
 			//confor
-			ManageHager(id4,cmnd);
+			HagerSends(id4,cmnd);
 	}	
 	//unit code = 3 : cmnd = 0 arret 1: confor
 	else if(unitcode==3)
 	{
 		if (cmnd==0)
-			ManageHager(id4,CMD_ARRET);
+			HagerSends(id4,CMD_ARRET);
 		else
 			//confor
-			ManageHager(id4,cmnd);
+			HagerSends(id4,cmnd);
 	}		
 }
 

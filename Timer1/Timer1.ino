@@ -34,6 +34,8 @@ void printBuffer()
 
 }
 extern void ManageHager( byte,byte,byte ) ;
+void HagerSends(byte,byte);
+
 void HagerPrint();
 void setup ()
 {
@@ -59,7 +61,7 @@ void loop()
 //timer1Transmitter.StartTransmission(4); 
   delay(1000);
   digitalWrite(PDATA, LOW);
-	ManageHager(0x55,1,0 ) ;
+	HagerSends(0x01,1 ) ;
 	 digitalWrite(PDATA, LOW);
 	 HagerPrint();
   delay(1000);
