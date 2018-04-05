@@ -12,7 +12,24 @@
 
 HomeEasyTransmitter easy(PDATA,0,0);
 
+void printBinary ( byte * data , byte pos)
+{
+  for (byte i = 0; i < pos; ++i)
+  {
+    byte bt = data[i];
+    for (byte b = 0; b < 8; b++)
+    {
+      if (bt & 0x80)
+        Serial.print('1');
+      else
+        Serial.print('0');
+      bt = bt << 1;
+      if (b == 3) Serial.print(' ');
+      if (b == 7) Serial.print(' ');
 
+    }
+  }
+}
 
 void printBuffer()
 {
@@ -35,6 +52,7 @@ void printBuffer()
 }
 #include "hagerdomo.h"
 void HagerPrint();
+extern byte HagerCmd[];
 void setup ()
 {
   pinMode(ledPin, OUTPUT);
@@ -55,6 +73,8 @@ void setup ()
   HagerSends1(0x01,1,1 ) ;
   printBuffer();
   HagerPrint();
+  printBinary ( HagerCmd ,8 );
+  
   delay(5000);
 
 }
