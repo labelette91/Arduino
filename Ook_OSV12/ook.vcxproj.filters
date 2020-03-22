@@ -81,6 +81,9 @@
     <ClCompile Include="..\libraries\DecodeHomeEasy\DecodeHomeEasy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Ook_OSV12.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Domotic.h">
