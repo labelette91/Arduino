@@ -15,12 +15,12 @@ C code : test.cpp
 
 std::string DeviceR = "/dev/gpiofreq";
 
-#include "OOKDecoder.h"
-#include "Oregon.h"
-#include "Print.h"
+#include "ookdecoder.h"
+#include "oregon.h"
+#include "print.h"
 
 #ifndef DOMOTIC
-#include  "reportSerialAscii.h"
+#include  "reportserialascii.h"
 #endif
 
 OregonDecoderV2 orscV2;
