@@ -68,7 +68,14 @@ byte    nosRepeats = 0;
  
 byte  manchester[20];
  
- 
+void PulseLed()
+{
+      if (digitalRead(ledPin)== LOW) 
+         digitalWrite(ledPin, HIGH);  
+      else
+         digitalWrite(ledPin, LOW);  
+}
+
 void setup() {
  
   Serial.begin(115200);
@@ -138,19 +145,19 @@ return;
   headerHits = 0;
   nosBits = 0;
   nosBytes = 0;
-  digitalWrite(ledPin, 0);
+//  digitalWrite(ledPin, 0);
   tempBit = polarity ^ 1;
   noErrors = true;
   firstZero = false;
   headerHits = 0;
   nosBits = 0;
   nosBytes = 0;
-  digitalWrite(ledPin, 0);
+//  digitalWrite(ledPin, 0);
   while (noErrors && (nosBytes < maxBytes)) {
     while (digitalRead(RxPin) != tempBit) {
     }
     delayMicroseconds(sDelay);
-    digitalWrite(ledPin, 0);
+//    digitalWrite(ledPin, 0);
     if (digitalRead(RxPin) != tempBit) {
       noErrors = false;
     }
@@ -164,7 +171,7 @@ return;
         if (!firstZero) {
           headerHits++;
           if (headerHits == headerBits) {
-            digitalWrite(ledPin, 1);
+//            digitalWrite(ledPin, 1);
           }
         }
         else {
@@ -184,7 +191,7 @@ return;
       }
     }
   }
-  digitalWrite(ledPin, 0);
+//  digitalWrite(ledPin, 0);
 }
  
 void hexBinDump() {
@@ -224,6 +231,7 @@ void hexBinDump() {
 #endif
 				}
 				tfa3208.resetDecoder(); 
+				PulseLed();
 			}
 		}
  }
