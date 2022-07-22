@@ -106,6 +106,7 @@ byte            PulsePinData;
 #include "Fifo.h"
 TFifo  fifo;
 
+#include "DecodeOOK.h"
 #include "tfaDecoder.h"
 Hideki tfa3208;
  
@@ -133,7 +134,7 @@ void loop() {
 
 	word p = 1 ;
 	p = fifo.get();
-	managedHideki(p);
+	managedHideki(&tfa3208,p);
     delayMicroseconds(sDelay);
 
 return;
@@ -215,26 +216,7 @@ void hexBinDump() {
   }
 }
  
-  void managedHideki(word p)
- {
-		if (p != 0) 
-		{
-			if (tfa3208.nextPulse(p))
-			{
-				if (tfa3208.data[0] == 81) 
-				{// ce sont bien nos sondes (signature, identification dans le 1er octet du header
-
-#ifndef DOMOTIC
-					tfa3208.ReportSerial();
-#else
-					reportDomoticTempHum (tfa3208.getTemperature(), tfa3208.gethumidity(), tfa3208.getId(), tfa3208.getChannel(), tfa3208.getBatteryLevel());
-#endif
-				}
-				tfa3208.resetDecoder(); 
-				PulseLed();
-			}
-		}
- }
+ 
 void analyseData() {
   // Décodage propre aux satellites TFA Dostmann 30.3208.02
   char cTp[5];
@@ -252,7 +234,7 @@ void analyseData() {
 	while(p!=0)
 	{
 		p = fifo.get();
-		managedHideki(p);
+		managedHideki(&tfa3208,p);
 	}
 	//Serial.println();
 	fifo.clear();
