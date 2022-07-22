@@ -124,7 +124,13 @@ void ext_int_1(void) {
  
 void loop() {
 
-	
+	word p = 1 ;
+	p = fifo.get();
+	managedHideki(p);
+    delayMicroseconds(sDelay);
+
+return;
+
   // Routine épurée basé sur https://github.com/robwlakes/ArduinoWeatherOS
   tempBit = polarity ^ 1;
   noErrors = true;
@@ -202,6 +208,9 @@ void hexBinDump() {
   }
 }
  
+ void HidekiReportSerial()
+ {
+ }
  void managedHideki(word p)
  {
 		if (p != 0) 
@@ -214,24 +223,38 @@ void hexBinDump() {
 
 			if (tfa3208.nextPulse(p))
 			{
-//				for (byte i=0;i<tfa3208.total_bits/8;i++) Serial.print(tfa3208.data[i],BIN); //		Serial.print(tfa3208.data[i],HEX);
-				Serial.print(tfa3208.sbits);  
+				if (data[0] == 81) 
+				{// ce sont bien nos sondes (signature, identification dans le 1er octet du header
 
-                Serial.print(" ");
+					byte Id    = tfa3208.getId();
+					byte Canal = tfa3208.GetCanal();
+					float Temp = tfa3208.GetTemp();
+					byte Hum   = tfa3208.GetHum();
+			
+	//				for (byte i=0;i<tfa3208.total_bits/8;i++) Serial.print(tfa3208.data[i],BIN); //		Serial.print(tfa3208.data[i],HEX);
+	//				Serial.print(tfa3208.sbits);  
+	//              Serial.print(" ");
+					for (byte i=0;i<tfa3208.total_bits/8;i++) Serial.print(tfa3208.data[i],HEX); 
+					tfa3208.resetDecoder(); 
 
-				for (byte i=0;i<tfa3208.total_bits/8;i++) Serial.print(tfa3208.data[i],HEX); //		Serial.print(tfa3208.data[i],HEX);
+					// Serial.println(" ");
+					Serial.print(" TFA      : ");
+	//				Serial.print(tfa3208.getId());
+					Serial.print(Id);
+					Serial.print(" " );
+	//				Serial.print(tfa3208.GetCanal());
+					Serial.print(Canal);
+					Serial.print(" " );
+	//				Serial.print(tfa3208.GetTemp());
+					Serial.print(Temp);
+					Serial.print(" " );
+	//				Serial.println(tfa3208.GetHum());
+					Serial.println(Hum);
+	//				tfa3208.resetDecoder(); 
+				}
+				else
+					tfa3208.resetDecoder(); 
 
-                // Serial.println(" ");
-				Serial.print(" TFA      : ");
-				Serial.print(tfa3208.getId());
-				Serial.print(" " );
-
-				Serial.print(tfa3208.GetCanal());
-				Serial.print(" " );
-				Serial.print(tfa3208.GetTemp());
-				Serial.print(" " );
-				Serial.println(tfa3208.GetHum());
-				tfa3208.resetDecoder(); 
 			}
 		}
  }
