@@ -99,6 +99,8 @@ byte            PulsePinData;
 #include "Fifo.h"
 TFifo  fifo;
 
+#include "tfaDecoder.h"
+Hideki tfa3208;
  
 void ext_int_1(void) {
     static unsigned long  last;
@@ -223,14 +225,28 @@ void analyseData() {
 
 			NbPulse++;
 			if((p>400)&&(p<600))
-				Serial.println(0);
+				Serial.print(0);
 			else
-				Serial.println(1);
+				Serial.print(1);
 //			Serial.print(' ');
+			if (tfa3208.nextPulse(p))
+			{
+                Serial.println("ok");
+				Serial.print("Décodage : ");
+				Serial.print(tfa3208.GetCanal());
+				Serial.print(" " );
+				Serial.print(tfa3208.GetTemp());
+				Serial.print(" " );
+				Serial.println(tfa3208.GetHum());
+				tfa3208.resetDecoder(); 
+			}
+
 		}
 	}
 	Serial.println();
 	fifo.clear();
+    sei();
+
 	
     Serial.println(Spaquet2);
 

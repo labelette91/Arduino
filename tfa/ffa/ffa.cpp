@@ -22,8 +22,8 @@ return *this ;
 }; 
 
 
-#include "../OOKDecoder.h"
-Hideki orscV2;
+#include "../tfaDecoder.h"
+Hideki tfa3208;
 
 
 word pulse[]= {
@@ -146,52 +146,6 @@ word pulse[]= {
 
 
 
-byte GetHum (byte* data)
-{
-	byte  iHum; // humidité
-	
-	//hum 8 bits bits 34 .. 41 6 bit data[4] + 2 bits data[5]
-	iHum = data[4] & 0x3F ;
-	iHum <<= 2 ;
-	iHum += data[5] >> 6 ;
-    return iHum;
-}	
-	
-byte GetCanal (byte* data)
-{
-/*	iCanal = Bin2Dec(Spaquet.substring(19, 22));
-    fTemp = (Bin2Dec(Spaquet.substring(22, 34)) - 720) * 0.0556;
-    fTemp *= 10;
-    fTemp = int(fTemp + 0.5);
-    fTemp /= 10;
-    iHum = Bin2Dec(Spaquet.substring(34, 42));
-*/	
-	byte iCanal ; //le canal du satellite
-
-	//bit 19 a 21
-	iCanal  = data[2] >> 2;
-
-    return iCanal & 0x3 ;
-}	
-float GetTemp (byte* data)
-{
-	float fTemp; // Température
-
-	//temp bit 22 a 33 : 12 bit en faraneight :  2 bit  data[2] + 8 bits  data[3] + 2 bits  data[4]
-	word 
-	Temp   = data[2] & 0x3 ;
-	Temp <<=  8 ;
-	Temp += data[3] ;
-	Temp <<=  2 ;
-	Temp += ( data[4] >>6 ) ;
-
-	//convert T = (X - 720) * 0.0556
-	fTemp = (Temp-720)* 0.0556;
-    return fTemp;	
-}	
-	
-	
-
 
 int main()
 {
@@ -199,30 +153,30 @@ int main()
     int i=0;
 while (pulse[i]!=-1)
 {
-			if (orscV2.nextPulse(pulse[i]*500 + 500 ))
+			if (tfa3208.nextPulse(pulse[i]*500 + 500 ))
                 printf("ok");
-printf ("i:%2d p:%d state:%d \n", i, pulse[i],orscV2.state );
+printf ("i:%2d p:%d state:%d \n", i, pulse[i],tfa3208.state );
             i++;
 }
-printf("%s\n",orscV2.sbits);
+printf("%s\n",tfa3208.sbits);
 
-printf ("%s\n",orscV2.Spaquet.c_str());
+//printf ("%s\n",tfa3208.Spaquet.c_str());
 
-for (int i=0;i<orscV2.total_bits/8;i++ )
-        printf ("%d ",orscV2.data[i]);
+for (int i=0;i<tfa3208.total_bits/8;i++ )
+        printf ("%d ",tfa3208.data[i]);
 
-for (int i=0;i<orscV2.total_bits/8;i++ )
-        printf ("%02X ",orscV2.data[i]);
+for (int i=0;i<tfa3208.total_bits/8;i++ )
+        printf ("%02X ",tfa3208.data[i]);
 
 printf("\n");
-printf("%s", orscV2.Spaquet.substring(0 , 11).c_str() );
+//printf("%s", tfa3208.Spaquet.substring(0 , 11).c_str() );
 
 printf("Décodage : ");
-printf("%d",GetCanal(orscV2.data));
+printf("%d",tfa3208.GetCanal());
 printf(" " );
-printf("%f",GetTemp(orscV2.data));
+printf("%f",tfa3208.GetTemp());
 printf(" " );
-printf("%d\n",GetHum(orscV2.data));
+printf("%d\n",tfa3208.GetHum());
 
 
 // 01010001 01011001 00000101 00101011 01001111 10110011 

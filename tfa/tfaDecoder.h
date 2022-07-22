@@ -1,82 +1,9 @@
-/*
-Code	Taille des trames
-0x0A4D	80
-0xEA4C	68
-0xCA48	??
-0x1A2D	80
-0xFA28	80
-0x*ACC	80
-0xCA2C	80
-0xFAB8	80
-0x1A3D	80
-0x5A5D	88
-0x5A6D	96
-0x2A1D	84
-0x2A19	92
-0x1A99	88
-0x1A89	??
-0x3A0D	80
-0xEA7C	120
-0xDA78	72
-0x*AEC	104
-0xEAC0	??
 
-
-Sensor name	  Code	Type
-Oregon-THR128	0x0A4D	Inside Temperature
-Oregon-THR138		
-Oregon-THC138		
-Oregon-THC238	0xEA4C	Outside/Water Temp
-Oregon-THC268		
-Oregon-THN132N		
-Oregon-THWR288A		
-Oregon-THRN122N		
-Oregon-THN122N		
-Oregon-AW129		
-Oregon-AW131		
-Oregon-THWR800	0xCA48	Water Temp
-Oregon-THGN122N	0x1A2D	Inside Temp-Hygro
-Oregon-THGN123N		
-Oregon-THGR122NX		
-Oregon-THGR228N		
-Oregon-THGR238		
-Oregon-THGR268		
-Oregon-THGR810	0xFA28	Inside Temp-Hygro
-Oregon-RTGR328N	0x*ACC	Outside Temp-Hygro
-Oregon-THGR328N	0xCA2C	Outside Temp-Hygro
-Oregon-WTGR800	0xFAB8	Outside Temp-Hygro
-Oregon-THGR918	0x1A3D	Outside Temp-Hygro
-Oregon-THGRN228NX		
-Oregon-THGN500		
-Huger – BTHR918	0x5A5D	Inside Temp-Hygro-Baro
-Oregon-BTHR918N	0x5A6D	Inside Temp-Hygro-Baro
-Oregon-BTHR968		
-Oregon-RGR126	0x2A1D	Rain Gauge
-Oregon-RGR682		
-Oregon-RGR918		
-Oregon-PCR800	0x2A19	Rain Gauge
-Oregon-WTGR800	0x1A99	Anemometer
-Oregon-WGR800	0x1A89	Anemometer
-Huger-STR918	0x3A0D	Anemometer
-Oregon-WGR918		
-Oregon-UVN128	0xEA7C	UV sensor
-Oregon-UV138		
-Oregon-UVN800	0xDA78	UV sensor
-Oregon-RTGR328N	0x*AEC	Date & Time
-cent-a-meter	0xEAC0	Ampere meter
-OWL CM113		
-Electrisave		
-OWL CM119	0x1A**	Power meter
-	0x2A**	
-	0x3A**	
-		
-
-*/
 class DecodeOOK {
 public:
     byte total_bits, max_bits,bits, flip, state, pos, data[25];
     char sbits[100];
-    String Spaquet; //tous les bits dans une String
+//    String Spaquet; //tous les bits dans une String
     virtual char decode (word width) =0;
     
 public:
@@ -109,7 +36,7 @@ public:
         total_bits = bits = pos = flip = 0;
         state = UNKNOWN;
         max_bits = 160;
-        Spaquet="";
+//        Spaquet="";
     }
     
     // add one bit to the packet data buffer
@@ -186,12 +113,7 @@ public:
     virtual void gotBit (char value) {
         sbits[total_bits]=value + '0';
         sbits[total_bits+1]=0 ;
-        if (value) {
-        Spaquet += '1'; 
-      }
-      else {
-        Spaquet += '0';
-      }
+//        if (value) Spaquet += '1';  else  Spaquet += '0';
 
 
 //        data[pos] = (data[pos] >> 1) | (value ? 0x80 : 00);
@@ -205,9 +127,10 @@ public:
           // Taille de trame par défaut (utilisée dans la majorité des sondes)
           max_bits = 160;
  
-          // Exceptions :
-          if(data[0] == 0x3A  && data[1] == 0x80)
-            max_bits = (11*16); // CML180
+
+          // tfa3208
+          if(data[0] == 81 )
+            max_bits = (6*8); // TFA3208
 /*
           else if(data[0] == 0xEA)
           {
