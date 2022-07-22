@@ -202,29 +202,13 @@ void hexBinDump() {
   }
 }
  
-void analyseData() {
-  // Décodage propre aux satellites TFA Dostmann 30.3208.02
-  char cTp[5];
- 
-  if (manchester[0] == 81) {// ce sont bien nos sondes (signature, identification dans le 1er octet du header
-  
-	//Serial.println(fifo.PWr);
-	//Serial.println(fifo.PRd);
-
-    cli();
-
-	fifo.PRd = fifo.PWr+1;
-	 if (fifo.PRd >=  SIZE_FIFO ) fifo.PRd=0;
-	word p = 1 ;
-	while(p!=0)
-	{
-		p = fifo.get();
-
-		if (p != 0) {
+ void managedHideki(word p)
+ {
+		if (p != 0) 
+		{
 			//get pinData
 			PulsePinData = p & 1;
 
-			NbPulse++;
 //			if((p>400)&&(p<600)) Serial.print(0);else Serial.print(1);
 //			Serial.println(p );
 
@@ -244,8 +228,26 @@ void analyseData() {
 				Serial.println(tfa3208.GetHum());
 				tfa3208.resetDecoder(); 
 			}
-
 		}
+ }
+void analyseData() {
+  // Décodage propre aux satellites TFA Dostmann 30.3208.02
+  char cTp[5];
+ 
+  if (manchester[0] == 81) {// ce sont bien nos sondes (signature, identification dans le 1er octet du header
+  
+	//Serial.println(fifo.PWr);
+	//Serial.println(fifo.PRd);
+
+    cli();
+
+	fifo.PRd = fifo.PWr+1;
+	 if (fifo.PRd >=  SIZE_FIFO ) fifo.PRd=0;
+	word p = 1 ;
+	while(p!=0)
+	{
+		p = fifo.get();
+		managedHideki(p);
 	}
 	//Serial.println();
 	fifo.clear();
