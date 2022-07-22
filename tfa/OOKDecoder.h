@@ -72,12 +72,12 @@ OWL CM119	0x1A**	Power meter
 		
 
 */
-#include "deftype.h"
 class DecodeOOK {
 public:
     byte total_bits, max_bits,bits, flip, state, pos, data[25];
-
-    virtual sbyte decode (word width) =0;
+    char sbits[100];
+    String Spaquet; //tous les bits dans une String
+    virtual char decode (word width) =0;
     
 public:
 
@@ -109,6 +109,7 @@ public:
         total_bits = bits = pos = flip = 0;
         state = UNKNOWN;
         max_bits = 160;
+        Spaquet="";
     }
     
     // add one bit to the packet data buffer
@@ -177,18 +178,27 @@ public:
 // 433 MHz decoders
 
 
-class OregonDecoderV2 : public DecodeOOK {
+class Hideki : public DecodeOOK {
 public:
-    OregonDecoderV2() {}
+    Hideki() {}
     
     // add one bit to the packet data buffer
     virtual void gotBit (char value) {
-        if(!(total_bits & 0x01))
-        {
-            data[pos] = (data[pos] >> 1) | (value ? 0x80 : 00);
-        }
+        sbits[total_bits]=value + '0';
+        sbits[total_bits+1]=0 ;
+        if (value) {
+        Spaquet += '1'; 
+      }
+      else {
+        Spaquet += '0';
+      }
+
+
+//        data[pos] = (data[pos] >> 1) | (value ? 0x80 : 00);
+        data[pos] = (data[pos] << 1) | (value );
+
         total_bits++;
-        pos = total_bits >> 4;
+        pos = total_bits >> 3 ;
         /*compute size of paxket */
         if(pos == 2)
         {
@@ -231,20 +241,21 @@ public:
         state = OK;
     }
     
-    virtual sbyte decode (word width) {
+    virtual char decode (word width) {
 //        if (200 <= width && width < 1200) {
-        if (200 <= width && width < 1699) {
-            byte w = width >= 700;
+        if (400 <= width && width < 1100 ) 
+        {
+            byte w = width >= 750;
             switch (state) {
                 case UNKNOWN:
-                    if (w != 0) {
-                        // Long pulse
+                    if (w == 0) {
+                        // short pulse
                         ++flip;
-//                    } else if (32 <= flip) {
-                    } else if (w == 0 && 24 <= flip) {
-                        // Short pulse, start bit
+                    } else if (w == 1 && flip >= 15 ) {
+                        // long pulse, start bit
                         flip = 0;
-                        state = T0;
+                         manchester(0);
+                        state = OK;
                     } else {
                       // Reset decoder
                         return -1;
@@ -276,57 +287,65 @@ public:
         }
         return total_bits == max_bits ? 1: 0;
     }
-};
+byte GetHum (byte* data)
+{
+	byte  iHum; // humidité
+	
+	//hum 8 bits bits 34 .. 41 6 bit data[4] + 2 bits data[5]
+	iHum = data[4] & 0x3F ;
+	iHum <<= 2 ;
+	iHum += data[5] >> 6 ;
+    return iHum;
+}	
 
-/*
-class OregonDecoderV3 : public DecodeOOK {
-public:
-    OregonDecoderV3() {}
-    
-    // add one bit to the packet data buffer
-    virtual void gotBit (char value) {
-        data[pos] = (data[pos] >> 1) | (value ? 0x80 : 00);
-        total_bits++;
-        pos = total_bits >> 3;
-        if (pos >= sizeof data) {
-            resetDecoder();
-            return;
-        }
-        state = OK;
-    }
-    
-    virtual char decode (word width) {
-        if (200 <= width && width < 1200) {
-            byte w = width >= 700;
-            switch (state) {
-                case UNKNOWN:
-                    if (w == 0)
-                        ++flip;
-                    else if (32 <= flip) {
-                        flip = 1;
-                        manchester(1);
-                    } else
-                        return -1;
-                    break;
-                case OK:
-                    if (w == 0)
-                        state = T0;
-                    else
-                        manchester(1);
-                    break;
-                case T0:
-                    if (w == 0)
-                        manchester(0);
-                    else
-                        return -1;
-                    break;
-            }
-        } else {
-            return -1;
-        }
-        return  total_bits == 80 ? 1: 0;
-    }
-};
+byte GetHum ()
+{
+    return GetHum(data);
+}
 
-*/
+byte GetCanal (byte* data)
+{
+/*	iCanal = Bin2Dec(Spaquet.substring(19, 22));
+    fTemp = (Bin2Dec(Spaquet.substring(22, 34)) - 720) * 0.0556;
+    fTemp *= 10;
+    fTemp = int(fTemp + 0.5);
+    fTemp /= 10;
+    iHum = Bin2Dec(Spaquet.substring(34, 42));
+*/	
+	byte iCanal ; //le canal du satellite
+
+	//bit 19 a 21
+	iCanal  = data[2] >> 2;
+
+    return iCanal & 0x3 ;
+}	
+byte GetCanal ()
+{
+    return GetCanal(data);
+}
+
+
+float GetTemp (byte* data)
+{
+	float fTemp; // Température
+
+	//temp bit 22 a 33 : 12 bit en faraneight :  2 bit  data[2] + 8 bits  data[3] + 2 bits  data[4]
+	word 
+	Temp   = data[2] & 0x3 ;
+	Temp <<=  8 ;
+	Temp += data[3] ;
+	Temp <<=  2 ;
+	Temp += ( data[4] >>6 ) ;
+
+	//convert T = (X - 720) * 0.0556
+	fTemp = (Temp-720)* 0.0556;
+    return fTemp;	
+}	
+float GetTemp ()
+{
+    return GetTemp(data);
+}
+	
+
+};
 

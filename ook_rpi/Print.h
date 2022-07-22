@@ -36,10 +36,12 @@ class Print
 	}
 
 		
-		static int write(uint8_t mes ) {printf("%02X",mes) ; };
+		static int write(uint8_t mes ) {printf("%02X",mes) ; 			return 1; };
 
     static int write(const char *buffer, int size) {
       for (int i=0;i<size;i++) write(buffer[i]);
+	  return 1;
+
     }
 
     static int write(const char *str) {

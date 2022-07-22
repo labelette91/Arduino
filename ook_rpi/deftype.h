@@ -3,6 +3,8 @@
 
 typedef unsigned char boolean;
 typedef unsigned char byte;
+typedef signed   char sbyte;
+typedef signed   short sint;
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int   uint32_t;
