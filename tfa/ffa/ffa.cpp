@@ -172,6 +172,7 @@ printf("\n");
 //printf("%s", tfa3208.Spaquet.substring(0 , 11).c_str() );
 
 printf("Décodage : ");
+printf("%d ",tfa3208.getId());
 printf("%d",tfa3208.GetCanal());
 printf(" " );
 printf("%f",tfa3208.GetTemp());

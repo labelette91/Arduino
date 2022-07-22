@@ -61,7 +61,7 @@ byte    headerHits = 0;
  
 byte    dataByte   = 0;
 byte    nosBits    = 0;
-byte    maxBytes   = 10; // Attention, 6 et pas 5
+byte    maxBytes   = 6; // Attention, 6 et pas 5
 byte    nosBytes   = 0;
  
 byte    nosRepeats = 0;
@@ -214,13 +214,18 @@ void hexBinDump() {
 
 			if (tfa3208.nextPulse(p))
 			{
-				for (byte i=0;i<tfa3208.total_bits/8;i++) Serial.print(tfa3208.data[i],BIN); //		Serial.print(tfa3208.data[i],HEX);
+//				for (byte i=0;i<tfa3208.total_bits/8;i++) Serial.print(tfa3208.data[i],BIN); //		Serial.print(tfa3208.data[i],HEX);
+				Serial.print(tfa3208.sbits);  
+
                 Serial.print(" ");
 
 				for (byte i=0;i<tfa3208.total_bits/8;i++) Serial.print(tfa3208.data[i],HEX); //		Serial.print(tfa3208.data[i],HEX);
 
                 // Serial.println(" ");
 				Serial.print(" TFA      : ");
+				Serial.print(tfa3208.getId());
+				Serial.print(" " );
+
 				Serial.print(tfa3208.GetCanal());
 				Serial.print(" " );
 				Serial.print(tfa3208.GetTemp());

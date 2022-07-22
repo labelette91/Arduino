@@ -268,7 +268,19 @@ float GetTemp ()
 {
     return GetTemp(data);
 }
-	
+//bit 18 
+byte getBatteryLevel()
+{
+    return (data[2]>>5)  & 1 ;
+}
 
+word getId()
+{
+
+    byte id = data[1] & 0x3F;
+    id <<=2 ;
+    id += (data[2]>>6) ;
+    return id;
+}
 };
 
