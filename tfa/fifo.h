@@ -5,7 +5,7 @@
 typedef word TBufferType  ;
 typedef byte TBufferPtrType  ;
 
-#define SIZE_FIFO (7*8*2)
+#define SIZE_FIFO (255)
 
 class TFifo {
 

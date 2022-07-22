@@ -61,7 +61,7 @@ byte    headerHits = 0;
  
 byte    dataByte   = 0;
 byte    nosBits    = 0;
-byte    maxBytes   = 6; // Attention, 6 et pas 5
+byte    maxBytes   = 10; // Attention, 6 et pas 5
 byte    nosBytes   = 0;
  
 byte    nosRepeats = 0;
@@ -208,10 +208,11 @@ void analyseData() {
  
   if (manchester[0] == 81) {// ce sont bien nos sondes (signature, identification dans le 1er octet du header
   
+	//Serial.println(fifo.PWr);
+	//Serial.println(fifo.PRd);
+
     cli();
-	Serial.println(fifo.PWr);
-	Serial.println(fifo.PRd);
-	
+
 	fifo.PRd = fifo.PWr+1;
 	 if (fifo.PRd >=  SIZE_FIFO ) fifo.PRd=0;
 	word p = 1 ;
@@ -224,15 +225,18 @@ void analyseData() {
 			PulsePinData = p & 1;
 
 			NbPulse++;
-			if((p>400)&&(p<600))
-				Serial.print(0);
-			else
-				Serial.print(1);
-//			Serial.print(' ');
+//			if((p>400)&&(p<600)) Serial.print(0);else Serial.print(1);
+//			Serial.println(p );
+
 			if (tfa3208.nextPulse(p))
 			{
-                Serial.println("ok");
-				Serial.print("Décodage : ");
+				for (byte i=0;i<tfa3208.total_bits/8;i++) Serial.print(tfa3208.data[i],BIN); //		Serial.print(tfa3208.data[i],HEX);
+                Serial.print(" ");
+
+				for (byte i=0;i<tfa3208.total_bits/8;i++) Serial.print(tfa3208.data[i],HEX); //		Serial.print(tfa3208.data[i],HEX);
+
+                // Serial.println(" ");
+				Serial.print(" TFA      : ");
 				Serial.print(tfa3208.GetCanal());
 				Serial.print(" " );
 				Serial.print(tfa3208.GetTemp());
@@ -243,12 +247,12 @@ void analyseData() {
 
 		}
 	}
-	Serial.println();
+	//Serial.println();
 	fifo.clear();
     sei();
 
 	
-    Serial.println(Spaquet2);
+//    Serial.println(Spaquet2);
 
     Serial.print(Spaquet.substring(0 , 11)); Serial.print(' ' );
     Serial.print(Spaquet.substring(11, 15)); Serial.print(' ' );
@@ -258,7 +262,7 @@ void analyseData() {
     Serial.print(Spaquet.substring(23, 35)); Serial.print(' ' );
     Serial.print(Spaquet.substring(35, 43)); Serial.print(' ' );
     Serial.print(Spaquet.substring(43    )); Serial.print(' ' );
-    Serial.println();
+//    Serial.println();
 	
     iCanal = Bin2Dec(Spaquet.substring(19, 22));
     fTemp = (Bin2Dec(Spaquet.substring(22, 34)) - 720) * 0.0556;
@@ -289,7 +293,7 @@ void analyseData() {
           // correction étalonnage
           mydata.Temp = fTemp + EtalonT[iCanal] ;
           mydata.Hum = iHum + EtalonH[iCanal];
- 
+ /*
           Serial.print(mydata.Canal);
           Serial.print(" " );
           Serial.print(mydata.Temp);
@@ -297,6 +301,7 @@ void analyseData() {
           Serial.print(mydata.Hum);
           //ET.sendData(4); // vers le module (esclave) 4
           Serial.println(" transmis");
+*/
           Nr = 0;
         } else {
           // pas identique, on reprend à zéro

@@ -2,7 +2,7 @@
 class DecodeOOK {
 public:
     byte total_bits, max_bits,bits, flip, state, pos, data[25];
-    char sbits[100];
+    char sbits[256];
 //    String Spaquet; //tous les bits dans une String
     virtual char decode (word width) =0;
     
