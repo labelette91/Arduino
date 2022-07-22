@@ -210,7 +210,7 @@ public:
         }
         return total_bits == max_bits ? 1: 0;
     }
-byte GetHum (byte* data)
+byte gethumidity (byte* data)
 {
 	byte  iHum; // humidité
 	
@@ -221,12 +221,12 @@ byte GetHum (byte* data)
     return iHum;
 }	
 
-byte GetHum ()
+byte gethumidity ()
 {
-    return GetHum(data);
+    return gethumidity(data);
 }
 
-byte GetCanal (byte* data)
+byte getChannel (byte* data)
 {
 /*	iCanal = Bin2Dec(Spaquet.substring(19, 22));
     fTemp = (Bin2Dec(Spaquet.substring(22, 34)) - 720) * 0.0556;
@@ -242,13 +242,13 @@ byte GetCanal (byte* data)
 
     return iCanal & 0x3 ;
 }	
-byte GetCanal ()
+byte getChannel ()
 {
-    return GetCanal(data);
+    return getChannel(data);
 }
 
 
-float GetTemp (byte* data)
+float getTemperature (byte* data)
 {
 	float fTemp; // Température
 
@@ -264,9 +264,9 @@ float GetTemp (byte* data)
 	fTemp = (Temp-720)* 0.0556;
     return fTemp;	
 }	
-float GetTemp ()
+float getTemperature ()
 {
-    return GetTemp(data);
+    return getTemperature(data);
 }
 //bit 18 
 byte getBatteryLevel()
@@ -282,5 +282,37 @@ word getId()
     id += (data[2]>>6) ;
     return id;
 }
+
+void ReportSerial()
+ {
+					byte Id    = getId();
+					byte Canal = getChannel();
+					float Temp = getTemperature();
+					byte Hum   = gethumidity();
+#ifndef WIN32			
+					for (byte i=0;i<total_bits/8;i++) Serial.print(data[i],HEX); 
+					resetDecoder(); 
+
+					Serial.print(" TFA      : ");
+					Serial.print(Id);
+					Serial.print(" " );
+					Serial.print(Canal);
+					Serial.print(" " );
+					Serial.print(Temp);
+					Serial.print(" " );
+					Serial.println(Hum);
+#else
+for (byte i=0;i<total_bits/8;i++) printf("%02X",data[i]); 
+printf("Décodage : ");
+printf("%d ",getId());
+printf("%d",getChannel());
+printf(" " );
+printf("%f",getTemperature());
+printf(" " );
+printf("%d\n",gethumidity());
+					resetDecoder(); 
+
+#endif
+ }
 };
 

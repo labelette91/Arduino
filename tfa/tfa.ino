@@ -208,53 +208,22 @@ void hexBinDump() {
   }
 }
  
- void HidekiReportSerial()
- {
- }
- void managedHideki(word p)
+  void managedHideki(word p)
  {
 		if (p != 0) 
 		{
-			//get pinData
-			PulsePinData = p & 1;
-
-//			if((p>400)&&(p<600)) Serial.print(0);else Serial.print(1);
-//			Serial.println(p );
-
 			if (tfa3208.nextPulse(p))
 			{
-				if (data[0] == 81) 
+				if (tfa3208.data[0] == 81) 
 				{// ce sont bien nos sondes (signature, identification dans le 1er octet du header
 
-					byte Id    = tfa3208.getId();
-					byte Canal = tfa3208.GetCanal();
-					float Temp = tfa3208.GetTemp();
-					byte Hum   = tfa3208.GetHum();
-			
-	//				for (byte i=0;i<tfa3208.total_bits/8;i++) Serial.print(tfa3208.data[i],BIN); //		Serial.print(tfa3208.data[i],HEX);
-	//				Serial.print(tfa3208.sbits);  
-	//              Serial.print(" ");
-					for (byte i=0;i<tfa3208.total_bits/8;i++) Serial.print(tfa3208.data[i],HEX); 
-					tfa3208.resetDecoder(); 
-
-					// Serial.println(" ");
-					Serial.print(" TFA      : ");
-	//				Serial.print(tfa3208.getId());
-					Serial.print(Id);
-					Serial.print(" " );
-	//				Serial.print(tfa3208.GetCanal());
-					Serial.print(Canal);
-					Serial.print(" " );
-	//				Serial.print(tfa3208.GetTemp());
-					Serial.print(Temp);
-					Serial.print(" " );
-	//				Serial.println(tfa3208.GetHum());
-					Serial.println(Hum);
-	//				tfa3208.resetDecoder(); 
+#ifndef DOMOTIC
+					tfa3208.ReportSerial();
+#else
+					reportDomoticTempHum (tfa3208.getTemperature(), tfa3208.gethumidity(), tfa3208.getId(), tfa3208.getChannel(), tfa3208.getBatteryLevel());
+#endif
 				}
-				else
-					tfa3208.resetDecoder(); 
-
+				tfa3208.resetDecoder(); 
 			}
 		}
  }

@@ -173,11 +173,11 @@ printf("\n");
 
 printf("Décodage : ");
 printf("%d ",tfa3208.getId());
-printf("%d",tfa3208.GetCanal());
+printf("%d",tfa3208.getChannel());
 printf(" " );
-printf("%f",tfa3208.GetTemp());
+printf("%f",tfa3208.getTemperature());
 printf(" " );
-printf("%d\n",tfa3208.GetHum());
+printf("%d\n",tfa3208.gethumidity());
 
 
 // 01010001 01011001 00000101 00101011 01001111 10110011 
