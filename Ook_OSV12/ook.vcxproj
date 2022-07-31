@@ -48,7 +48,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Arduino\libraries\DecodeHomeEasy;C:\Arduino\libraries\def;C:\Arduino\libraries\RFM69;C:\Arduino\libraries\RFM69\pi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Arduino\libraries\DecodeHomeEasy;C:\Arduino\libraries\def;C:\Arduino\libraries\RFM69;C:\Arduino\libraries\RFM69\pi;C:\Arduino\libraries\HagerDecoder;C:\Arduino\libraries\HomeEasyTransmitter;C:\Arduino\libraries\DecodeMD230;C:\Arduino\libraries\DecodeOTIO;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>

@@ -113,7 +113,7 @@ HomeEasyTransmitter easy(PDATA,PCLK,ledPin);
 #include "hager.h"
 
 #ifdef HIDEKI_ENABLE        
-#include "c:\arduino\tfa\tfaDecoder.h"
+#include "tfaDecoder.h"
 Hideki tfa3208;
 #endif
 
