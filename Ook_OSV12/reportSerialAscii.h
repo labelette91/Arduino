@@ -1,3 +1,12 @@
+
+char DectoHex(byte v)
+{
+    if (v<=9)
+        return (v+'0');
+    else
+        return (v+'A'-10);
+}
+
 void printBinary ( byte * data , byte pos)
 {
 	for (byte i = 0; i < pos; ++i)
@@ -22,8 +31,8 @@ void printHexa (byte * data, byte pos)
 {
 
 for (byte i = 0; i < pos; ++i) {
-	Serial.print(data[i] >> 4, HEX);
-	Serial.print(data[i] & 0x0F, HEX);
+	Serial.print(DectoHex( data[i] >> 4 ));
+	Serial.print(DectoHex(data[i] & 0x0F));
 }
 }
 
@@ -57,12 +66,8 @@ void reportSerialAscii (const char* s, const byte* data,byte pos) {
 
 
 //sump binaire
-    for (byte i = 0; i < pos; ++i) {
-        Serial.print(data[i] >> 4, HEX);
-        Serial.print(data[i] & 0x0F, HEX);
-    }
-  
-  
+    printHexa (data, pos);
+    
 //    Serial.println();
  // Outside/Water Temp : THN132N,...
     if(data[0] == 0xEA && data[1] == 0x4C)
@@ -115,7 +120,9 @@ void reportSerialAscii (const char* s, const byte* data,byte pos) {
        }
     }
 
+#ifdef RFM69
      Serial.print(" RSSI:");Serial.print(radio.readRSSI());
+#endif
      Serial.println();
     
 }

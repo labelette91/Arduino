@@ -81,9 +81,6 @@
     <ClCompile Include="..\libraries\DecodeHomeEasy\DecodeHomeEasy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Ook_OSV12.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Domotic.h">
@@ -127,8 +124,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Ook_OSV12.ino">
-      <Filter>Source Files</Filter>
-    </None>
+    <None Include="Ook_OSV12.ino" />
   </ItemGroup>
 </Project>

@@ -257,7 +257,7 @@ void PulseLed();
  #ifndef DOMOTIC
               ptfa3208->ReportSerial();
  #else
-              reportDomoticTempHum (ptfa3208->.getTemperature(), ptfa3208->gethumidity(), ptfa3208->getId(), ptfa3208->getChannel(), ptfa3208->getBatteryLevel());
+              reportDomoticTempHum (ptfa3208->getTemperature(), ptfa3208->gethumidity(), ptfa3208->getId(), ptfa3208->getChannel(), ptfa3208->getBatteryLevel());
  #endif
           }
         }

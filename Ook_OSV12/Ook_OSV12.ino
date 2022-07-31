@@ -1,15 +1,15 @@
 //si = define  : report serial forma domoticz (binaire)
 //si =  : report serial format text 
 
-#define DOMOTIC 1
+//#define DOMOTIC 1
 
 #define OTIO_ENABLE 1
 #define OOK_ENABLE  1
 //#define HAGER_ENABLE 1
 //#define HOMEEASY_ENABLE 1
-#define MD230_ENABLE 1
-#define RUBICSON_ENABLE 1
-
+//#define MD230_ENABLE 1
+//#define RUBICSON_ENABLE 1
+#define  HIDEKI_ENABLE        
 
 #include <RFM69.h>
 #include <RFM69registers.h>
@@ -49,7 +49,13 @@ DecodeOTIO Otio(3);
 TFifo  fifo;
 
 #define PORT 2
+//#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1284__) || defined(__AVR_ATmega1284P__) || defined(__AVR_ATmega644__) || defined(__AVR_ATmega644A__) || defined(__AVR_ATmega644P__) || defined(__AVR_ATmega644PA__)
+#if defined(__AVR_ATmega2560__) 
+#define ledPin  13
+#else
 #define ledPin  9
+#endif
+
 #define PDATA 3 //pin for data input/output
 #define PCLK  4 //pin for clk  input/output
 
@@ -106,6 +112,40 @@ HomeEasyTransmitter easy(PDATA,PCLK,ledPin);
 
 #include "hager.h"
 
+#ifdef HIDEKI_ENABLE        
+#include "c:\arduino\tfa\tfaDecoder.h"
+Hideki tfa3208;
+#endif
+
+
+inline static void write(word w)
+{
+  if (w>=1000)
+  {
+  Serial.write(w/1000+'0'); w = w % 1000; 
+  Serial.write(w/100 +'0'); w = w % 100;  
+  Serial.write(w/10  +'0') ; w = w % 10;  
+  Serial.write(w     +'0') ;              
+  }
+  else if (w>=100)
+  {
+  Serial.write(w/100 +'0'); w = w % 100;  
+  Serial.write(w/10  +'0') ; w = w % 10;  
+  Serial.write(w     +'0') ;              
+  }
+  else if (w>=10)
+  {
+  Serial.write(w/10  +'0') ; w = w % 10;  
+  Serial.write(w     +'0') ;              
+  }
+  else 
+  {
+  Serial.write(w     +'0') ;              
+  }
+  Serial.write('\n');
+  
+}
+
 void reportSerial (const char* s, class DecodeOOK& decoder) 
 {
 #ifndef DOMOTIC
@@ -118,22 +158,25 @@ void reportSerial (const char* s, class DecodeOOK& decoder)
 void setup () {
 	  LastReceive = 0 ;
 	  NbReceive   = 0;
-    
+
+#ifndef DOMOTIC
+    Serial.begin(2000000);
+#else
     Serial.begin(38400);
-//    Serial.begin(115200);
-    
+#endif    
    // initialize the LED pin as an output:
     pinMode(ledPin, OUTPUT);       
     pinMode(PDATA, INPUT);
    
     pulse=0;
 
-    radio.initialize(RF69_433MHZ,1,100);
     attachInterrupt(1, ext_int_1, CHANGE);
+#ifdef RFM69
+    radio.initialize(RF69_433MHZ,1,100);
 
     radio.setMode(RF69_MODE_RX);
-    DomoticInit();
-//    PulseLed();
+
+		    PulseLed();
     //2400 bauds bit rate 3,4
     radio.writeReg(REG_BITRATEMSB,RF_BITRATEMSB_2400);
     radio.writeReg(REG_BITRATELSB,RF_BITRATELSB_2400);
@@ -145,8 +188,13 @@ void setup () {
 //    radio.writeReg(REG_OOKFIX,84 );
     //lna 50 h    
     radio.writeReg(REG_LNA, RF_LNA_ZIN_50);
+#endif     
+
     HEasy.resetDecoder();
 	  MD230.resetDecoder();
+
+		DomoticInit();
+
 #ifndef DOMOTIC
     Serial.print("Version ");
     Serial.println(VERSION);
@@ -174,9 +222,10 @@ void loop () {
     word p = fifo.get();
 
 		if (p != 0) {
-			//get pinData
-			PulsePinData = p & 1;
+//            if (p>200)		write(p/10);
 
+            //get pinData
+			PulsePinData = p & 1;
 			NbPulse++;
 			Dt = millis() / 1000;
 			if (Dt != LastReceive)
@@ -184,6 +233,7 @@ void loop () {
 					LastReceive = Dt ;
 					NbPulsePerSec = NbPulse;
 					NbPulse = 0;
+//          Serial.print(".");
 			}
 			if (orscV2.nextPulse(p))
 			{
@@ -293,6 +343,9 @@ void loop () {
 			}
 #endif      	
 
+#ifdef HIDEKI_ENABLE        
+      managedHideki(&tfa3208,p);
+#endif
 
     }
 
@@ -303,10 +356,19 @@ void loop () {
 	//attente une secone max pour emetre si emission en cours -80--> -70
 	//pas de reception en cours
 	if (   (DomoticPacketReceived)
+#ifdef RFM69
 		  && (radio.canSend(-70)   )
+#endif
+#ifdef OTIO_ENABLE        
 		  && (Otio.total_bits ==0)
+#endif
+#ifdef OOK_ENABLE        
 		  && (orscV2.total_bits == 0)
+#endif
+#ifdef RUBICSON_ENABLE        
 		  && (Rubicson.total_bits == 0)
+#endif
+
 //		  && (HEasy.total_bits == 0)
 //		  && (MD230.total_bits == 0)
 		)
@@ -321,9 +383,8 @@ void loop () {
     }
     else
     {
-			rssi = radio.readRSSI();
-			
-			detachInterrupt(1);
+#ifdef RFM69
+	    detachInterrupt(1);
 	    easy.initPin();
 	    radio.setMode(RF69_MODE_TX);
 			delay(10);
@@ -363,6 +424,7 @@ void loop () {
 	    pinMode(PDATA, INPUT);
 	    attachInterrupt(1, ext_int_1, CHANGE);
 	    radio.setMode(RF69_MODE_RX);
+#endif
     }
   	digitalWrite(ledPin,LOW);
 		DomoticPacketReceived = false;
@@ -400,4 +462,3 @@ void reportTemperatureToDomotic()
 #endif
 
 }
-

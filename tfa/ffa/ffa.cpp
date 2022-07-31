@@ -21,7 +21,14 @@ return *this ;
 }
 }; 
 
-
+int millis()
+{
+return 0;
+}
+void PulseLed()
+{
+}
+#include "../DecodeOOK.h"
 #include "../tfaDecoder.h"
 Hideki tfa3208;
 
