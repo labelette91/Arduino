@@ -142,7 +142,7 @@ byte getChannel (byte* data)
 	//bit 19 a 21
 	iCanal  = data[2] >> 2;
 
-    return iCanal & 0x3 ;
+    return (iCanal & 0x3) + 1 ;
 }	
 byte getChannel ()
 {
@@ -257,7 +257,7 @@ void PulseLed();
  #ifndef DOMOTIC
               ptfa3208->ReportSerial();
  #else
-              reportDomoticTempHum (ptfa3208->getTemperature(), ptfa3208->gethumidity(), ptfa3208->getId(), ptfa3208->getChannel(), ptfa3208->getBatteryLevel());
+              reportDomoticTempHum (ptfa3208->getTemperature()*10 , ptfa3208->gethumidity(), ptfa3208->getId(), ptfa3208->getChannel(), ptfa3208->getBatteryLevel());
  #endif
           }
         }
