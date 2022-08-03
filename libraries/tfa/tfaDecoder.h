@@ -9,7 +9,7 @@ public:
     //last packet data received ident
     byte lastdata[6] ;
 
-    Hideki() {}
+    Hideki() : DecodeOOK () {}
     
     // add one bit to the packet data buffer
     virtual void gotBit (char value) {
@@ -253,6 +253,7 @@ void PulseLed();
         {// ce sont bien nos sondes (signature, identification dans le 1er octet du header
           if (ptfa3208->newPacket())
           {
+            PulseLed();
             
  #ifndef DOMOTIC
               ptfa3208->ReportSerial();
@@ -262,7 +263,6 @@ void PulseLed();
           }
         }
         ptfa3208->resetDecoder(); 
-        PulseLed();
       }
     }
  }

@@ -28,8 +28,8 @@ return 0;
 void PulseLed()
 {
 }
-#include "../DecodeOOK.h"
-#include "../tfaDecoder.h"
+#include "../../libraries/tfa/DecodeOOK.h"
+#include "../../libraries/tfa/tfaDecoder.h"
 Hideki tfa3208;
 
 

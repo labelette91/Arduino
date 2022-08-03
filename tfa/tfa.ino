@@ -10,9 +10,10 @@
                 https://github.com/madsci1016/Arduino-EasyTransfer/tree/master/EasyTransferI2C
 */
  
-#include <Wire.h>
+//#include <Wire.h>
  
 // RTC
+
  
 //==================================
 const byte MxCnl = 8 ; // Nombre max de canaux / satellites
@@ -42,9 +43,13 @@ const int EtalonH[MxCnl] = { -2, 0, 2, -2, -4, -2, 2, 3};
  
 //Interface Definitions
 //int RxPin           = 8;   //The number of signal from the Rx
+#ifdef ESP8266
+int RxPin           = 5;   //The number of signal from the Rx
+int ledPin          = 2;  //The number of the onboard LED pin
+#else
 int RxPin           = 3;   //The number of signal from the Rx
 int ledPin          = 13;  //The number of the onboard LED pin
- 
+#endif 
 // Variables for Manchester Receiver Logic:
 //word    sDelay     = 250;  //Small Delay about 1/4 of bit duration  try like 250 to 500
 //220 semble donner de meilleurs résultats
@@ -67,6 +72,20 @@ byte    nosBytes   = 0;
 byte    nosRepeats = 0;
  
 byte  manchester[20];
+
+#include "user_interface.h"
+
+int getBootDevice(void) {
+  int bootmode;
+  asm (
+    "movi %0, 0x60000200\n\t"
+    "l32i %0, %0, 0x118\n\t"
+    : "+r" (bootmode) /* Output */
+    : /* Inputs (none) */                
+    : "memory" /* Clobbered */           
+  );
+  return ((bootmode >> 0x10) & 0x7); 
+}
  
 void PulseLed()
 {
@@ -76,26 +95,6 @@ void PulseLed()
          digitalWrite(ledPin, LOW);  
 }
 
-void setup() {
- 
-  Serial.begin(115200);
- 
-  Wire.begin();
-  //start the library, pass in the data details and the name of the serial port. Can be Serial, Serial1, Serial2, etc.
-//  ET.begin(details(mydata), &Wire);
- 
-  pinMode(RxPin, INPUT);
-  pinMode(ledPin, OUTPUT);
-  lDelay = 2 * sDelay;
-  eraseManchester();
- 
-  attachInterrupt(1, ext_int_1, CHANGE);
-
- 
-  Serial.println(F("START Module 3 Prod v1 : TFA >=> I2C"));
-    sei();
- 
-}
  
 volatile word 	pulse;
 byte            pinData;
@@ -110,7 +109,11 @@ TFifo  fifo;
 #include "tfaDecoder.h"
 Hideki tfa3208;
  
+#ifdef ESP8266
+void ICACHE_RAM_ATTR ext_int_1(void) {
+#else
 void ext_int_1(void) {
+#endif
     static unsigned long  last;
 
     // determine the pulse length in microseconds, for either polarity
@@ -129,14 +132,54 @@ void ext_int_1(void) {
 
 		fifo.put(pulse);
 }
+
+
+void setup() {
+ 
+//  Serial.begin(115200);
+  Serial.begin(1000000);
+  
+  if ( getBootDevice() == 1 ) {
+    Serial.println("\n\nLe ESP8266 est encore en mode UART et les redémarrages");
+    Serial.println("ne fonctionneront pas correctement. Appuyez sur le bouton");
+    Serial.println("RESET ou interrompez temporairement l'alimentation pour");
+    Serial.println("sortir de ce mode."); 
+    while (1) { yield(); }
+  }
+  
+   Serial.println( );
+   Serial.print("START " );
+   Serial.print(RxPin );
+   Serial.print(ledPin );
+//  Wire.begin();
+  //start the library, pass in the data details and the name of the serial port. Can be Serial, Serial1, Serial2, etc.
+//  ET.begin(details(mydata), &Wire);
+ 
+  pinMode(RxPin, INPUT);
+  pinMode(ledPin, OUTPUT);
+  lDelay = 2 * sDelay;
+  eraseManchester();
+
+ 
+//  attachInterrupt(1, ext_int_1, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(RxPin) , ext_int_1, CHANGE);
+
+ 
+  Serial.println(F("START Module 3 Prod v1 : TFA >=> I2C"));
+    sei();
+ PulseLed();
+
+}
  
 void loop() {
 
 	word p = 1 ;
 	p = fifo.get();
+ //if (p>100)
+ // Serial.println(p/10);
+ 
 	managedHideki(&tfa3208,p);
     delayMicroseconds(sDelay);
-
 return;
 
   // Routine épurée basé sur https://github.com/robwlakes/ArduinoWeatherOS
