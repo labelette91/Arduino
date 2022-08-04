@@ -46,7 +46,7 @@ void printTab(byte tab, byte n)
 
 }
 
-void reportSerialAscii (const char* s,  byte* data,byte pos) {
+void reportSerialAscii (const char* s, const byte* data,byte pos) {
 	  byte nb;
     Serial.print(s);
     Serial.print(' ');

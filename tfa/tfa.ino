@@ -94,7 +94,22 @@ void PulseLed()
       else
          digitalWrite(ledPin, LOW);  
 }
+char DectoHex(byte v)
+{
+    if (v<=9)
+        return (v+'0');
+    else
+        return (v+'A'-10);
+}
 
+void printHexa ( byte * data, byte pos)
+{
+
+for (byte i = 0; i < pos; ++i) {
+	Serial.print(DectoHex( data[i] >> 4 ));
+	Serial.print(DectoHex(data[i] & 0x0F));
+}
+}
  
 volatile word 	pulse;
 byte            pinData;
@@ -137,7 +152,8 @@ void ext_int_1(void) {
 void setup() {
  
 //  Serial.begin(115200);
-  Serial.begin(1000000);
+//  Serial.begin(1000000);
+  Serial.begin(2000000);
   
   if ( getBootDevice() == 1 ) {
     Serial.println("\n\nLe ESP8266 est encore en mode UART et les redémarrages");
