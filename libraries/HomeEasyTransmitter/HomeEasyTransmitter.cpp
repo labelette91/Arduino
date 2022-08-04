@@ -40,7 +40,7 @@
 #include <stdio.h>
 #include <Arduino.h>
 #include <avr/pgmspace.h>
-#include <timer.h>
+//#include <timer.h>
 #define DelayMicroseconds(VALUE)     delayMicroseconds(VALUE);
 #define DelayMicrosecondsHard(VALUE) delayMicroseconds(VALUE);
 #else

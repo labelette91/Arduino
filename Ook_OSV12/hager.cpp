@@ -1,7 +1,7 @@
 #include "arduino.h"
 #include <avr/pgmspace.h>
 
-#include <timer.h>
+//#include <timer.h>
 
 
 #define DelayMicroseconds(VALUE) delayMicroseconds(VALUE);

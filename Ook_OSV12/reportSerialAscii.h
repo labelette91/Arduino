@@ -27,7 +27,7 @@ void printBinary ( byte * data , byte pos)
 }
 
 //sump hex
-void printHexa (byte * data, byte pos)
+void printHexa ( byte * data, byte pos)
 {
 
 for (byte i = 0; i < pos; ++i) {
@@ -46,7 +46,7 @@ void printTab(byte tab, byte n)
 
 }
 
-void reportSerialAscii (const char* s, const byte* data,byte pos) {
+void reportSerialAscii (const char* s,  byte* data,byte pos) {
 	  byte nb;
     Serial.print(s);
     Serial.print(' ');
@@ -66,7 +66,7 @@ void reportSerialAscii (const char* s, const byte* data,byte pos) {
 
 
 //sump binaire
-    printHexa (data, pos);
+    printHexa ((byte*)data, pos);
     
 //    Serial.println();
  // Outside/Water Temp : THN132N,...
@@ -106,8 +106,6 @@ void reportSerialAscii (const char* s, const byte* data,byte pos) {
     {
        Serial.print("[CMR180,...] Id:");
        Serial.print(data[0], HEX);Serial.print(data[1], HEX);
-       Serial.print(", size:");
-       Serial.print(pos);
        Serial.print(" ,power:");
        Serial.print(getPower((byte*)data)); 
        if (pos > 6) {
@@ -120,7 +118,7 @@ void reportSerialAscii (const char* s, const byte* data,byte pos) {
        }
     }
 
-#ifdef RFM69
+#ifdef RFM69_ENABLE
      Serial.print(" RSSI:");Serial.print(radio.readRSSI());
 #endif
      Serial.println();
