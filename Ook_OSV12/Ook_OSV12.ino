@@ -1,7 +1,8 @@
 //si = define  : report serial forma domoticz (binaire)
 //si =  : report serial format text 
 
-#define DOMOTIC 1
+//#define DOMOTIC 1
+//#define RFM69_ENABLE
 
 #define OTIO_ENABLE 1
 #define OOK_ENABLE  1
@@ -33,12 +34,15 @@ DecodeRubicson  Rubicson;
 
 //end oregon 
 
+#ifdef HOMEEASY_ENABLE
 #include "DecodeHomeEasy.h"
 DecodeHomeEasy HEasy ;
+#endif
 
+#ifdef MD230_ENABLE
 #include "DecodeMD230.h"
 DecodeMD230 MD230(2) ;
-
+#endif
 
 #ifdef OTIO_ENABLE        
 #include <DecodeOTIO.h>
@@ -50,15 +54,21 @@ TFifo  fifo;
 
 #define PORT 2
 //#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1284__) || defined(__AVR_ATmega1284P__) || defined(__AVR_ATmega644__) || defined(__AVR_ATmega644A__) || defined(__AVR_ATmega644P__) || defined(__AVR_ATmega644PA__)
-#if defined(__AVR_ATmega2560__) 
-#define ledPin  13
-#else
-#define ledPin  9
-#endif
+// #if defined(__AVR_ATmega2560__) 
+// #define ledPin  13 sur UNO
+// #define ledPin  9 sur anarduino
+// #define ledPin  2 sur 8266
 
+#define ledPin  LED_BUILTIN
+
+#ifdef ESP8266
+#define PDATA 5 // GPIO5 = D1 sur la carte wiimos
+#define PCLK  4 // GPIO4 = D2 sur la carte wiimos
+
+#else
 #define PDATA 3 //pin for data input/output
 #define PCLK  4 //pin for clk  input/output
-
+#endif
 volatile word pulse;
 
 word  	LastReceive ;
@@ -75,8 +85,13 @@ byte            pinData;
 byte            PulsePinData;
 
 //le signal du RFM69 entre sur int ext    d3 : int1
-
+//sur 8266 : interrupt shall be in IRAM
+#ifdef ESP8266
+void ICACHE_RAM_ATTR ext_int_1(void) {
+#else
 void ext_int_1(void) {
+#endif
+
     static unsigned long  last;
 
     // determine the pulse length in microseconds, for either polarity
@@ -120,6 +135,7 @@ Hideki tfa3208;
 
 inline static void write(word w)
 {
+  static byte nbc = 0;
   if (w>=1000)
   {
   Serial.write(w/1000+'0'); w = w % 1000; 
@@ -142,7 +158,12 @@ inline static void write(word w)
   {
   Serial.write(w     +'0') ;              
   }
-  Serial.write('\n');
+  nbc++;
+  if ((nbc%16) == 0 )
+    Serial.write('\n');
+  else
+    Serial.write(' ');
+
   
 }
 
@@ -161,6 +182,7 @@ void setup () {
 
 #ifndef DOMOTIC
     Serial.begin(2000000);
+    //Serial.begin(115200);
 #else
     Serial.begin(38400);
 #endif    
@@ -170,8 +192,9 @@ void setup () {
    
     pulse=0;
 
-    attachInterrupt(1, ext_int_1, CHANGE);
-#ifdef RFM69
+    attachInterrupt(digitalPinToInterrupt(PDATA) , ext_int_1, CHANGE);
+
+#ifdef RFM69_ENABLE
     radio.initialize(RF69_433MHZ,1,100);
 
     radio.setMode(RF69_MODE_RX);
@@ -190,11 +213,15 @@ void setup () {
     radio.writeReg(REG_LNA, RF_LNA_ZIN_50);
 #endif     
 
+#ifdef HOMEEASY_ENABLE
     HEasy.resetDecoder();
+#endif
+#ifdef MD230_ENABLE
 	  MD230.resetDecoder();
-
+#endif
 		DomoticInit();
 
+delay(100);
 #ifndef DOMOTIC
     Serial.print("Version ");
     Serial.println(VERSION);
@@ -221,8 +248,9 @@ void loop () {
 	word rssi;
     word p = fifo.get();
 
-		if (p != 0) {
-//            if (p>200)		write(p/10);
+		if (p > 0 ) {
+//            if (p>200)		
+//                write(p/10);
 
             //get pinData
 			PulsePinData = p & 1;
@@ -263,7 +291,11 @@ void loop () {
 				else
 				{
 #ifndef DOMOTIC
-					Serial.println("Bad checksum");
+					Serial.print("Bad checksum ");
+
+                    Serial.print(orscV2.total_bits); Serial.print(' ');
+                    Serial.print(orscV2.state     ); Serial.print(' ');
+
 					reportSerial("OSV2", orscV2);
 #endif     
 				}
@@ -356,7 +388,7 @@ void loop () {
 	//attente une secone max pour emetre si emission en cours -80--> -70
 	//pas de reception en cours
 	if (   (DomoticPacketReceived)
-#ifdef RFM69
+#ifdef RFM69_ENABLE
 		  && (radio.canSend(-70)   )
 #endif
 #ifdef OTIO_ENABLE        
@@ -369,8 +401,12 @@ void loop () {
 		  && (Rubicson.total_bits == 0)
 #endif
 
+#ifdef HOMEEASY_ENABLE
 //		  && (HEasy.total_bits == 0)
+#endif
+#ifdef MD230_ENABLE
 //		  && (MD230.total_bits == 0)
+#endif
 		)
   {
   	digitalWrite(ledPin,HIGH);
@@ -383,8 +419,9 @@ void loop () {
     }
     else
     {
-#ifdef RFM69
-	    detachInterrupt(1);
+#ifdef RFM69_ENABLE
+	    detachInterrupt(digitalPinToInterrupt(PDATA));
+
 	    easy.initPin();
 	    radio.setMode(RF69_MODE_TX);
 			delay(10);
@@ -422,7 +459,7 @@ void loop () {
 
 	
 	    pinMode(PDATA, INPUT);
-	    attachInterrupt(1, ext_int_1, CHANGE);
+        attachInterrupt(digitalPinToInterrupt(PDATA) , ext_int_1, CHANGE);
 	    radio.setMode(RF69_MODE_RX);
 #endif
     }
