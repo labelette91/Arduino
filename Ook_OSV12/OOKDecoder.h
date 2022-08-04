@@ -84,7 +84,7 @@ public:
 
     DecodeOOK () { resetDecoder(); }
 
-    bool nextPulse (word width) {
+    virtual bool nextPulse (word width) {
         if (state != DONE)
         
             switch (decode(width)) {
@@ -197,6 +197,17 @@ public:
           // Exceptions :
           if(data[0] == 0x3A  && data[1] == 0x80)
             max_bits = (11*16); // CML180
+			
+          else  if(data[0] == 0xEA && data[1] == 0x4C)  // Outside/Water Temp : THN132N,...
+            max_bits = 160;
+          else if(data[0] == 0x1A && data[1] == 0x2D)   // Inside Temp-Hygro : THGR228N,...
+            max_bits = 160;
+          else
+          {
+            resetDecoder();
+            return;
+          }
+
 /*
           else if(data[0] == 0xEA)
           {
@@ -268,7 +279,7 @@ public:
                     }
                     break;
             }
-        } else if (width >= 2500  && pos >= 8) {
+        } else if (width >= 2500  && total_bits == max_bits ) {
             return 1;
         } else {
             return -1;
