@@ -21,14 +21,13 @@ return *this ;
 }
 }; 
 
-int millis()
-{
-return 0;
-}
 void PulseLed()
 {
 }
-#include "../../libraries/tfa/DecodeOOK.h"
+#include "../../rubicson/VSPDE.h"
+#include  "../../Ook_OSV12/reportSerial.h"
+
+#include "../../Ook_OSV12/DecodeOOK.h"
 #include "../../libraries/tfa/tfaDecoder.h"
 Hideki tfa3208;
 
@@ -148,37 +147,37 @@ word pulse[]= {
 0,
 
 
--1
+0xFFFF
 };
 
 
 
-
-int main()
+void loop()
+{}
+void setup()
 {
 
     int i=0;
-while (pulse[i]!=-1)
+while (pulse[i]!=0xFFFF)
 {
-			if (tfa3208.nextPulse(pulse[i]*500 + 500 ))
+			if (tfa3208.nextPulse(pulse[i]*500 + 500 )){
                 printf("ok");
-printf ("i:%2d p:%d state:%d \n", i, pulse[i],tfa3208.state );
+                printf ("i:%2d p:%d state:%d \n", i, pulse[i],tfa3208.state );
+                break;
+            }
             i++;
 }
-printf("%s\n",tfa3208.sbits);
 
 //printf ("%s\n",tfa3208.Spaquet.c_str());
 
-for (int i=0;i<tfa3208.total_bits/8;i++ )
-        printf ("%d ",tfa3208.data[i]);
+tfa3208.ReportSerial();
 
-for (int i=0;i<tfa3208.total_bits/8;i++ )
-        printf ("%02X ",tfa3208.data[i]);
-
-printf("\n");
+//for (int i=0;i<tfa3208.total_bits/8;i++ )         printf ("%d ",tfa3208.data[i]);
+//for (int i=0;i<tfa3208.total_bits/8;i++ )        printf ("%02X ",tfa3208.data[i]);
+//printf("\n");
 //printf("%s", tfa3208.Spaquet.substring(0 , 11).c_str() );
 
-printf("Décodage : ");
+printf("decodage : ");
 printf("%d ",tfa3208.getId());
 printf("%d",tfa3208.getChannel());
 printf(" " );
@@ -187,7 +186,15 @@ printf(" " );
 printf("%d\n",tfa3208.gethumidity());
 
 
-// 01010001 01011001 00000101 00101011 01001111 10110011 
+if ( tfa3208.getId()         != 100       )printf ("error 1");
+if ( tfa3208.getChannel()    != 2         )printf ("error 2");
+if ((tfa3208.getTemperature()-26.5212)>.01)printf ("error 3");
+if ( tfa3208.gethumidity()   !=62         )printf ("error 4");
+if ( tfa3208.getBatteryLevel()!= 15       )printf ("error 5");
+
+// 5159052B4FB3 01010001 01011001 00000101 00101011 01001111 10110011
+
+//              01010001 01011001 00000101 00101011 01001111 10110011 
 // 010100010101100100000101001010110100111110110011 
    
 // 01010001010 1100 10

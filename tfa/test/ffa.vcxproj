@@ -151,6 +151,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Ook_OSV12\util.cpp" />
+    <ClCompile Include="..\..\rubicson\vspde.cpp" />
     <ClCompile Include="ffa.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
