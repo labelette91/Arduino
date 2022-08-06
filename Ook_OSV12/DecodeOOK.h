@@ -1,9 +1,9 @@
+#pragma once
 
 class DecodeOOK {
 public:
     byte total_bits, max_bits,bits, flip, state, pos, data[25];
-    char sbits[256];
-//    String Spaquet; //tous les bits dans une String
+
     virtual char decode (word width) =0;
     
 public:
@@ -12,7 +12,7 @@ public:
 
     DecodeOOK () { resetDecoder(); }
 
-    bool nextPulse (word width) {
+    virtual bool nextPulse (word width) {
         if (state != DONE)
         
             switch (decode(width)) {
@@ -36,7 +36,6 @@ public:
         total_bits = bits = pos = flip = 0;
         state = UNKNOWN;
         max_bits = 160;
-//        Spaquet="";
     }
     
     // add one bit to the packet data buffer

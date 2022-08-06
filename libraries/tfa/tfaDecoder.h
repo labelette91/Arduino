@@ -2,6 +2,7 @@
 
 // 433 MHz decoders
 
+//#include "DecodeOOK.h"
 
 class Hideki : public DecodeOOK {
 public:
@@ -84,8 +85,8 @@ public:
                     if (w == 0) {
                         // short pulse
                         ++flip;
-                    } else if (w == 1 && flip >= 15 ) {
-//                    } else if (w == 1 && flip >= 9 ) {
+                    } else if (w == 1 && flip >= 11 ) {
+//                    } else if (w == 1 && flip >= 15 ) {
                         // long pulse, start bit
                         flip = 0;
                          manchester(0);
@@ -210,10 +211,11 @@ void ReportSerial()
 					byte Hum   = gethumidity();
                     byte bat   = getBatteryLevel();
 #ifndef WIN32			
-                     printHexa ( data, total_bits/8);
+                    printHexa ( data, total_bits/8);
+//                    printBinary ( data, total_bits/8 , 8 );
 					resetDecoder(); 
 
-					Serial.print(" TFA      : ");
+					Serial.print(" TFA:");
 					Serial.print(Id);
 					Serial.print(" " );
 					Serial.print(Canal);
@@ -242,19 +244,20 @@ printf("%d\n",gethumidity());
   bool newPacket()
   {
     //send at least every 10 min
-    register unsigned long time = millis() ;
-	if (  (time - LastSend) > (10*60*1000)  ) 
-    {
-      lastdata[5] = 0;
-    }
+ //   register unsigned long time = millis() ;
+	//if (  (time - LastSend) > (10*60*1000)  ) 
+ //   {
+ //     lastdata[5] = 0;
+ //   }
 
-    if ((lastdata[5] != data[5]) || (lastdata[3] != data[3]) || (lastdata[4] != data[4]) || (lastdata[1] != data[1]) || (lastdata[2] != data[2])) {
+      //ignore 2 low temp bits 
+    if ((lastdata[5] != data[5]) || (lastdata[3] != data[3]) || ( ( lastdata[4] & 0x3F)  != (data[4] & 0x3F) ) ||  (lastdata[1] != data[1]) || (lastdata[2] != data[2])) {
       lastdata[1] = data[1];
       lastdata[2] = data[2];
       lastdata[3] = data[3];
       lastdata[4] = data[4];
       lastdata[5] = data[5];
-      LastSend =time ;
+//      LastSend =time ;
 
       return true;
     }
@@ -273,7 +276,7 @@ printf("%d\n",gethumidity());
         return true ;
     }
 
-  virtual bool nextPulse (word width) {
+  virtual bool nextPulse1 (word width) {
     bool receivedOk = DecodeOOK::nextPulse(width);
     if (receivedOk)
 	{
@@ -289,7 +292,7 @@ printf("%d\n",gethumidity());
     return receivedOk;
   }
 
-/*
+
     virtual bool nextPulse (word width) 
     {
         bool receivedOk = DecodeOOK::nextPulse(width);
@@ -297,7 +300,8 @@ printf("%d\n",gethumidity());
         if (receivedOk)
         {
             //if packet valid
-            if (valid() )
+//            if (valid() )
+            if (1 )
             {
                 numberSamePacketReceided ++ ;
         
@@ -330,7 +334,7 @@ printf("%d\n",gethumidity());
         }
         return receivedOk ;
     }
-*/
+
 };
 void PulseLed();
  void managedHideki(Hideki* ptfa3208 , word p)
@@ -345,8 +349,7 @@ void PulseLed();
             
  #ifndef DOMOTIC
 //              if (ptfa3208->newPacket())  Serial.print("NEW ");
-                Serial.print(ptfa3208->DeltaReceivedTime());
-                Serial.print(" ");
+//                Serial.print(ptfa3208->DeltaReceivedTime());                Serial.print(" ");
                 ptfa3208->ReportSerial();
  #else
               reportDomoticTempHum (ptfa3208->getTemperature()*10 , ptfa3208->gethumidity(), ptfa3208->getId(), ptfa3208->getChannel(), ptfa3208->getBatteryLevel());

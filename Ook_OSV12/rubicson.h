@@ -1,5 +1,5 @@
 void printHexa(byte * data, byte pos);
-void printBinary(byte * data, byte pos); 
+void printBinary(byte * data, byte pos,byte space ); 
 class DecodeOOKV2 {
 public:
 	byte total_bits, bits, state, pos, data[25];
@@ -230,7 +230,7 @@ Each (group) of numbers has a specific meaning:
 	  Serial.print(gethumidity());
 
 		Serial.print(' ');
-		printBinary(data, pos);
+		printBinary(data, pos,4);
 
 	  Serial.print('\n');
 	  Serial.print('\r');
