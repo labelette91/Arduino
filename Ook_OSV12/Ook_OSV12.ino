@@ -1,11 +1,12 @@
+
 //si = define  : report serial forma domoticz (binaire)
 //si =  : report serial format text 
 
 //#define DOMOTIC 1
 //#define RFM69_ENABLE
 
-#define OTIO_ENABLE 1
-#define OOK_ENABLE  1
+//#define OTIO_ENABLE 1
+//#define OOK_ENABLE  1
 //#define HAGER_ENABLE 1
 //#define HOMEEASY_ENABLE 1
 //#define MD230_ENABLE 1
@@ -419,12 +420,13 @@ void loop () {
     }
     else
     {
-#ifdef RFM69_ENABLE
 	    detachInterrupt(digitalPinToInterrupt(PDATA));
 
 	    easy.initPin();
+#ifdef RFM69_ENABLE
 	    radio.setMode(RF69_MODE_TX);
-			delay(10);
+#endif
+        delay(10);
 	    	
 	    if (Cmd.LIGHTING2.packettype==pTypeLighting2) 
 			{  //
@@ -460,6 +462,7 @@ void loop () {
 	
 	    pinMode(PDATA, INPUT);
         attachInterrupt(digitalPinToInterrupt(PDATA) , ext_int_1, CHANGE);
+#ifdef RFM69_ENABLE
 	    radio.setMode(RF69_MODE_RX);
 #endif
     }

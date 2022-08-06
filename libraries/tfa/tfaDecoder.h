@@ -41,7 +41,6 @@ public:
         }
         state = OK;
     }
-    
     virtual char decode (word width) {
         if (400 <= width && width < 1100 ) 
         {
@@ -156,7 +155,7 @@ void ReportSerial()
 					byte Hum   = gethumidity();
                     byte bat   = getBatteryLevel();
                     printHexa ( data, total_bits/8);
-                    printBinary ( data, total_bits/8 , 8 );
+ //                   printBinary ( data, total_bits/8 , 8 );
 					Serial.print(" TFA:");
 					Serial.print(Id);
 					Serial.print(" " );
@@ -173,12 +172,10 @@ void ReportSerial()
   {
     //send at least every 10 min
     register unsigned long time = millis() ;
-    if (  (time - LastSend) > (1*60*1000)  ) 
+    if (  (time - LastSend) > (60000L)  ) 
     {
         lastdata[0] = 0;
     }
-
-      //ignore 2 low temp bits 
     if ((lastdata[0] !=getId()) || (lastdata[1] != getCrc() ) )
     {
       lastdata[0] = getId();
@@ -204,19 +201,20 @@ void ReportSerial()
       if (!valid()) 
 	  {
           receivedOk = false ;
-          resetDecoder(); 
  #ifndef DOMOTIC
-          Serial.print("TFA BAD ");
-          ReportSerial();
+          Serial.println("TFA BAD ");
+          //ReportSerial();
  #endif 
+          resetDecoder(); 
       }
       if (!newPacket())
       {
           receivedOk = false ;
-          resetDecoder(); 
  #ifndef DOMOTIC
-          Serial.println("TFA SAME");
+          //Serial.println("TFA SAME ");
+          //ReportSerial();
  #endif 
+          resetDecoder(); 
       }
     }
     return receivedOk;
