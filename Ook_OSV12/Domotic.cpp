@@ -134,10 +134,6 @@ void reportDomoticTemp ( int temp , byte id1 , byte id2 ,  byte bateryLevel){
             
     Serial.write((byte*)&Send.Temp,9);
 }
-void reportDomoticTemp ( const byte* data){
-	reportDomoticTemp ( temperatureint(data) , 0x48  , 0x00 , battery(data) );
-	
-}
 
 //temp = temperature * 10 
 void reportDomoticTempHum ( int temp , byte hum , byte id1 , byte id2, byte bateryLevel){

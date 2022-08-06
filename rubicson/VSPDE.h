@@ -72,14 +72,18 @@ public:
 	void print(const char*);
 	void print(const char);
 	void print(int,int);
+	void print(unsigned long value);
+	void print(float val);
 
 	void println();
-	void println(char*);
+	void println(const char*);
 	void println(int,int);
 	void print(int value);
+	void print(byte value);
 
 	void println(unsigned int,int);
 	void println(unsigned long,int);
+	void println(byte value);
 	int available();
 	char read();
 

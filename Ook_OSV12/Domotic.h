@@ -212,8 +212,6 @@ extern  tRBUF Cmd ;
 extern bool DomoticPacketReceived;
 
 extern void DomoticReceive();
-extern void reportDomoticTemp ( const byte* data);
-extern void reportDomoticTempHum ( const byte* data);
 extern unsigned long getLightingId ();
 extern void  DomoticInit();
 extern void reportDomoticTemp ( int temp , byte id1 , byte id2 , byte bateryLevel);

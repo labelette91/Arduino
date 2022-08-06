@@ -83,7 +83,18 @@ void CSerial::print(int value, int f)
 void CSerial::print(int value)
 {
 		printf("%d", value);
-
+}
+void CSerial::print(byte value)
+{
+		printf("%d", value);
+}
+void CSerial::print(unsigned long  value)
+{
+		printf("%d", value);
+}
+void CSerial::print(float value)
+{
+		printf("%f", value);
 }
 
 void CSerial::println()
@@ -91,12 +102,16 @@ void CSerial::println()
 	printf("\r\n");
 }
 
-void CSerial::println(char *pString)
+void CSerial::println(const char *pString)
 {
 	printf("%s\r\n", pString);
 }
 
 void CSerial::println(int value, int)
+{
+	printf("%d\r\n", value);
+}
+void CSerial::println(byte value)
 {
 	printf("%d\r\n", value);
 }
