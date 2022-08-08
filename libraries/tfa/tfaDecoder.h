@@ -278,7 +278,7 @@ void PulseLed();
                 Serial.print(ptfa3208->DeltaReceivedTime());                Serial.print(" ");
                 ptfa3208->ReportSerial();
  #else
-              reportDomoticTempHum (ptfa3208->getTemperature()*10 , ptfa3208->gethumidity(), ptfa3208->getId(), ptfa3208->getChannel(), ptfa3208->getBatteryLevel());
+              reportDomoticTempHum (ptfa3208->getTemperature()*10 , ptfa3208->gethumidity(), ptfa3208->getId(), ptfa3208->getChannel(), ptfa3208->getBatteryLevel(),sTypeTH11_TFA);
  #endif
           }
         }

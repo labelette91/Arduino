@@ -2,11 +2,11 @@
 //si = define  : report serial forma domoticz (binaire)
 //si =  : report serial format text 
 
-//#define DOMOTIC 1
+#define DOMOTIC 1
 //#define RFM69_ENABLE
 
-//#define OTIO_ENABLE 1
-//#define OOK_ENABLE  1
+#define OTIO_ENABLE 1
+#define OOK_ENABLE  1
 //#define HAGER_ENABLE 1
 //#define HOMEEASY_ENABLE 1
 //#define MD230_ENABLE 1
@@ -120,6 +120,8 @@ RFM69 radio;
 // pin 3 : data pin
 // pin 4 : clk  pin
 HomeEasyTransmitter easy(PDATA,PCLK,ledPin);
+
+#include  "reportSerial.h"
 
 #ifndef DOMOTIC
 #include  "reportSerialAscii.h"
@@ -367,7 +369,7 @@ void loop () {
 						reportDomoticTemp(Rubicson.getTemperatureOtio(), Rubicson.getIdOtio(), 0           , Rubicson.getBatteryLevelOtio());
 					else
 //  					reportDomoticTemp(Rubicson.getTemperature(), Rubicson.getId(), Rubicson.getChannel(), Rubicson.getBatteryLevel());
-					  reportDomoticTempHum (Rubicson.getTemperature(), Rubicson.gethumidity(), Rubicson.getId(), Rubicson.getChannel(), Rubicson.getBatteryLevel());
+					  reportDomoticTempHum (Rubicson.getTemperature(), Rubicson.gethumidity(), Rubicson.getId(), Rubicson.getChannel(), Rubicson.getBatteryLevel(),sTypeTH10_RUBiCSON);
 
 #endif
 					PulseLed();

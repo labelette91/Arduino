@@ -27,43 +27,7 @@
     <ClCompile Include="Oregon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ConfZ1.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ConfZ2.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ConfZ3.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ConfZ4.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="header.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Hz1.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Hz2.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Z1Conf.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Z1Eco.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="z2Conf.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="z2eco.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="z3conf.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="z3eco.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libraries\HomeEasyTransmitter\HomeEasyTransmitter.cpp">
@@ -120,6 +84,15 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libraries\DecodeOTIO\DecodeOTIO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DecodeOOK.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fifo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rubicson.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

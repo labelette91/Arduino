@@ -139,8 +139,8 @@ struct {	//response on a mode command from the application
 		byte	total4;
 		byte	total5;
 		byte	total6;
-		byte	rssi : 4;
 		byte	battery_level : 4;
+		byte	rssi : 4;
 	} ENERGY;
 
 	struct {
@@ -207,6 +207,36 @@ struct {	//response on a mode command from the application
 #define pTypePOWER 0x5C
 #define sTypeELEC5 0x1   //revolt
 
+//types for temperature+humidity
+#define pTypeTEMP_HUM 0x52
+#define sTypeTH1_OREGON 0x1  //THGN122/123,THGN132,THGR122/228/238/268
+#define sTypeTH2 0x2  //THGR810,THGN800
+#define sTypeTH3 0x3  //RTGR328
+#define sTypeTH4 0x4  //THGR328
+#define sTypeTH5 0x5  //WTGR800
+#define sTypeTH6 0x6  //THGR918,THGRN228,THGN500
+#define sTypeTH7 0x7  //TFA TS34C, Cresta
+#define sTypeTH8 0x8  //WT450H
+#define sTypeTH9 0x9  //Viking 02035,02038 (02035 has no humidity), TSS320
+#define sTypeTH10_RUBiCSON 0xA   //Rubicson
+#define sTypeTH11_TFA 0xB   //EW109
+#define sTypeTH12 0xC   //Imagintronix
+#define sTypeTH13 0xD   //Alecto WS1700 and compatibles
+#define sTypeTH14 0xE   //Alecto
+
+//types for temperature
+#define pTypeTEMP 0x50
+#define sTypeTEMP1 0x1  //THR128/138,THC138, Davis
+#define sTypeTEMP2 0x2  //THC238/268,THN132,THWR288,THRN122,THN122,AW129/131
+#define sTypeTEMP3 0x3  //THWR800
+#define sTypeTEMP4 0x4	//RTHN318
+#define sTypeTEMP5 0x5  //LaCrosse TX3
+#define sTypeTEMP6 0x6  //TS15C
+#define sTypeTEMP7 0x7  //Viking 02811,TSS330
+#define sTypeTEMP8 0x8  //LaCrosse WS2300
+#define sTypeTEMP9 0x9  //RUBiCSON
+#define sTypeTEMP10_TFA 0xA  //TFA 30.3133
+#define sTypeTEMP11 0xB  //WT0122
 
 extern  tRBUF Cmd ;
 extern bool DomoticPacketReceived;
@@ -215,7 +245,7 @@ extern void DomoticReceive();
 extern unsigned long getLightingId ();
 extern void  DomoticInit();
 extern void reportDomoticTemp ( int temp , byte id1 , byte id2 , byte bateryLevel);
-extern void reportDomoticTempHum ( int temp , byte hum , byte id1 , byte id2, byte bateryLevel);
+extern void reportDomoticTempHum ( int temp , byte hum , byte id1 , byte id2, byte bateryLevel, byte subType);
 extern void DomoticStartReceive();
 extern void DomoticStatus();
 void reportHagerDomotic ( const byte* data, byte pos );

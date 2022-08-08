@@ -1,4 +1,4 @@
-
+#pragma once
 char DectoHex(byte v)
 {
     if (v<=9)

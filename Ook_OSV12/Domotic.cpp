@@ -116,7 +116,7 @@ void reportDomoticTemp ( int temp , byte id1 , byte id2 ,  byte bateryLevel){
 
 		Send.Temp.packetlength = 8;
 		Send.Temp.packettype   = 0x50;
-		Send.Temp.subtype      = 05  ;
+		Send.Temp.subtype      = sTypeTEMP5  ;
 		Send.Temp.seqnbr       = Seqnbr++;
 		Send.Temp.id1          = id1 ;
 		Send.Temp.id2          = id2 ;
@@ -136,7 +136,7 @@ void reportDomoticTemp ( int temp , byte id1 , byte id2 ,  byte bateryLevel){
 }
 
 //temp = temperature * 10 
-void reportDomoticTempHum ( int temp , byte hum , byte id1 , byte id2, byte bateryLevel){
+void reportDomoticTempHum ( int temp , byte hum , byte id1 , byte id2, byte bateryLevel , byte subType ){
 	
 	
 	//test if as changed
@@ -144,7 +144,7 @@ void reportDomoticTempHum ( int temp , byte hum , byte id1 , byte id2, byte bate
 	{
   Send.Temp_Hum.packetlength = sizeof(Send.Temp_Hum)-1;
   Send.Temp_Hum.packettype   = 0x52;   //pTypeTEMP_HUM
-  Send.Temp_Hum.subtype      = 01  ;   //sTypeTH1 0x1  //THGN122/123,THGN132,THGR122/228/238/268
+  Send.Temp_Hum.subtype      = subType  ;   //sTypeTH1 0x1  //THGN122/123,THGN132,THGR122/228/238/268
   Send.Temp_Hum.seqnbr       = Seqnbr++;
   Send.Temp_Hum.id1          = id1;
   Send.Temp_Hum.id2          = id2;
@@ -182,7 +182,8 @@ tlong.Long= getTotalPower(data);
   Send.ENERGY.seqnbr       = Seqnbr++;
   Send.ENERGY.id1          = data[0];
   Send.ENERGY.id2          = data[1];
-  
+  Send.ENERGY.battery_level=15;
+  Send.ENERGY.rssi=9;
  	Send.ENERGY.count=1;     
 	Send.ENERGY.instant1=0;
 	Send.ENERGY.instant2=0;
@@ -210,7 +211,7 @@ void reportDomotic ( const byte* data,byte size ){
   if (getSensorByte1(data)==HOMESWITCH_ID0)
     reportDomoticHomeEasy( (byte*)data, size );
   else
-    reportDomoticTempHum (temperatureint(data) , getHumidity(data) , getId(data),channel(data), battery(data));
+    reportDomoticTempHum (temperatureint(data) , getHumidity(data) , getId(data),channel(data), battery(data), sTypeTH1_OREGON );
 	
 }
 

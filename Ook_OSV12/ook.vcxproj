@@ -76,23 +76,11 @@
     <ClCompile Include="..\libraries\DecodeMD230\DecodeMD230.cpp" />
     <ClCompile Include="..\libraries\HomeEasyTransmitter\HomeEasyTransmitter.cpp" />
     <ClCompile Include="..\libraries\RFM69\RFM69.cpp" />
-    <ClCompile Include="ConfZ1.c" />
-    <ClCompile Include="ConfZ2.c" />
-    <ClCompile Include="ConfZ3.c" />
-    <ClCompile Include="ConfZ4.c" />
     <ClCompile Include="Domotic.cpp" />
     <ClCompile Include="fifo.cpp" />
     <ClCompile Include="hager.cpp" />
     <ClCompile Include="header.c" />
-    <ClCompile Include="Hz1.c" />
-    <ClCompile Include="Hz2.c" />
     <ClCompile Include="Oregon.cpp" />
-    <ClCompile Include="Z1Conf.c" />
-    <ClCompile Include="Z1Eco.c" />
-    <ClCompile Include="z2Conf.c" />
-    <ClCompile Include="z2eco.c" />
-    <ClCompile Include="z3conf.c" />
-    <ClCompile Include="z3eco.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libraries\DecodeMD230\DecodeMD230.h" />
@@ -100,13 +88,16 @@
     <ClInclude Include="..\libraries\HomeEasyTransmitter\HomeEasyTransmitter.h" />
     <ClInclude Include="..\libraries\RFM69\RFM69.h" />
     <ClInclude Include="..\libraries\RFM69\RFM69registers.h" />
+    <ClInclude Include="DecodeOOK.h" />
     <ClInclude Include="Domotic.h" />
+    <ClInclude Include="fifo.h" />
     <ClInclude Include="hager.h" />
     <ClInclude Include="nouveau dossier\Domotic.h" />
     <ClInclude Include="OOKDecoder.h" />
     <ClInclude Include="Oregon.h" />
     <ClInclude Include="Record.h" />
     <ClInclude Include="reportSerialAscii.h" />
+    <ClInclude Include="rubicson.h" />
     <ClInclude Include="SerialRfmCmd.h" />
   </ItemGroup>
   <ItemGroup>
