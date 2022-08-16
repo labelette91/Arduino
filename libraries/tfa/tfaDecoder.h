@@ -4,6 +4,8 @@
 
 //#include "DecodeOOK.h"
 uint8_t lfsr_digest8(uint8_t const message[], unsigned bytes, uint8_t gen, uint8_t key);
+uint16_t getRaw16bValue(uint8_t* data, uint8_t offset, uint8_t size);
+uint8_t getRaw08bValue(uint8_t* data, uint8_t offset, uint8_t size);
 
 class Hideki : public DecodeOOK {
 public:
@@ -115,6 +117,7 @@ float getTemperature (byte* data)
 {
 	float fTemp; // Température
     int Temp   = ((data[3] & 0x0f) << 8) | data[4]; 
+//    int Temp = getRaw16bValue(data,28,12);
 	//convert T = (X - 720) * 0.0556
 	fTemp = (Temp-720)* 0.0556;
     return fTemp;	
