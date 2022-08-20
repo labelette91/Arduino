@@ -1,8 +1,10 @@
-
+#ifdef WIN32
+#include "../vspde.h"
+#endif
 //si = define  : report serial forma domoticz (binaire)
 //si =  : report serial format text 
 
-#define DOMOTIC 1
+//#define DOMOTIC 1
 //#define RFM69_ENABLE
 
 #define OTIO_ENABLE 1
@@ -12,11 +14,8 @@
 //#define MD230_ENABLE 1
 //#define RUBICSON_ENABLE 1
 #define  HIDEKI_ENABLE        
-#define  BMP180_ENABLE        
+//#define  BMP180_ENABLE        
 
-#include <RFM69.h>
-#include <RFM69registers.h>
-#include <SPI.h>
 // Oregon V2 decoder added - Dominique Pierre
 // Oregon V3 decoder revisited - Dominique Pierre
 // New code to decode OOK signals from weather sensors, etc.
@@ -114,7 +113,12 @@ void ext_int_1(void) {
 }
 #include "Oregon.h"
 
+#ifdef RFM69_ENABLE
+#include <RFM69.h>
+#include <RFM69registers.h>
+#include <SPI.h>
 RFM69 radio;
+#endif
 
 // This is the Home Easy controller
 // This example will use a 433AM transmitter on
@@ -549,13 +553,16 @@ void printRSSI()
 {
 //print RSSI
 if ((millis() - Last ) > 5000 ) {
+#ifdef RFM69_ENABLE
       Serial.print(radio.readRSSI());  
+#endif
       Last = millis() ;
 }
 }
 
 void reportTemperatureToDomotic()
 {
+#ifdef RFM69_ENABLE
       // -1 = user cal factor, adjust for correct ambient
       byte temperature =  radio.readTemperature(-1); 
 
@@ -565,5 +572,5 @@ void reportTemperatureToDomotic()
 #else
        reportDomoticTemp ( temperature , 0x45  , 0 ,15 );
 #endif
-
+#endif
 }
