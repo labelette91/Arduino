@@ -1,5 +1,6 @@
 #define VERSION 15
 
+
 typedef union tRBUF {
 //domotic structure
 	struct T_TEMP {
@@ -166,8 +167,58 @@ struct {	//response on a mode command from the application
 		byte	rssi : 4;
 		byte	battery_level : 4;
 	} CURRENT_ENERGY;
-	
+
+ struct 
+{
+	uint8_t len;
+	uint8_t type;
+	uint8_t subtype;
+	uint8_t id1;
+	float   temp;
+	float   baro;
+	float   altitude;
+	uint8_t forecast;
+
+} _tTempBaro;
+
+#define BYTE byte
+ 	struct {
+		BYTE	packetlength;
+		BYTE	packettype;
+		BYTE	subtype;
+		BYTE	seqnbr;
+		BYTE	id1;
+		BYTE	id2;
+#ifdef IS_BIG_ENDIAN
+		BYTE	tempsign : 1;
+		BYTE	temperatureh : 7;
+#else
+		BYTE	temperatureh : 7;
+		BYTE	tempsign : 1;
+#endif
+		BYTE	temperaturel;
+		BYTE	humidity;
+		BYTE	humidity_status;
+		BYTE	baroh;
+		BYTE	barol;
+		BYTE	forecast;
+#ifdef IS_BIG_ENDIAN
+		BYTE	rssi : 4;
+		BYTE	battery_level : 4;
+#else
+		BYTE	battery_level : 4;
+		BYTE	rssi : 4;
+#endif
+	} TEMP_HUM_BARO;
+
+
 }_tRBUF;	
+
+#define pTypeTEMP_BARO 0xF7
+#define sTypeBMP085 0x01
+
+
+
 
 #define cmdRESET	  0x00 // reset the receiver/transceiver
 #define cmdSTATUS	  0x02 // return firmware versions and configuration of the interface
@@ -238,8 +289,15 @@ struct {	//response on a mode command from the application
 #define sTypeTEMP10_TFA 0xA  //TFA 30.3133
 #define sTypeTEMP11 0xB  //WT0122
 
+#define pTypeTEMP_HUM_BARO 0x54
+#define sTypeTHB1 0x1   //BTHR918,BTHGN129
+#define sTypeTHB2 0x2   //BTHR918N,BTHR968
+#define sTypeTHBFloat 0x10	    // Weather Station
+
 extern  tRBUF Cmd ;
 extern bool DomoticPacketReceived;
+
+bool DomoticReceptionInProgress();
 
 extern void DomoticReceive();
 extern unsigned long getLightingId ();
@@ -250,6 +308,8 @@ extern void DomoticStartReceive();
 extern void DomoticStatus();
 void reportHagerDomotic ( const byte* data, byte pos );
 void resetLastSensorValue();
+void reportDomoticTempBaro(byte id1, float temp, float baro, float altitude, uint8_t forecast);
+void reportDomoticTempHumBaro(byte id1, byte unit, float temperature, float pressure, uint8_t forecast, byte humidity, byte BatteryLevel, byte RssiLevel);
 void reportDomotic ( const byte* data,byte size );
 void reportDomoticHomeEasy ( const byte* data, byte pos );
 void reportDomoticMD230(const byte* data, byte pos);

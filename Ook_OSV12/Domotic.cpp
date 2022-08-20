@@ -71,6 +71,12 @@ Seqnbr=0;
 DomoticPacketReceived = false;
 
 }
+
+/// return true if packet en cours de reception
+bool DomoticReceptionInProgress()
+{
+    return receiveLength != 0 ;
+}
 //reception d'une commande de send domotic
 void DomoticReceive()
 {
@@ -198,6 +204,66 @@ tlong.Long= getTotalPower(data);
   
   Serial.write((byte*)&Send.Temp_Hum,sizeof(Send.ENERGY));
               
+}
+
+void reportDomoticTempBaro (byte id1 , float temp , float baro , float altitude , uint8_t forecast )
+{
+
+    Send._tTempBaro.len     = sizeof(Send. _tTempBaro) - 1;
+	Send._tTempBaro.type    = pTypeTEMP_BARO;
+	Send._tTempBaro.subtype = sTypeBMP085;
+	Send._tTempBaro.id1     = id1 ;
+    Send._tTempBaro.temp    = temp ;
+    Send._tTempBaro.baro    = baro ;
+    Send._tTempBaro.altitude= altitude;
+    Send._tTempBaro.forecast= forecast;
+    Serial.write((byte*)&Send._tTempBaro,sizeof(Send._tTempBaro));
+}
+
+//status types for humidity
+#define humstat_normal 0x0
+#define humstat_comfort 0x1
+#define humstat_dry 0x2
+#define humstat_wet 0x3
+
+unsigned char Get_Humidity_Level(const unsigned char hlevel)
+{
+	if (hlevel < 25)
+		return humstat_dry;
+	if (hlevel > 60)
+		return humstat_wet;
+	if ((hlevel >= 25) && (hlevel <= 60))
+		return humstat_comfort;
+	return humstat_normal;
+}
+
+void reportDomoticTempHumBaro (byte id1 , byte unit ,float temperature , float pressure , uint8_t forecast , byte humidity , byte BatteryLevel , byte RssiLevel  )
+{
+
+	Send.TEMP_HUM_BARO.packetlength = sizeof(Send.TEMP_HUM_BARO) - 1;
+	Send.TEMP_HUM_BARO.packettype = pTypeTEMP_HUM_BARO;
+	Send.TEMP_HUM_BARO.subtype = sTypeTHB1;
+	Send.TEMP_HUM_BARO.battery_level = BatteryLevel;
+	Send.TEMP_HUM_BARO.rssi = RssiLevel;
+	Send.TEMP_HUM_BARO.id1 = id1;
+	Send.TEMP_HUM_BARO.id2 = unit;
+
+	Send.TEMP_HUM_BARO.tempsign = (temperature >= 0) ? 0 : 1;
+	int at10 = (abs(temperature * 10.0F));
+	Send.TEMP_HUM_BARO.temperatureh = (BYTE)(at10 / 256);
+	at10 -= (Send.TEMP_HUM_BARO.temperatureh * 256);
+	Send.TEMP_HUM_BARO.temperaturel = (BYTE)(at10);
+	Send.TEMP_HUM_BARO.humidity = (BYTE)humidity;
+	Send.TEMP_HUM_BARO.humidity_status = Get_Humidity_Level(humidity);
+
+	int ab10 = round(pressure);
+	Send.TEMP_HUM_BARO.baroh = (BYTE)(ab10 / 256);
+	ab10 -= (Send.TEMP_HUM_BARO.baroh * 256);
+	Send.TEMP_HUM_BARO.barol = (BYTE)(ab10);
+
+	Send.TEMP_HUM_BARO.forecast = (BYTE)forecast;
+
+    Serial.write((byte*)&Send.TEMP_HUM_BARO,sizeof(Send.TEMP_HUM_BARO));
 }
 
 

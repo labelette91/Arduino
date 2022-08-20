@@ -12,6 +12,7 @@
 //#define MD230_ENABLE 1
 //#define RUBICSON_ENABLE 1
 #define  HIDEKI_ENABLE        
+#define  BMP180_ENABLE        
 
 #include <RFM69.h>
 #include <RFM69registers.h>
@@ -72,18 +73,18 @@ TFifo  fifo;
 #endif
 volatile word pulse;
 
-word  	LastReceive ;
-
 //last packet data received ident
 byte data0,data1,data2,data3;
 
 word 		NbReceive;
-word 		Dt;
 word 	NbPulse  ;
 word 	NbPulsePerSec ;
 byte            pinData;
 //etat du pulse
 byte            PulsePinData;
+word 		Seconds;
+word 		lastSeconds;
+word 		lastMinute ;
 
 //le signal du RFM69 entre sur int ext    d3 : int1
 //sur 8266 : interrupt shall be in IRAM
@@ -135,6 +136,25 @@ HomeEasyTransmitter easy(PDATA,PCLK,ledPin);
 Hideki tfa3208;
 #endif
 
+#ifdef BMP180_ENABLE
+#include <Wire.h>
+#include <BMP180advanced.h>
+
+/*
+BMP180advanced(resolution)
+
+resolution:
+BMP180_ULTRALOWPOWER - pressure oversampled 1 time  & power consumption 3uA
+BMP180_STANDARD      - pressure oversampled 2 times & power consumption 5uA
+BMP180_HIGHRES       - pressure oversampled 4 times & power consumption 7uA
+BMP180_ULTRAHIGHRES  - pressure oversampled 8 times & power consumption 12uA, library default
+*/
+BMP180advanced myBMP(BMP180_ULTRAHIGHRES);
+
+float coefPressureSeaLevel;
+
+#endif
+
 
 inline static void write(word w)
 {
@@ -180,7 +200,6 @@ void reportSerial (const char* s, class DecodeOOK& decoder)
 }
 
 void setup () {
-	  LastReceive = 0 ;
 	  NbReceive   = 0;
 
 #ifndef DOMOTIC
@@ -224,6 +243,26 @@ void setup () {
 #endif
 		DomoticInit();
 
+#ifdef BMP180_ENABLE
+        bool status = myBMP.begin();
+        //compute coeficien niveau de la mer     pressureSeaLevel =  (pressure / pow(1.0 - (float)trueAltitude / 44330, 5.255));
+        // coefPressureSeaLevel = 0,991730   1/coefPressureSeaLevel = 1.008338963225878
+        float trueAltitude = 70.0;
+        coefPressureSeaLevel =  pow(1.0 - (float)trueAltitude / 44330, 5.255) ;
+
+        #ifndef DOMOTIC
+        if (status != true)
+        {
+            Serial.println(F("Bosch BMP180/BMP085 is not connected or fail to read calibration coefficients"));
+        }
+  
+        Serial.println(F("Bosch BMP180/BMP085 sensor is OK ")); //(F()) saves string to flash & keeps dynamic memory free
+        Serial.print(" coefPressureSeaLevel ");
+        Serial.println(coefPressureSeaLevel,6 );
+        #endif
+
+#endif
+
 delay(100);
 #ifndef DOMOTIC
     Serial.print("Version ");
@@ -258,20 +297,44 @@ void loop () {
             //get pinData
 			PulsePinData = p & 1;
 			NbPulse++;
-			Dt = millis() / 1000;
-			if (Dt != LastReceive)
+			Seconds = millis() / 1000;
+            //every seconds
+			if (Seconds != lastSeconds)
 			{
-					LastReceive = Dt ;
+					lastSeconds = Seconds ;
 					NbPulsePerSec = NbPulse;
 					NbPulse = 0;
 //          Serial.print(".");
 			}
+            //every minute
+            if ((Seconds/60)!= lastMinute )
+            {
+                if (!DomoticReceptionInProgress())
+                {
+                    lastMinute = Seconds/60;
+#ifdef BMP180_ENABLE
+                    float temp = myBMP.getTemperature() ;
+                    uint32_t pressureInPa = myBMP.getPressure() ;
+#ifndef DOMOTIC
+                    Serial.print(F("Temperature.......: ")); Serial.print(temp, 1);              Serial.println(F(" +-1.0C"));
+                    Serial.print(F("Pressure..........: ")); Serial.print(pressureInPa);         Serial.println(F(" +-1hPa"));
+                    Serial.print(F("Pressure Sea Level: ")); Serial.print((float)pressureInPa/coefPressureSeaLevel);         Serial.println(F(" +-1hPa"));
+#else                    
+                    reportDomoticTempBaro (1 , temp , pressureInPa/100  , 50.0  , 1 );
+
+                    reportDomoticTempHumBaro (1,1  , temp , pressureInPa/100 ,  1,  0  , 0xff , 0xFF   );
+#endif
+#endif
+                }
+                lastMinute = Seconds/60;
+            }
+
+
 			if (orscV2.nextPulse(p))
 			{
 					// -1 : on retire le byte de postambule
 				if (checksum(orscV2.getData(), orscV2.pos - 1))
 				{
-					Dt = (millis() - LastReceive) / 1000;
 					if ((data3 != orscV2.data[3]) || (data0 != orscV2.data[0]) || (data1 != orscV2.data[1]) || (data2 != orscV2.data[2])) {
 						PulseLed();
 #ifdef OOK_ENABLE        
