@@ -43,7 +43,7 @@ public:
         }
         state = OK;
     }
-    virtual char decode (word width) {
+    virtual char decode (word width, byte BitData) {
         if (400 <= width && width < 1100 ) 
         {
             byte w = width >= 750;

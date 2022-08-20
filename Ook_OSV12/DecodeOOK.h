@@ -1,21 +1,99 @@
 #pragma once
 
+#include  "reportSerial.h"
+
+#ifdef WIN32
+#else
+#endif    
+
+#define REPORT_DOMOTIC 0
+#define REPORT_SERIAL       1
+#define SERIAL_DEBUG 2
+
+
+#define INVALID_INT 0x7F
+
+typedef enum {
+	LSB_FIRST = 0,
+	MSB_FIRST = 1,
+} TBIT_STREAM ;
+
 class DecodeOOK {
 public:
     byte total_bits, max_bits,bits, flip, state, pos, data[25];
 
-    virtual char decode (word width) =0;
+	TBIT_STREAM bitStream = MSB_FIRST;
+	
+	virtual char decode(word width, byte level) { return -1; };
+
+    virtual float getTemperature() {	  return (INVALID_INT);  }
+    virtual byte  gethumidity()  {	  return (INVALID_INT);  }
+    virtual byte getId()         {	  return (INVALID_INT);  }
     
+    virtual byte getBatteryLevel() {		  return 15;  } //return 15 if batterie OK  
+    virtual byte getChannel()      {	  return  1;  }    
+    virtual float getPressure()      {	  return  INVALID_INT;  }    
+    virtual char* getName()      {	  return  "";  }    
+    virtual bool isValid()      		 {	  return  false;  }    
+    
+    virtual  void ReportSerial(byte rtype) 
+	{
+        Serial.print(getName());
+		Serial.print(' ');
+        Serial.print(millis() / 1000);
+		int temp = getTemperature();
+		if (temp != INVALID_INT )
+		{
+			Serial.print(" T:");
+			Serial.print(temp );
+		}
+        Serial.print(" Id:");
+        Serial.print(getId() );
+        Serial.print(" Chn:");
+        Serial.print(getChannel());
+        Serial.print(" Bat:");
+        Serial.print(getBatteryLevel());
+		byte hum = gethumidity() ;
+		if (hum != INVALID_INT )
+		{
+			Serial.print(" Hum:");
+			Serial.print(hum);
+		}
+		float pressure = getPressure() ;
+		if (pressure != INVALID_INT )
+		{
+			Serial.print(" Pressure:");
+			Serial.print(pressure);
+		}
+		
+		if (rtype == SERIAL_DEBUG ){
+			Serial.print(' ');
+			printBinary (data, pos , 8 );
+		}
+        Serial.print('\n');
+        Serial.print('\r');
+    }
+	virtual void report(byte rtype)
+	{
+		if (rtype == REPORT_DOMOTIC ){
+//				if (gethumidity() != INVALID_INT)
+//					  reportDomoticTempHum (getTemperature(), gethumidity(), getId(), getChannel(), getBatteryLevel());
+		}
+		else	
+		{
+					  ReportSerial(rtype);
+		}    
+	}
 public:
 
     enum { UNKNOWN, T0, T1, T2, T3, OK, DONE };
 
     DecodeOOK () { resetDecoder(); }
 
-    virtual bool nextPulse (word width) {
+	virtual bool nextPulse(word width, byte level=0) {
         if (state != DONE)
         
-            switch (decode(width)) {
+			switch (decode(width, level)) {
                 case -1: resetDecoder(); break;
                 case 1:  done(); break;
             }
@@ -40,7 +118,21 @@ public:
     
     // add one bit to the packet data buffer
     
-    virtual void gotBit (char value) {
+    void gotBitMsb (char value) {
+        total_bits++;
+        byte *ptr = data + pos;
+		*ptr = (*ptr << 1) | (value);
+
+        if (++bits >= 8) {
+            bits = 0;
+            if (++pos >= sizeof data) {
+                resetDecoder();
+                return;
+            }
+        }
+        state = OK;
+    }
+	 void gotBitLsb (char value) {
         total_bits++;
         byte *ptr = data + pos;
         *ptr = (*ptr >> 1) | (value << 7);
@@ -54,6 +146,14 @@ public:
         }
         state = OK;
     }
+	virtual void gotBit (char value) 
+	{
+		if ( bitStream == MSB_FIRST )
+			gotBitMsb ( value) ;
+		else
+			gotBitLsb ( value) ;
+	
+	}
     
     // store a bit using Manchester encoding
     void manchester (char value) {
