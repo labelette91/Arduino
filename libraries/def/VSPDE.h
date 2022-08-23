@@ -12,9 +12,6 @@
 
 #include "arduino.h"
 
-//#define byte unsigned char
-//#define word unsigned short  
-
 #pragma warning(disable : 4996)
 
 //#include <stdio.h>
@@ -27,7 +24,6 @@
 #define _SFR_IO8(io_addr) ((io_addr))
 //#include "C:\Program Files\Arduino\hardware\tools\avr\avr\include\avr\iomxx0_1.h"
 
-#define boolean bool
 
 // From "c:\program files\arduino\hardware\cores\arduino\print.h"
 
@@ -44,12 +40,6 @@
 
 #define INPUT 0x0
 #define OUTPUT 0x1
-
-#define PI 3.14159265
-#define HALF_PI 1.57079
-#define TWO_PI 6.283185
-#define DEG_TO_RAD 0.01745329
-#define RAD_TO_DEG 57.2957786
 
 #define SERIAL  0x0
 #define DISPLAY 0x1
@@ -97,12 +87,6 @@ private:
 };
 
 extern CSerial Serial1;
-extern unsigned long millis();
-extern void delay(unsigned long);
-extern void pinMode(int,int);
-extern void digitalWrite(int,int);
-extern bool digitalRead(int);
-extern unsigned long micros();
 extern void cli();
 extern void sei();
 

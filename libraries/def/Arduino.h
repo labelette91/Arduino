@@ -21,11 +21,16 @@
 #define Arduino_h
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
+#include "deftype.h"
 
 #define PROGMEM
+
+#define __asm__ 
+#define __volatile__(B)
 
 #ifdef __cplusplus
 extern "C"{
@@ -90,17 +95,17 @@ void yield(void);
 #define bitWrite(value, bit, bitvalue) (bitvalue ? bitSet(value, bit) : bitClear(value, bit))
 
 
-typedef unsigned int word;
+//typedef unsigned int word;
 
 #define bit(b) (1UL << (b))
 
-typedef bool boolean;
-typedef uint8_t byte;
+//typedef bool boolean;
+//typedef uint8_t byte;
 
 
-typedef unsigned char uint8_t;
-typedef unsigned short uint16_t;
-typedef unsigned int   uint32_t;
+// typedef unsigned char uint8_t;
+// typedef unsigned short uint16_t;
+// typedef unsigned int   uint32_t;
 
 
 void init(void);
@@ -228,12 +233,13 @@ long map(long, long, long, long, long);
 #define OCT 8
 #define BIN 2
 
-extern int printf(const char *, ...);
 class Print
 {
 public:
+	char buffer[1024];
+	int buflen;
 
-	static int PRINT(long mes, int base, bool lf)
+	int PRINT(long mes, int base, bool lf)
 	{
 		switch (base) {
 		case BIN: printf("%d", mes);
@@ -252,39 +258,71 @@ public:
 	}
 
 
-	static int write(uint8_t mes) { printf("%02X", mes); };
+	int write(byte mes) { printf("%02X", mes); return 1; };
 
-	static int write(const char *buffer, int size) {
+	int write(const byte *buffer, int size) {
 		for (int i = 0; i<size; i++) write(buffer[i]);
+        return size;
 	}
 
-	static int write(const char *str) {
+	int write(const byte *str) {
 		if (str == NULL) return 0;
-		return write(str, strlen(str));
+		return write(str, strlen((char*)str));
 	}
 
-	static int print(const char mes[]) { return printf("%s", mes); };
-	static int print(char mes) { return printf("%c", mes); };
-	static int print(unsigned char mes, int base = DEC) { return PRINT(mes, base, false); };
-	static int print(int mes, int base = DEC) { return PRINT(mes, base, false); };
-	static int print(unsigned int mes, int base = DEC) { return PRINT(mes, base, false); };
-	static int print(long mes, int base = DEC) { return PRINT(mes, base, false); };
-	static int print(unsigned long mes, int base = DEC) { return PRINT(mes, base, false); };
-	static int print(double mes, int base = 2) { return printf("%f", mes); };
-	static int println(const char mes[]) { return printf("%s\n", mes); };
-	static int println(char mes) { return printf("%c\n", mes); };
-	static int println(unsigned char mes, int base = DEC) { return PRINT(mes, base, true); };
-	static int println(int mes, int base = DEC) { return PRINT(mes, base, true); };
-	static int println(unsigned int mes, int base = DEC) { return PRINT(mes, base, true); };
-	static int println(long mes, int base = DEC) { return PRINT(mes, base, true); };
-	static int println(unsigned long mes, int base = DEC) { return PRINT(mes, base, true); };
-	static int println(double mes, int base = 2) { return printf("%f\n", mes); };
-	static int println(void) { return printf("\n"); };
+	 int print(const char mes[]) { return printf("%s", mes); };
+	 int print(char mes) { return printf("%c", mes); };
+	 int print(unsigned char mes, int base = DEC) { return PRINT(mes, base, false); };
+	 int print(int mes, int base = DEC) { return PRINT(mes, base, false); };
+	 int print(unsigned int mes, int base = DEC) { return PRINT(mes, base, false); };
+	 int print(long mes, int base = DEC) { return PRINT(mes, base, false); };
+	 int print(unsigned long mes, int base = DEC) { return PRINT(mes, base, false); };
+	 int print(double mes, int base = 2) { return printf("%f", mes); };
+	 int println(const char mes[]) { return printf("%s\n", mes); };
+	 int println(char mes) { return printf("%c\n", mes); };
+	 int println(unsigned char mes, int base = DEC) { return PRINT(mes, base, true); };
+	 int println(int mes, int base = DEC) { return PRINT(mes, base, true); };
+	 int println(unsigned int mes, int base = DEC) { return PRINT(mes, base, true); };
+	 int println(long mes, int base = DEC) { return PRINT(mes, base, true); };
+	 int println(unsigned long mes, int base = DEC) { return PRINT(mes, base, true); };
+	 int println(double mes, int base = 2) { return printf("%f\n", mes); };
+	 int println(void) { return printf("\n"); };
 
-	static bool available() { return false; };
-	static byte  read() { return 0; };
+
+    int available() 
+    {
+	    return buflen;
+    };
+
+     char read() 
+    { 
+	    char c = 0;
+	    if (buflen > 0)
+	    {
+		    c = buffer[0];
+		    memcpy(&buffer[0], &buffer[1], --buflen);
+	    }
+	    return c;
+    };
+    void _append(char c)
+    {
+	    buffer[buflen] = c;
+	    if (++buflen >= 1024)
+	    {
+		    buflen--;
+	    }
+    };
+
+
+
+
+
+    void begin(long){ };
 
 };
+
+extern void cli();
+extern void sei();
 
 extern Print Serial;
 #endif

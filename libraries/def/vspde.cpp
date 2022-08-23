@@ -16,41 +16,70 @@
 extern void setup();
 extern void loop();
 
-CSerial Serial;
+Print Serial;
 
 //--------------------------------------------------------------------
 // Timers
 //--------------------------------------------------------------------
+void init(void)
+{}
+void initVariant(void)
+{}
 
-unsigned long millis()
-{
-//	return (clock() * 1000)  /* /  CLOCKS_PER_SEC */;
-  return 1;
-}
-
-void delay(unsigned long delayms)
-{
-	unsigned long u = millis() + delayms;
-	while (u > millis())
-		;
-}
-
-//--------------------------------------------------------------------
-// I/O
-//--------------------------------------------------------------------
-
-void pinMode(int,int)
-{
-}
-
-void digitalWrite(int,int)
-{
-}
-
-bool digitalRead(int)
+void pinMode(uint8_t, uint8_t)
+{}
+void digitalWrite(uint8_t, uint8_t)
+{}
+int digitalRead(uint8_t)
 {
 	return 0;
 }
+int analogRead(uint8_t)
+{return 0;}
+void analogReference(uint8_t mode)
+{}
+void analogWrite(uint8_t, int)
+{}
+
+unsigned long millis(void)
+{
+//	return GetTickCount();
+  return 1;
+}
+unsigned long micros(void)
+{
+return 1;
+}
+void delay(unsigned long delayms)
+{	unsigned long u = millis() + delayms;
+//	while (u > millis())		;
+}
+void delayMicroseconds(unsigned int us)
+{}
+unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout)
+{
+return 0;
+}
+unsigned long pulseInLong(uint8_t pin, uint8_t state, unsigned long timeout)
+{
+return 0;
+}
+
+void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val)
+{}
+uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder)
+{
+return 0;
+}
+
+void attachInterrupt(uint8_t, void (*)(void), int mode)
+{}
+void detachInterrupt(uint8_t)
+{}
+
+ void cli(){};
+ void sei(){};
+
 
 //--------------------------------------------------------------------
 // Serial
@@ -151,12 +180,179 @@ void CSerial::_append(char c)
 	}
 }
 
+
+#include <vector>
+
+ typedef std::vector<int> TPulses ;
+
+/// PulseString = "540 1890 540  " or "540;1890;540 "
+ // lit les valeur de pulse a partir chaine 
+ void readPulse( char* PulseString ,  TPulses* Pulse  )
+{
+  int nb=0;
+
+  std::string list[1000];
+  Split ( PulseString  , " ;" , "" , true , list ) ;
+  while (list[nb]!="")
+  {
+    int pulse = atoi (list[nb].c_str())  ;
+    Pulse->push_back ( pulse );
+    nb++;
+  }
+}
+
+ void convertdPulse( TPulses* Pulse , float coefA = 1 , float coefB=0  )
+{
+  int nb=0;
+
+  for (unsigned int i = 0 ; i<Pulse->size() ;i++ )
+  {
+    int pulse =(*Pulse)[i] * coefA + coefB ;
+    (*Pulse)[i] =  ( pulse );
+  }
+}
+
 //--------------------------------------------------------------------
 // Main
 //--------------------------------------------------------------------
+ 
+char * Rubicson1  = "540 1890 540 3780 540 1890 540 3780 540 3780 540 3780 540 3780 540 3780 540 1890 540 1890 540 3780 540 4050 540 3780 540 1890 540 1890 540 1890 540 1890 540 1890 540 1890 540 1890 540 3780 540 3780 540 1890 540 1890 540 4050 540 3780 540 1890 540 4050 540 1890 540 1890 540 4050 540 1890 540 3780 540 1890 540 3780 540 3780 540 9180";
 
-int main(int, char**)
+TPulses TfaPulse= {
+0  ,
+0  ,
+1  ,
+0  ,
+0  ,
+1  ,
+0  ,
+0  ,
+0  ,
+0  ,
+1  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+1  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+1  ,
+1  ,
+1  ,
+1  ,
+1  ,
+0  ,
+0  ,
+0  ,
+0  ,
+1  ,
+1  ,
+1  ,
+1  ,
+1  ,
+0  ,
+0  ,
+1  ,
+0  ,
+0  ,
+1  ,
+1  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+1  ,
+1  ,
+1  ,
+1  ,
+0  ,
+0  ,
+1  ,
+1  ,
+1  ,
+1  ,
+1  ,
+0  ,
+0  ,
+1  ,
+1  ,
+1  ,
+0  ,
+0  ,
+1  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+0  ,
+1  ,
+1  ,
+0  ,
+0  ,
+1  ,
+0  ,
+0  ,
+1  ,
+0  ,
+0  ,
+0  ,
+0  ,
+1  ,
+0  ,
+0  ,
+0  ,
+
+
+0xFFFF
+};
+
+
+
+
+#include "Fifo.h"
+extern TFifo  fifo;
+
+//duree = coefA * duree + float coefB 
+void testOOK (char* TestString ,TPulses* TestPulse, float coefA=1.0 , float coefB=0   )
 {
+    TPulses Pulse ;
+    TPulses* LPulse = & Pulse ;
+    unsigned int PulseNb=0;
+
+    if (TestString != 0)
+        readPulse(TestString,LPulse);
+    else
+        LPulse = TestPulse;
 	setup();
 	for(;;)
 	{
@@ -165,12 +361,24 @@ int main(int, char**)
 			Serial._append((char)_getch());
 		}
 		loop();
+        if (PulseNb<TestPulse->size())
+        {
+            int pulse =(*TestPulse)[PulseNb] * coefA + coefB ;
+            fifo.put(pulse);
+            PulseNb++;
+        }
+        else
+            break;
 	}
 }
 
-int micros(){return 1;};
- void cli(){};
- void sei(){};
+
+int main(int, char**)
+{
+//    testOOK (Rubicson1 , 0 ) ;
+    testOOK (0         , &TfaPulse , 500 , 500 ) ;
+
+}
 
 #endif
 
@@ -317,3 +525,10 @@ char *decoupecsv(char *ligne, char *mot, int MotLen , char *sep)
        }
      }
 }
+
+ byte Header[] = {
+21 ,	//0 : 1 / 208
+22 ,	//1 : 0 / 212
+0 };
+
+
