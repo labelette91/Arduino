@@ -153,10 +153,10 @@ data [5..8] total power : 4 byte watt /s
  */
 int getPower(byte* data )
 {
-  T_INT tint ;
-  tint.Car[0] = data[3] ;
-  tint.Car[1] = data[4] ;
-  return tint.Int  ;
+  int power = data[4] ;//MSB
+  power <<=8 ;
+  power += data[3] ;//LSB
+  return power ;
    
 }
 
