@@ -39,7 +39,7 @@
 #if defined(ARDUINO) && ARDUINO >= 100
 #include <stdio.h>
 #include <Arduino.h>
-#include <avr/pgmspace.h>
+//#include <avr/pgmspace.h>
 //#include <timer.h>
 #define DelayMicroseconds(VALUE)     delayMicroseconds(VALUE);
 #define DelayMicrosecondsHard(VALUE) delayMicroseconds(VALUE);
@@ -91,7 +91,7 @@ extern void scheduler_standard() ;
 
 void HomeEasyTransmitter::rfm69_set_data(byte state)
 {
-    if (clkPin>=0)
+    if (clkPin>0)
         rfm69_set_data_with_clk(state) ;
     else
         rfm69_set_data_with_clk( state);
@@ -115,7 +115,7 @@ void HomeEasyTransmitter::rfm69_set_data_with_clk(byte state)
 }
 
 
-HomeEasyTransmitter::HomeEasyTransmitter(short dataPin, short pclkPin , byte pLed )
+HomeEasyTransmitter::HomeEasyTransmitter(byte dataPin, byte pclkPin , byte pLed )
 {
   txPin  = dataPin;
   clkPin = pclkPin ;
@@ -123,10 +123,10 @@ HomeEasyTransmitter::HomeEasyTransmitter(short dataPin, short pclkPin , byte pLe
 }
 
 //withou clock management
-HomeEasyTransmitter::HomeEasyTransmitter(short dataPin,  byte pLed )
+HomeEasyTransmitter::HomeEasyTransmitter(byte dataPin,  byte pLed )
 {
   txPin  = dataPin;
-  clkPin = -1 ;
+  clkPin = 0 ;
   ledPin = pLed ;
 }
 
@@ -246,7 +246,7 @@ void HomeEasyTransmitter::initPin()
     pinMode(txPin, OUTPUT);      // transmitter pin.
     digitalWrite(txPin, LOW);    //no tx 
 
-    if (clkPin>=0)
+    if (clkPin>0)
 		{
     	pinMode(clkPin, OUTPUT);      
     	digitalWrite(clkPin, LOW);
@@ -256,7 +256,7 @@ void HomeEasyTransmitter::initPin()
 void HomeEasyTransmitter::deactivatePin()
 {
     pinMode(txPin, INPUT);
-    if (clkPin>=0)
+    if (clkPin>0)
 		{
     	pinMode(clkPin, INPUT);      
 		}

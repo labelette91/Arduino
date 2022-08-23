@@ -8,9 +8,9 @@ class HomeEasyTransmitter
   public:
     //Constructor.
     //arg1 = pin to connected to 434Mhz transmitter
-    HomeEasyTransmitter(short dataPin, short pclkPin , byte pLed );
+    HomeEasyTransmitter(byte dataPin, byte pclkPin , byte pLed );
     
-    HomeEasyTransmitter(short dataPin,  byte pLed );
+    HomeEasyTransmitter(byte dataPin,  byte pLed );
 
     //arg1 = true to turn switch on, false for off
     //arg2 = the 26 bit long transmitter ID as found by the Pete and Banarby's recevier code
@@ -19,8 +19,8 @@ class HomeEasyTransmitter
     //init pin in output
     void initPin();
 //  private:
-    short txPin;  // 433mhz transmitter on pin2
-    short clkPin;  // 433mhz transmitter on pin2
+    byte txPin;  // 433mhz transmitter on pin2
+    byte clkPin;  // 433mhz transmitter on pin2
     byte  ledPin;
 
     void transmit(bool, unsigned long, short);
