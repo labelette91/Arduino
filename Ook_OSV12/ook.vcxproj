@@ -43,17 +43,17 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;ARDUINO=100;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Arduino\libraries\DecodeHomeEasy;C:\Arduino\libraries\def;C:\Arduino\libraries\RFM69;C:\Arduino\libraries\RFM69\pi;C:\Arduino\libraries\HagerDecoder;C:\Arduino\libraries\HomeEasyTransmitter;C:\Arduino\libraries\DecodeMD230;C:\Arduino\libraries\tfa;C:\Arduino\libraries\DecodeOTIO;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Arduino\libraries\DecodeHomeEasy;C:\Arduino\libraries\def;C:\Arduino\libraries\RFM69;C:\Arduino\libraries\RFM69\pi;C:\Arduino\libraries\HagerDecoder;C:\Arduino\libraries\HomeEasyTransmitter;C:\Arduino\libraries\DecodeMD230;C:\Arduino\libraries\tfa;C:\Arduino\libraries\DecodeOTIO;C:\Arduino\Ook_OSV12;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -74,13 +74,16 @@
   <ItemGroup>
     <ClCompile Include="..\libraries\DecodeHomeEasy\DecodeHomeEasy.cpp" />
     <ClCompile Include="..\libraries\DecodeMD230\DecodeMD230.cpp" />
+    <ClCompile Include="..\libraries\def\vspde.cpp" />
     <ClCompile Include="..\libraries\HomeEasyTransmitter\HomeEasyTransmitter.cpp" />
-    <ClCompile Include="..\libraries\RFM69\RFM69.cpp" />
+    <ClCompile Include="..\libraries\RFM69\RFM69.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Domotic.cpp" />
     <ClCompile Include="fifo.cpp" />
     <ClCompile Include="hager.cpp" />
-    <ClCompile Include="header.c" />
     <ClCompile Include="Oregon.cpp" />
+    <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libraries\DecodeMD230\DecodeMD230.h" />
@@ -88,6 +91,7 @@
     <ClInclude Include="..\libraries\HomeEasyTransmitter\HomeEasyTransmitter.h" />
     <ClInclude Include="..\libraries\RFM69\RFM69.h" />
     <ClInclude Include="..\libraries\RFM69\RFM69registers.h" />
+    <ClInclude Include="..\libraries\tfa\tfaDecoder.h" />
     <ClInclude Include="DecodeOOK.h" />
     <ClInclude Include="Domotic.h" />
     <ClInclude Include="fifo.h" />
@@ -101,7 +105,9 @@
     <ClInclude Include="SerialRfmCmd.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Ook_OSV12.ino" />
+    <ClCompile Include="Ook_OSV12.ino">
+      <FileType>Document</FileType>
+    </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

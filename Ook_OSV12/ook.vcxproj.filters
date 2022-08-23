@@ -27,9 +27,6 @@
     <ClCompile Include="Oregon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="header.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\libraries\HomeEasyTransmitter\HomeEasyTransmitter.cpp">
       <Filter>Source Files\lib</Filter>
     </ClCompile>
@@ -43,6 +40,13 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libraries\DecodeHomeEasy\DecodeHomeEasy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ook_OSV12.ino" />
+    <ClCompile Include="..\libraries\def\vspde.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -95,8 +99,8 @@
     <ClInclude Include="rubicson.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Ook_OSV12.ino" />
+    <ClInclude Include="..\libraries\tfa\tfaDecoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
