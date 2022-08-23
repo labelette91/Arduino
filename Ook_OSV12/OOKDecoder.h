@@ -74,6 +74,7 @@ OWL CM119	0x1A**	Power meter
 */
 #include "DecodeOOK.h"
 // 433 MHz decoders
+#include "Oregon.h"
 
 
 class OregonDecoderV2 : public DecodeOOK {
@@ -186,6 +187,24 @@ public:
         }
         return total_bits == max_bits ? 1: 0;
     }
+
+    virtual float getTemperature() {	  return (INVALID_INT);  }
+    virtual byte  gethumidity()  {	  return (INVALID_INT);  }
+    virtual byte getId()         {	  return (INVALID_INT);  }
+    virtual byte getCrc()         
+    {	  
+        return (data[pos-2]);  
+    }
+    
+    virtual byte getBatteryLevel() {		  return 15;  } //return 15 if batterie OK  
+    virtual byte getChannel()      {	  return  1;  }    
+    virtual float getPressure()      {	  return  INVALID_INT;  }    
+    virtual char* getName()      {	  return  "";  }    
+    virtual bool isValid()      		 
+    {	
+        return  (checksum(getData(), pos - 1)) ;
+    }    
+
 };
 
 /*

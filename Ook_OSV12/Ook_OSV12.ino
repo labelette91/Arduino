@@ -1,5 +1,5 @@
 #ifdef WIN32
-#include "../vspde.h"
+#include "vspde.h"
 #endif
 //si = define  : report serial forma domoticz (binaire)
 //si =  : report serial format text 
@@ -70,7 +70,6 @@ TFifo  fifo;
 #define PDATA 3 //pin for data input/output
 #define PCLK  4 //pin for clk  input/output
 #endif
-volatile word pulse;
 
 //last packet data received ident
 byte data0,data1,data2,data3;
@@ -78,9 +77,9 @@ byte data0,data1,data2,data3;
 word 		NbReceive;
 word 	NbPulse  ;
 word 	NbPulsePerSec ;
-byte            pinData;
+
 //etat du pulse
-byte            PulsePinData;
+byte        PulsePinData;
 word 		Seconds;
 word 		lastSeconds;
 word 		lastMinute ;
@@ -94,6 +93,8 @@ void ext_int_1(void) {
 #endif
 
     static unsigned long  last;
+    byte            pinData;
+    word pulse;
 
     // determine the pulse length in microseconds, for either polarity
     pulse = micros() - last;
@@ -216,8 +217,6 @@ void setup () {
     pinMode(ledPin, OUTPUT);       
     pinMode(PDATA, INPUT);
    
-    pulse=0;
-
     attachInterrupt(digitalPinToInterrupt(PDATA) , ext_int_1, CHANGE);
 
 #ifdef RFM69_ENABLE
@@ -283,21 +282,20 @@ void PulseLed()
          digitalWrite(ledPin, LOW);  
 }
 #define HEXTODEC(AH) AH = AH-'0'; if (AH>9) AH = AH -( 7 );if (AH>15) AH = AH - 0x20 ;
-  long int 	Last ;
+
+//1 = dump pulse len to serial
+byte dumpPulse=0;
 
 void loop () {
-/*    cli();
-    word p = pulse;
-    pulse = 0;
-    sei();
-*/
-	word rssi;
+
+    word rssi;
     word p = fifo.get();
 
 		if (p > 0 ) {
-//            if (p>200)		
-//                write(p/10);
-
+            if (dumpPulse)
+                if (p>200){		
+                        write(p);
+                }
             //get pinData
 			PulsePinData = p & 1;
 			NbPulse++;
@@ -337,8 +335,12 @@ void loop () {
 			if (orscV2.nextPulse(p))
 			{
 					// -1 : on retire le byte de postambule
-				if (checksum(orscV2.getData(), orscV2.pos - 1))
+//				if (checksum(orscV2.getData(), orscV2.pos - 1))
+                if (orscV2.isValid())
 				{
+                    //if ( orscV2.data[0] == CMR180_ID0 ) dumpPulse=0;
+                    //if ( orscV2.data[0] == 0x1A       ) dumpPulse=0;  //THGR228N
+
 					if ((data3 != orscV2.data[3]) || (data0 != orscV2.data[0]) || (data1 != orscV2.data[1]) || (data2 != orscV2.data[2])) {
 						PulseLed();
 #ifdef OOK_ENABLE        
@@ -372,7 +374,8 @@ void loop () {
 				orscV2.resetDecoder();
 			}
 #ifdef OTIO_ENABLE        
-			if (Otio.nextPulse(p, pinData)) {
+			if (Otio.nextPulse(p, PulsePinData)) {
+                dumpPulse=0;
 #ifndef DOMOTIC
 				Otio.ReportSerial();
 #else
@@ -551,12 +554,13 @@ void Blink(byte PIN, int DELAY_MS)
 
 void printRSSI()
 {
+    static long int LastPrintRSSI ;
 //print RSSI
-if ((millis() - Last ) > 5000 ) {
+if ((millis() - LastPrintRSSI ) > 5000 ) {
 #ifdef RFM69_ENABLE
       Serial.print(radio.readRSSI());  
 #endif
-      Last = millis() ;
+      LastPrintRSSI = millis() ;
 }
 }
 

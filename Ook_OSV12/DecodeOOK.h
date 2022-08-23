@@ -23,25 +23,42 @@ public:
     byte total_bits, max_bits,bits, flip, state, pos, data[25];
 
 	TBIT_STREAM bitStream = MSB_FIRST;
+    byte lastId ;
+    byte lastChannel ;
+    byte lastCrc    ;
+
 	
 	virtual char decode(word width, byte level) { return -1; };
 
     virtual float getTemperature() {	  return (INVALID_INT);  }
     virtual byte  gethumidity()  {	  return (INVALID_INT);  }
     virtual byte getId()         {	  return (INVALID_INT);  }
+    virtual byte getCrc()         {	  return (INVALID_INT);  }
     
     virtual byte getBatteryLevel() {		  return 15;  } //return 15 if batterie OK  
     virtual byte getChannel()      {	  return  1;  }    
     virtual float getPressure()      {	  return  INVALID_INT;  }    
     virtual char* getName()      {	  return  "";  }    
-    virtual bool isValid()      		 {	  return  false;  }    
-    
+    virtual bool isValid()      		 {	  return  true;  }    
+    virtual bool  newPacket()       
+    {	 
+        if ( lastId != getId()  || lastChannel != getChannel() || lastCrc != getCrc()  )
+        {
+            lastId      = getId() ;
+            lastChannel =  getChannel() ;
+            lastCrc     = getCrc();
+            return  true ;  
+        }
+            
+        return  false  ;  
+    }
+
     virtual  void ReportSerial(byte rtype) 
 	{
         Serial.print(getName());
 		Serial.print(' ');
         Serial.print(millis() / 1000);
-		int temp = getTemperature();
+		int temp = (int)getTemperature();
 		if (temp != INVALID_INT )
 		{
 			Serial.print(" T:");

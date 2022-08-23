@@ -38,7 +38,7 @@ public:
        byte width = pWidth / 100;
        /* 1er bit 1500 micros */ 
 //       if ( (width>15)&& (data==1) )   state = T0 ;
-       if ( (width>15)&& (data==1) )   state = T0 ;
+       if ( (width>15)&& (data==0) )   state = T0 ;
       /* bit next 1000 micros  */
       if ( (width>10)&&(state == T0) )
       {
