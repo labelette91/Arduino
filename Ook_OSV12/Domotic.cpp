@@ -1,5 +1,5 @@
 #if _MSC_VER 
-#include "debug\vspde.h"
+#include "vspde.h"
 #endif
 
 #include "arduino.h"
@@ -250,18 +250,18 @@ void reportDomoticTempHumBaro (byte id1 , byte unit ,float temperature , float p
 
 	Send.TEMP_HUM_BARO.tempsign = (temperature >= 0) ? 0 : 1;
 	int at10 = (abs(temperature * 10.0F));
-	Send.TEMP_HUM_BARO.temperatureh = (BYTE)(at10 / 256);
+	Send.TEMP_HUM_BARO.temperatureh = (byte)(at10 / 256);
 	at10 -= (Send.TEMP_HUM_BARO.temperatureh * 256);
-	Send.TEMP_HUM_BARO.temperaturel = (BYTE)(at10);
-	Send.TEMP_HUM_BARO.humidity = (BYTE)humidity;
+	Send.TEMP_HUM_BARO.temperaturel = (byte)(at10);
+	Send.TEMP_HUM_BARO.humidity = (byte)humidity;
 	Send.TEMP_HUM_BARO.humidity_status = Get_Humidity_Level(humidity);
 
 	int ab10 = round(pressure);
-	Send.TEMP_HUM_BARO.baroh = (BYTE)(ab10 / 256);
+	Send.TEMP_HUM_BARO.baroh = (byte)(ab10 / 256);
 	ab10 -= (Send.TEMP_HUM_BARO.baroh * 256);
-	Send.TEMP_HUM_BARO.barol = (BYTE)(ab10);
+	Send.TEMP_HUM_BARO.barol = (byte)(ab10);
 
-	Send.TEMP_HUM_BARO.forecast = (BYTE)forecast;
+	Send.TEMP_HUM_BARO.forecast = (byte)forecast;
 
     Serial.write((byte*)&Send.TEMP_HUM_BARO,sizeof(Send.TEMP_HUM_BARO));
 }

@@ -181,33 +181,32 @@ struct {	//response on a mode command from the application
 
 } _tTempBaro;
 
-#define BYTE byte
  	struct {
-		BYTE	packetlength;
-		BYTE	packettype;
-		BYTE	subtype;
-		BYTE	seqnbr;
-		BYTE	id1;
-		BYTE	id2;
+		byte	packetlength;
+		byte	packettype;
+		byte	subtype;
+		byte	seqnbr;
+		byte	id1;
+		byte	id2;
 #ifdef IS_BIG_ENDIAN
-		BYTE	tempsign : 1;
-		BYTE	temperatureh : 7;
+		byte	tempsign : 1;
+		byte	temperatureh : 7;
 #else
-		BYTE	temperatureh : 7;
-		BYTE	tempsign : 1;
+		byte	temperatureh : 7;
+		byte	tempsign : 1;
 #endif
-		BYTE	temperaturel;
-		BYTE	humidity;
-		BYTE	humidity_status;
-		BYTE	baroh;
-		BYTE	barol;
-		BYTE	forecast;
+		byte	temperaturel;
+		byte	humidity;
+		byte	humidity_status;
+		byte	baroh;
+		byte	barol;
+		byte	forecast;
 #ifdef IS_BIG_ENDIAN
-		BYTE	rssi : 4;
-		BYTE	battery_level : 4;
+		byte	rssi : 4;
+		byte	battery_level : 4;
 #else
-		BYTE	battery_level : 4;
-		BYTE	rssi : 4;
+		byte	battery_level : 4;
+		byte	rssi : 4;
 #endif
 	} TEMP_HUM_BARO;
 
