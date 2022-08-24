@@ -90,6 +90,12 @@ extern CSerial Serial1;
 extern void cli();
 extern void sei();
 
- void Split ( char * ptligne , char * separateur , char * concatenator , bool AllowDuplicateSeparator , std::string list[] );
+char* decoupe(char* ligne, char* mot, char* sep);
+
+char* decoupe(char* ligne, char* mot, int MotLen, char* separator, char* concatenator, bool AllowDuplicateSeparator);
+
+char* decoupecsv(char* ligne, char* mot, int MotLen, char* sep);
+
+void Split ( char * ptligne , char * separateur , char * concatenator , bool AllowDuplicateSeparator , std::string list[] );
 
 #endif
