@@ -133,12 +133,12 @@ byte getBatteryLevel()
     //(b[2] & 0x80) != 0; // if not zero, battery is low
     return ((data[3] & 0x80) ) ? 0 : 15; ;
 }
-inline byte getId()
+byte getId()
 {
     byte id = data[2] ;
     return id;
 }
-inline byte getCrc()
+byte getCrc()
 {
     byte id = data[6] ;
     return id;
@@ -188,7 +188,9 @@ void ReportSerial()
     }
     return false ;
   }
-  bool valid()
+  
+  
+  virtual bool isValid()
   {
       uint8_t expected = data[6];
       uint8_t calculated = lfsr_digest8((uint8_t const*)&data[1], 5, 0x98, 0x3e) ^ 0x64;
@@ -201,7 +203,7 @@ void ReportSerial()
     bool receivedOk = DecodeOOK::nextPulse(width);
     if (receivedOk)
 	{
-      if (!valid()) 
+      if (!isValid()) 
 	  {
           receivedOk = false ;
  #ifndef DOMOTIC

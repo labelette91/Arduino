@@ -258,7 +258,8 @@ public:
 	}
 
 
-	int write(byte mes) { printf("%02X", mes); return 1; };
+	//int write(byte mes) { printf("%02X", mes); return 1; };
+	int write(char mes) { printf("%C", mes); return 1; };
 
 	int write(const byte *buffer, int size) {
 		for (int i = 0; i<size; i++) write(buffer[i]);

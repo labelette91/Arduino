@@ -12,7 +12,7 @@
 //#define HAGER_ENABLE 1
 //#define HOMEEASY_ENABLE 1
 //#define MD230_ENABLE 1
-//#define RUBICSON_ENABLE 1
+#define RUBICSON_ENABLE 1
 #define  HIDEKI_ENABLE        
 //#define  BMP180_ENABLE        
 
@@ -70,9 +70,6 @@ TFifo  fifo;
 #define PDATA 3 //pin for data input/output
 #define PCLK  4 //pin for clk  input/output
 #endif
-
-//last packet data received ident
-byte data0,data1,data2,data3;
 
 word 		NbReceive;
 word 	NbPulse  ;
@@ -341,16 +338,11 @@ void loop () {
                     //if ( orscV2.data[0] == CMR180_ID0 ) dumpPulse=0;
                     //if ( orscV2.data[0] == 0x1A       ) dumpPulse=0;  //THGR228N
 
-					if ((data3 != orscV2.data[3]) || (data0 != orscV2.data[0]) || (data1 != orscV2.data[1]) || (data2 != orscV2.data[2])) {
+					if (orscV2.newPacket()) {
 						PulseLed();
 #ifdef OOK_ENABLE        
 						reportSerial("OSV2", orscV2);
 #endif
-						data0 = orscV2.data[0];
-						data1 = orscV2.data[1];
-						data2 = orscV2.data[2];
-						data3 = orscV2.data[3];
-
 					}
 					NbReceive++;
 					if (NbReceive > 25)
@@ -375,7 +367,7 @@ void loop () {
 			}
 #ifdef OTIO_ENABLE        
 			if (Otio.nextPulse(p, PulsePinData)) {
-                dumpPulse=0;
+                //dumpPulse=0;
 #ifndef DOMOTIC
 				Otio.ReportSerial();
 #else
@@ -427,13 +419,16 @@ void loop () {
 #ifdef RUBICSON_ENABLE        
 			if (Rubicson.nextPulse(p, PulsePinData)) {
 
-				if (Rubicson.newPacket() ) {
-
+				if (Rubicson.newPacket() ) 
+                {
 #ifndef DOMOTIC
 					if (Rubicson.isOtio())
 						Rubicson.ReportSerialOtio();
 					else
-						Rubicson.ReportSerial();
+                    {
+                        Rubicson.ReportSerial();
+                        dumpPulse=0;
+                    }
 #else
 					if (Rubicson.isOtio())
 						reportDomoticTemp(Rubicson.getTemperatureOtio(), Rubicson.getIdOtio(), 0           , Rubicson.getBatteryLevelOtio());
@@ -480,6 +475,9 @@ void loop () {
 #ifdef MD230_ENABLE
 //		  && (MD230.total_bits == 0)
 #endif
+#ifdef HIDEKI_ENABLE        
+		  && (tfa3208.total_bits == 0)
+#endif
 		)
   {
   	digitalWrite(ledPin,HIGH);
@@ -501,7 +499,7 @@ void loop () {
         delay(10);
 	    	
 	    if (Cmd.LIGHTING2.packettype==pTypeLighting2) 
-			{  //
+		{  //
 				if (Cmd.LIGHTING2.subtype == sTypeHEU) 	         //if home easy protocol : subtype==1
 				{
 					easy.setSwitch(Cmd.LIGHTING2.cmnd, getLightingId(), Cmd.LIGHTING2.unitcode);    // turn on device 0
@@ -514,23 +512,18 @@ void loop () {
 				}
 				else
 					Cmd.LIGHTING2.subtype = 2;
-
 	    }
-			else
+		else
 				Cmd.LIGHTING2.subtype = 3;
 
-			//acknoledge 
-			Cmd.LIGHTING2.packettype = pTypeUndecoded;
-			Cmd.LIGHTING2.packetlength = 7;
-			Cmd.LIGHTING2.id1 = rssi >> 8;
-			Cmd.LIGHTING2.id2 = rssi & 0x00ff ;
-			Cmd.LIGHTING2.id3 = NbPulsePerSec >> 8;
-			Cmd.LIGHTING2.id4 = NbPulsePerSec & 0x00ff;
-
-			
-
-			Serial.write((byte*)&Cmd.LIGHTING2, Cmd.LIGHTING2.packetlength + 1);
-
+		//acknoledge 
+		Cmd.LIGHTING2.packettype = pTypeUndecoded;
+		Cmd.LIGHTING2.packetlength = 7;
+		Cmd.LIGHTING2.id1 = rssi >> 8;
+		Cmd.LIGHTING2.id2 = rssi & 0x00ff ;
+		Cmd.LIGHTING2.id3 = NbPulsePerSec >> 8;
+		Cmd.LIGHTING2.id4 = NbPulsePerSec & 0x00ff;
+		Serial.write((byte*)&Cmd.LIGHTING2, Cmd.LIGHTING2.packetlength + 1);
 	
 	    pinMode(PDATA, INPUT);
         attachInterrupt(digitalPinToInterrupt(PDATA) , ext_int_1, CHANGE);
