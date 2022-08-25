@@ -99,36 +99,47 @@ public:
 		//pulse low
 		if (data == 0)
 		{
-      //if end pulse : 9200us
-			if ((width > TO(8600)) && (width < TO(9800)))
-			//if ((width > TO(7000)) && (width < TO(9800)))
-			{
-        //if end of frame : pulse = 9200us
-        if (total_bits == 36){ 
-					//rubicson
-          return 1;
-        }
-				else if (total_bits == 24) {
-					//otio
-					return -1;
-				}
-				else
-          return -1;
-      }
 
-			//if one  pulse : 3800us
-			if ((width > TO(3200)) && (width < TO(4400)))
-			{
-				gotBit(1);
-				return 0;
-			}
+            if (state == OK )
+            {
+                //if end pulse : 9200us
+			    if ((width > TO(7000)) && (width < TO(9800)))
+			    {
+                    //if end of frame : pulse = 9200us
+                    if (total_bits == 36){ 
+					            //rubicson
+                      return 1;
+                    }
+				    else if (total_bits == 24) {
+					    //otio
+					    return 1;
+				    }
+				    else
+                        return -1;
+                }
 
-			//if 0  pulse : 1900 us
-			if ((width > TO(1600)) && (width < TO(2200)))
-			{
-					gotBit(0);
-					return 0;
-			}
+			    //if one  pulse : 3800us
+			    if ((width > TO(3200)) && (width < TO(4400)))
+			    {
+				    gotBit(1);
+				    return 0;
+			    }
+
+			    //if 0  pulse : 1900 us
+			    if ((width > TO(1600)) && (width < TO(2200)))
+			    {
+					    gotBit(0);
+					    return 0;
+			    }
+            }
+            else
+            {
+                //synchro pulse
+			    if ((width > TO(7000)) && (width < TO(9800))){
+                    state = OK ;
+                    return 0;
+                }
+            }
 		}
 		return -1;
   }
