@@ -1,4 +1,23 @@
 #pragma once
+
+#ifdef WIN32
+void registerStdout() {}
+#else
+
+static FILE uartout = {0} ;
+
+static int uart_putchar (char c, FILE *stream)
+{
+  Serial.write(c) ;
+  return 0 ;
+}
+
+void registerStdout() {
+  fdev_setup_stream (&uartout, uart_putchar, NULL, _FDEV_SETUP_WRITE);
+  stdout = &uartout ;
+}
+#endif
+
 char DectoHex(byte v)
 {
     if (v<=9)

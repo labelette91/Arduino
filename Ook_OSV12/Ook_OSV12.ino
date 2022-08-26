@@ -269,6 +269,7 @@ delay(100);
     Serial.println(VERSION);
 #endif     
    
+    registerStdout();
 }
 
 void PulseLed()
