@@ -182,31 +182,6 @@ void ReportSerial()
       }
       return true;
   }
-  virtual bool nextPulse (word width) {
-    bool receivedOk = DecodeOOK::nextPulse(width);
-    if (receivedOk)
-	{
-      if (!isValid()) 
-	  {
-          receivedOk = false ;
- #ifndef DOMOTIC
-          Serial.println("TFA BAD ");
-          //ReportSerial();
- #endif 
-          resetDecoder(); 
-      }
-      if (!newPacket())
-      {
-          receivedOk = false ;
- #ifndef DOMOTIC
-          //Serial.println("TFA SAME ");
-          //ReportSerial();
- #endif 
-          resetDecoder(); 
-      }
-    }
-    return receivedOk;
-  }
 
 };
 void PulseLed();
@@ -216,6 +191,7 @@ void PulseLed();
     {
       if (ptfa3208->nextPulse(p))
       {
+        if (ptfa3208->newPacket())
         {// ce sont bien nos sondes (signature, identification dans le 1er octet du header
           {
             PulseLed();

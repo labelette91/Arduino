@@ -47,13 +47,15 @@ public:
     virtual bool isValid()      		 {	  return  true;  }    
     virtual bool  newPacket()       
     {	 
-//        if ( lastId != getId()  || lastChannel != getChannel() || lastCrc != getCrc()  )
-//        {
-//            lastId      = getId() ;
-//            lastChannel =  getChannel() ;
-//            lastCrc     = getCrc();
-//            return  true ;  
-//        }
+
+        if (!isValid())
+        {
+#ifndef DOMOTIC
+            Serial.println("BADCHK ");          //ReportSerial();
+#endif 
+            resetDecoder();
+            return  false  ;  
+        }
         //send at least every 2min
         if ((millis() - LastSend) > 120000)  { lastdata[0]=lastdata[1]=lastdata[2]=lastdata[3] = 0;LastSend = millis();Serial.print("RESET ");}
         
