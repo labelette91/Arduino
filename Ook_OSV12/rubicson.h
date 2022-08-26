@@ -308,7 +308,7 @@ frame  0 = short pulse = 2ms
 	}
 
 	void ReportSerialOtio() {
-		Serial.print("OTIO ");
+		Serial.print("OTIOR ");
 		Serial.print(millis() / 1000);
 		Serial.print(" ");
 		printHexa( data, 3 );

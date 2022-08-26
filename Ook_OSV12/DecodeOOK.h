@@ -23,8 +23,8 @@ public:
     byte total_bits, max_bits,bits, flip, state, pos, data[16];
 
 	TBIT_STREAM bitStream = MSB_FIRST;
-    byte lastId ;
-    byte lastChannel ;
+//    byte lastId ;
+//    byte lastChannel ;
     byte lastCrc    ;
 
 	byte lastdata[4] ;
@@ -55,15 +55,16 @@ public:
 //            return  true ;  
 //        }
         //send at least every 2min
-        if ((millis() - LastSend) > 120000)  { lastdata[0]=lastdata[1]=lastdata[2]=lastdata[3] = 0;}
+        if ((millis() - LastSend) > 120000)  { lastdata[0]=lastdata[1]=lastdata[2]=lastdata[3] = 0;LastSend = millis();Serial.print("RESET ");}
         
         countPacket();
-//                Serial.print(getName());
-//                Serial.print(PacketCount);
-//                Serial.print(' ');
+                Serial.print(getName());
+                Serial.print(PacketCount);
+                Serial.print(' ');
 
         if (PacketCount == PacketCountSeuil) {
             LastSend = millis();
+            Serial.println();
             return true;
         }
 
@@ -239,7 +240,8 @@ public:
     byte countPacket()
     {
         if (
-               (lastdata[0] != data[0])
+               (lastCrc     != getCrc()) 
+            || (lastdata[0] != data[0])
             || (lastdata[1] != data[1])
             || (lastdata[2] != data[2])
             || (lastdata[3] != data[3])
@@ -249,6 +251,7 @@ public:
             lastdata[1] = data[1];
             lastdata[2] = data[2];
             lastdata[3] = data[3];
+            lastCrc     = getCrc();
             PacketCount = 0;
         }
         PacketCount++;

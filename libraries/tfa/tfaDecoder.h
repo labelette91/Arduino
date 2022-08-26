@@ -9,13 +9,14 @@ uint8_t getRaw08bValue(uint8_t* data, uint8_t offset, uint8_t size);
 
 class Hideki : public DecodeOOK {
 public:
-    unsigned long LastSend ;
-    //last packet data received ident
-    byte lastdata[2] ;
-    byte numberSamePacketReceided = 0 ;
     unsigned long LastReceivedTime ;
 
-    Hideki() : DecodeOOK () {}
+    Hideki() : DecodeOOK () {
+        resetDecoder(); 
+        PacketCountSeuil=1;
+        Name="T";
+    
+    }
     
     // add one bit to the packet data buffer
     virtual void gotBit (char value) {
@@ -140,8 +141,8 @@ byte getId()
 }
 byte getCrc()
 {
-    byte id = data[6] ;
-    return id;
+    byte crc = data[6] ;
+    return crc;
 }
 unsigned long DeltaReceivedTime()
 {
@@ -170,24 +171,6 @@ void ReportSerial()
 					Serial.print(" " );
 					Serial.println(bat);
  }
-//return true si new packet    
-  bool newPacket()
-  {
-    //send at least every 10 min
-    register unsigned long time = millis() ;
-    if (  (time - LastSend) > (60000L)  ) 
-    {
-        lastdata[0] = 0;
-    }
-    if ((lastdata[0] !=getId()) || (lastdata[1] != getCrc() ) )
-    {
-      lastdata[0] = getId();
-      lastdata[1] = getCrc();
-      LastSend =time ;
-      return true;
-    }
-    return false ;
-  }
   
   
   virtual bool isValid()
@@ -224,47 +207,6 @@ void ReportSerial()
     }
     return receivedOk;
   }
-    virtual bool nextPulse1 (word width) 
-    {
-        bool receivedOk = DecodeOOK::nextPulse(width);
-        //if pcket received
-        if (receivedOk)
-        {
-            //if packet valid
-//            if (valid() )
-            if (1 )
-            {
-                numberSamePacketReceided ++ ;
-        
-                Serial.print("sp"); Serial.print( numberSamePacketReceided );
-                if ( (numberSamePacketReceided>1) &&  (newPacket() ) )
-                {
-                    numberSamePacketReceided = 1 ;
-                }
-                //2 packet identique
-                Serial.print(" "); Serial.print( numberSamePacketReceided );
-                if (numberSamePacketReceided>=2)
-                {
-                    receivedOk = true;
-                    numberSamePacketReceided=0;
-                }
-                else
-                {
-                    receivedOk = false;
-                }
-                Serial.print(" "); Serial.print( numberSamePacketReceided );
-                ReportSerial();
-            }
-            else
-                receivedOk = false;
-            
-            if (receivedOk == false )
-            {
-                resetDecoder(); 
-            }
-        }
-        return receivedOk ;
-    }
 
 };
 void PulseLed();
