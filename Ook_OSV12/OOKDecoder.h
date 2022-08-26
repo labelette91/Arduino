@@ -79,7 +79,11 @@ OWL CM119	0x1A**	Power meter
 
 class OregonDecoderV2 : public DecodeOOK {
 public:
-    OregonDecoderV2() {}
+    OregonDecoderV2() {
+        resetDecoder(); 
+        PacketCountSeuil=1;
+        Name="O";
+    }
     
     // add one bit to the packet data buffer
     virtual void gotBit (char value) {
@@ -199,7 +203,6 @@ public:
     virtual byte getBatteryLevel() {		  return 15;  } //return 15 if batterie OK  
     virtual byte getChannel()      {	  return  1;  }    
     virtual float getPressure()      {	  return  INVALID_INT;  }    
-    virtual char* getName()      {	  return  "";  }    
     virtual bool isValid()      		 
     {	
         return  (checksum(getData(), pos - 1)) ;

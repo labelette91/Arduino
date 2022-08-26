@@ -63,11 +63,8 @@ public:
 };
 
 
-class DecodeRubicson : public DecodeOOKV2 {
+class DecodeRubicson : public DecodeOOK {
 public:
-	unsigned long LastSend ;
-	//last packet data received ident
-	byte lastdata[4] ;
 
     bool SyncReceived = 0 ;
 
@@ -77,7 +74,11 @@ public:
 	//pMaxTemp : the number of successive received equal value to return the current temperature
 	//OTIO send 20 frames with the 24 bits value */
 
-	DecodeRubicson() { LastSend = 0; resetDecoder(); }
+	DecodeRubicson() { 
+        resetDecoder(); 
+        PacketCountSeuil=3;
+        Name="R";
+    }
 
 
 #define TO(VALUE)(VALUE)
@@ -123,7 +124,7 @@ public:
 				    else if (total_bits == 24) {
 					    //otio
                         SyncReceived = true;
-					    return -1;
+					    return 1;
 				    }
 				    else {
                         SyncReceived = false;
@@ -202,7 +203,7 @@ Each (group) of numbers has a specific meaning:
 */
 
   /* temperature in Lsb = 0.1 degrec C */
-  int getTemperature() {
+  float getTemperature() {
 	  int temp = data[2];
 	  temp = (temp << 4) + ((data[3] & 0xF0) >> 4);
 	  if (data[2] & 0x80)
@@ -262,26 +263,6 @@ Each (group) of numbers has a specific meaning:
 
   }
 
-//return true si new packet		
-	bool newPacket()
-	{
-		//send at least every 2min
-		if (  (millis() - LastSend) > 120000  )
-		{
-			lastdata[3] = 0;
-		}
-		if ((lastdata[3] != data[3]) || (lastdata[0] != data[0]) || (lastdata[1] != data[1]) || (lastdata[2] != data[2])) {
-			lastdata[3] = data[3];
-			lastdata[0] = data[0];
-			lastdata[1] = data[1];
-			lastdata[2] = data[2];
-			LastSend = millis();
-			return true;
-		}
-
-		return false ;
-
-	}
 
 //otio
 /*

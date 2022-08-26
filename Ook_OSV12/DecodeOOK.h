@@ -20,13 +20,18 @@ typedef enum {
 
 class DecodeOOK {
 public:
-    byte total_bits, max_bits,bits, flip, state, pos, data[25];
+    byte total_bits, max_bits,bits, flip, state, pos, data[16];
 
 	TBIT_STREAM bitStream = MSB_FIRST;
     byte lastId ;
     byte lastChannel ;
     byte lastCrc    ;
 
+	byte lastdata[4] ;
+	byte PacketCount ;
+    byte PacketCountSeuil = 1 ; //nombre de packets identique recu pout detecter un nouveau packet 
+    unsigned long LastSend ;
+    char* Name ="U";
 	
 	virtual char decode(word width, byte level) { return -1; };
 
@@ -38,19 +43,32 @@ public:
     virtual byte getBatteryLevel() {		  return 15;  } //return 15 if batterie OK  
     virtual byte getChannel()      {	  return  1;  }    
     virtual float getPressure()      {	  return  INVALID_INT;  }    
-    virtual char* getName()      {	  return  "";  }    
+    virtual char* getName()      {	  return  Name;  }    
     virtual bool isValid()      		 {	  return  true;  }    
     virtual bool  newPacket()       
     {	 
-        if ( lastId != getId()  || lastChannel != getChannel() || lastCrc != getCrc()  )
-        {
-            lastId      = getId() ;
-            lastChannel =  getChannel() ;
-            lastCrc     = getCrc();
-            return  true ;  
+//        if ( lastId != getId()  || lastChannel != getChannel() || lastCrc != getCrc()  )
+//        {
+//            lastId      = getId() ;
+//            lastChannel =  getChannel() ;
+//            lastCrc     = getCrc();
+//            return  true ;  
+//        }
+        //send at least every 2min
+        if ((millis() - LastSend) > 120000)  { lastdata[0]=lastdata[1]=lastdata[2]=lastdata[3] = 0;}
+        
+        countPacket();
+//                Serial.print(getName());
+//                Serial.print(PacketCount);
+//                Serial.print(' ');
+
+        if (PacketCount == PacketCountSeuil) {
+            LastSend = millis();
+            return true;
         }
-            
+
         return  false  ;  
+
     }
 
     virtual  void ReportSerial(byte rtype) 
@@ -101,6 +119,7 @@ public:
 					  ReportSerial(rtype);
 		}    
 	}
+
 public:
 
     enum { UNKNOWN, T0, T1, T2, T3, OK, DONE };
@@ -216,6 +235,26 @@ public:
             gotBit(0); // padding
         state = DONE;
     }
+
+    byte countPacket()
+    {
+        if (
+               (lastdata[0] != data[0])
+            || (lastdata[1] != data[1])
+            || (lastdata[2] != data[2])
+            || (lastdata[3] != data[3])
+            )
+        {
+            lastdata[0] = data[0];
+            lastdata[1] = data[1];
+            lastdata[2] = data[2];
+            lastdata[3] = data[3];
+            PacketCount = 0;
+        }
+        PacketCount++;
+        return PacketCount;
+    }
+
 };
 
 
