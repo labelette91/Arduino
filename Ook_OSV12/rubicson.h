@@ -69,6 +69,8 @@ public:
 	//last packet data received ident
 	byte lastdata[4] ;
 
+    bool SyncReceived = 0 ;
+
 public:
 	enum { UNKNOWN, T0, T1, T2, T3, OK, DONE };
 
@@ -91,7 +93,14 @@ public:
 		if (data == 1)
 		{
 			if ((width > TO(300)) && (width < TO(700)))
+            {
+                if ( SyncReceived ){
+                    //last end sync in a packet begin
+                    state = OK ;
+                    SyncReceived=false;
+                }
 				return 0;
+            }
 			 else
 				 return -1;
 		}
@@ -107,15 +116,19 @@ public:
 			    {
                     //if end of frame : pulse = 9200us
                     if (total_bits == 36){ 
-					            //rubicson
-                      return 1;
+		                //rubicson
+                        SyncReceived = true;
+                        return 1;
                     }
 				    else if (total_bits == 24) {
 					    //otio
-					    return 1;
+                        SyncReceived = true;
+					    return -1;
 				    }
-				    else
+				    else {
+                        SyncReceived = false;
                         return -1;
+                    }
                 }
 
 			    //if one  pulse : 3800us
@@ -141,6 +154,7 @@ public:
                 }
             }
 		}
+        SyncReceived = false;
 		return -1;
   }
 
@@ -262,7 +276,6 @@ Each (group) of numbers has a specific meaning:
 			lastdata[1] = data[1];
 			lastdata[2] = data[2];
 			LastSend = millis();
-
 			return true;
 		}
 
