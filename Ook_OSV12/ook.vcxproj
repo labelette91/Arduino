@@ -83,6 +83,7 @@
     <ClCompile Include="fifo.cpp" />
     <ClCompile Include="hager.cpp" />
     <ClCompile Include="Oregon.cpp" />
+    <ClCompile Include="reportSerial.cpp" />
     <ClCompile Include="test\test.cpp" />
     <ClCompile Include="util.cpp" />
   </ItemGroup>

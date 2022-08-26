@@ -6,11 +6,6 @@
 #else
 #endif    
 
-#define REPORT_DOMOTIC 0
-#define REPORT_SERIAL       1
-#define SERIAL_DEBUG 2
-
-
 #define INVALID_INT 0x7F
 
 typedef enum {
