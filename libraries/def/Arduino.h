@@ -241,24 +241,25 @@ public:
 
 	int PRINT(long mes, int base, bool lf)
 	{
+        int nb=0;
 		switch (base) {
-		case BIN: printf("%d", mes);
+		case BIN:  nb=printf("%d", mes);
 			break;
-		case OCT:  printf("%o", mes);
+		case OCT:  nb=printf("%o", mes);
 			break;
-		case DEC: printf("%d", mes);
+		case DEC:  nb=printf("%d", mes);
 			break;
-		case HEX: printf("%X", mes);
+		case HEX:  nb=printf("%X", mes);
 			break;
-		default: printf("%d", mes);
+		default:   nb=printf("%d", mes);
 			break;
 		}
 		if (lf)printf("\n");
-		return 1;
+		return nb;
 	}
 
 
-	//int write(byte mes) { printf("%02X", mes); return 1; };
+	int write(byte mes) { printf("%02X", mes); return 1; };
 	int write(char mes) { printf("%C", mes); return 1; };
 
 	int write(const byte *buffer, int size) {

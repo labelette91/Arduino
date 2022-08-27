@@ -4,7 +4,13 @@
 //si = define  : report serial forma domoticz (binaire)
 //si =  : report serial format text 
 
-//#define DOMOTIC 1
+#define DOMOTIC 1
+
+//type de report serie 
+//#define REPORT_TYPE  REPORT_DOMOTIC
+//#define REPORT_TYPE REPORT_SERIAL 
+#define REPORT_TYPE SERIAL_DEBUG 
+
 //#define RFM69_ENABLE
 
 #define OTIO_ENABLE 1
@@ -22,15 +28,27 @@
 // 2010-04-11 <jcw@equi4.com> http://opensource.org/licenses/mit-license.php
 // $Id: ookDecoder.pde 5331 2010-04-17 10:45:17Z jcw $
 
-#include "OOKDecoder.h"
+#include "domotic.h"
+
+#include "DecodeOOK.h"
+
 #include <HagerDecoder.h>
 #include <HomeEasyTransmitter.h>
 #include "rubicson.h"
 
-OregonDecoderV2 orscV2;
-HagerDecoder    hager;
-DecodeRubicson  Rubicson;
+#include "OOKDecoder.h"
 
+#ifdef OOK_ENABLE        
+OregonDecoderV2 orscV2;
+#endif
+
+#ifdef HAGER_ENABLE        
+HagerDecoder    hager;
+#endif
+
+#ifdef RUBICSON_ENABLE        
+DecodeRubicson  Rubicson;
+#endif
 /* OregonDecoderV3 orscV3; */
 
 //end oregon 
@@ -71,7 +89,6 @@ TFifo  fifo;
 #define PCLK  4 //pin for clk  input/output
 #endif
 
-word 		NbReceive;
 word 	NbPulse  ;
 word 	NbPulsePerSec ;
 
@@ -126,11 +143,6 @@ HomeEasyTransmitter easy(PDATA,PCLK,ledPin);
 
 #include  "reportSerial.h"
 
-#ifndef DOMOTIC
-#include  "reportSerialAscii.h"
-#endif
-#include "domotic.h"
-
 #include "hager.h"
 
 #ifdef HIDEKI_ENABLE        
@@ -163,25 +175,25 @@ inline static void write(word w)
   static byte nbc = 0;
   if (w>=1000)
   {
-  Serial.write(w/1000+'0'); w = w % 1000; 
-  Serial.write(w/100 +'0'); w = w % 100;  
-  Serial.write(w/10  +'0') ; w = w % 10;  
-  Serial.write(w     +'0') ;              
+  Serial.write((byte)(w/1000+'0') ); w = w % 1000; 
+  Serial.write((byte)(w/100 +'0') ); w = w % 100;  
+  Serial.write((byte)(w/10  +'0') ); w = w % 10;  
+  Serial.write((byte)(w     +'0') );              
   }
   else if (w>=100)
   {
-  Serial.write(w/100 +'0'); w = w % 100;  
-  Serial.write(w/10  +'0') ; w = w % 10;  
-  Serial.write(w     +'0') ;              
+  Serial.write((byte)(w/100 +'0') ); w = w % 100;  
+  Serial.write((byte)(w/10  +'0') ); w = w % 10;  
+  Serial.write((byte)(w     +'0') );              
   }
   else if (w>=10)
   {
-  Serial.write(w/10  +'0') ; w = w % 10;  
-  Serial.write(w     +'0') ;              
+  Serial.write((byte)(w/10  +'0') ); w = w % 10;  
+  Serial.write((byte)(w     +'0') );              
   }
   else 
   {
-  Serial.write(w     +'0') ;              
+  Serial.write((byte)(w     +'0') );              
   }
   nbc++;
   if ((nbc%16) == 0 )
@@ -192,25 +204,25 @@ inline static void write(word w)
   
 }
 
-void reportSerial (const char* s, class DecodeOOK& decoder) 
-{
-#ifndef DOMOTIC
-            reportSerialAscii("OSV2", decoder.getData(),decoder.pos);  
-#else            
-            reportDomotic ( decoder.getData(),decoder.pos);
-#endif      
-}
+// void reportSerial (const char* s, class DecodeOOK& decoder) 
+// {
+// #ifndef DOMOTIC
+//             reportSerialAscii("OSV2", decoder.getData(),decoder.pos);  
+// #else            
+//             reportDomotic ( decoder.getData(),decoder.pos);
+// #endif      
+// }
 
 void setup () {
-	  NbReceive   = 0;
+    setReportType(REPORT_TYPE);
 
-#ifndef DOMOTIC
+if (isReportSerial() )
     Serial.begin(2000000);
     //Serial.begin(115200);
-#else
+else
     Serial.begin(38400);
-#endif    
-   // initialize the LED pin as an output:
+
+// initialize the LED pin as an output:
     pinMode(ledPin, OUTPUT);       
     pinMode(PDATA, INPUT);
    
@@ -250,26 +262,26 @@ void setup () {
         float trueAltitude = 70.0;
         coefPressureSeaLevel =  pow(1.0 - (float)trueAltitude / 44330, 5.255) ;
 
-        #ifndef DOMOTIC
-        if (status != true)
-        {
-            Serial.println(F("Bosch BMP180/BMP085 is not connected or fail to read calibration coefficients"));
-        }
+        if (isReportSerial()){
+            if (status != true)
+            {
+                Serial.println(F("Bosch BMP180/BMP085 is not connected or fail to read calibration coefficients"));
+            }
   
-        Serial.println(F("Bosch BMP180/BMP085 sensor is OK ")); //(F()) saves string to flash & keeps dynamic memory free
-        Serial.print(" coefPressureSeaLevel ");
-        Serial.println(coefPressureSeaLevel,6 );
-        #endif
-
+            Serial.println(F("Bosch BMP180/BMP085 sensor is OK ")); //(F()) saves string to flash & keeps dynamic memory free
+            Serial.print(" coefPressureSeaLevel ");
+            Serial.println(coefPressureSeaLevel,6 );
+        }
 #endif
 
 delay(100);
-#ifndef DOMOTIC
+if (isReportSerial() )
+{
     Serial.print("Version ");
     Serial.println(VERSION);
-#endif     
-   
+}
     registerStdout();
+
 }
 
 void PulseLed()
@@ -311,91 +323,66 @@ void loop () {
             {
                 if (!DomoticReceptionInProgress())
                 {
-                    lastMinute = Seconds/60;
+                    lastMinute = Seconds / 60;
 #ifdef BMP180_ENABLE
-                    float temp = myBMP.getTemperature() ;
-                    uint32_t pressureInPa = myBMP.getPressure() ;
-#ifndef DOMOTIC
-                    Serial.print(F("Temperature.......: ")); Serial.print(temp, 1);              Serial.println(F(" +-1.0C"));
-                    Serial.print(F("Pressure..........: ")); Serial.print(pressureInPa);         Serial.println(F(" +-1hPa"));
-                    Serial.print(F("Pressure Sea Level: ")); Serial.print((float)pressureInPa/coefPressureSeaLevel);         Serial.println(F(" +-1hPa"));
-#else                    
-                    reportDomoticTempBaro (1 , temp , pressureInPa/100  , 50.0  , 1 );
-
-                    reportDomoticTempHumBaro (1,1  , temp , pressureInPa/100 ,  1,  0  , 0xff , 0xFF   );
-#endif
+                    float temp = myBMP.getTemperature();
+                    uint32_t pressureInPa = myBMP.getPressure();
+                    if (isReportSerial()) {
+                        Serial.print(F("Temperature.......: ")); Serial.print(temp, 1);              Serial.println(F(" +-1.0C"));
+                        Serial.print(F("Pressure..........: ")); Serial.print(pressureInPa);         Serial.println(F(" +-1hPa"));
+                        Serial.print(F("Pressure Sea Level: ")); Serial.print((float)pressureInPa / coefPressureSeaLevel);         Serial.println(F(" +-1hPa"));
+                    }
+                    else{
+                        reportDomoticTempBaro(1, temp, pressureInPa / 100, 50.0, 1);
+                        reportDomoticTempHumBaro(1, 1, temp, pressureInPa / 100, 1, 0, 0xff, 0xFF);
+                    }
 #endif
                 }
                 lastMinute = Seconds/60;
             }
 
 
-			if (orscV2.nextPulse(p))
-			{
-					// -1 : on retire le byte de postambule
-//				if (checksum(orscV2.getData(), orscV2.pos - 1))
-                if (orscV2.isValid())
-				{
-                    //if ( orscV2.data[0] == CMR180_ID0 ) dumpPulse=0;
-                    //if ( orscV2.data[0] == 0x1A       ) dumpPulse=0;  //THGR228N
-
-					if (orscV2.newPacket()) {
-						PulseLed();
 #ifdef OOK_ENABLE        
-						reportSerial("OSV2", orscV2);
+            if (orscV2.nextPulse(p))
+            {
+                //if ( orscV2.data[0] == CMR180_ID0 ) dumpPulse=0;
+                //if ( orscV2.data[0] == 0x1A       ) dumpPulse=0;  //THGR228N
+                if (orscV2.newPacket()) {
+                    PulseLed();
+                    orscV2.report();
+                }
+                orscV2.resetDecoder();
+            }
 #endif
-					}
-					NbReceive++;
-					if (NbReceive > 25)
-					{
-						resetLastSensorValue();
-						NbReceive = 0;
-					}
 
-				}
-				else
-				{
-#ifndef DOMOTIC
-					Serial.print("Bad checksum ");
 
-                    Serial.print(orscV2.total_bits); Serial.print(' ');
-                    Serial.print(orscV2.state     ); Serial.print(' ');
-
-					reportSerial("OSV2", orscV2);
-#endif     
-				}
-				orscV2.resetDecoder();
-			}
 #ifdef OTIO_ENABLE        
 			if (Otio.nextPulse(p, PulsePinData)) {
                 //dumpPulse=0;
-#ifndef DOMOTIC
-				Otio.ReportSerial();
-#else
-				reportDomoticTemp(Otio.getTemperature(), Otio.getId(), 0, Otio.getBatteryLevel());
-#endif
-				PulseLed();
+                if (isReportSerial())
+    				Otio.ReportSerial();
+                else
+				    reportDomoticTemp(Otio.getTemperature(), Otio.getId(), 0, Otio.getBatteryLevel());
+                PulseLed();
 			}
 #endif      	
 
 #ifdef HOMEEASY_ENABLE
 			if (HEasy.nextPulse(p, pinData)) {
-#ifndef DOMOTIC
-				HEasy.ReportSerial();
-#else
-				reportDomoticHomeEasy(HEasy.getData(), HEasy.getBytes());
-#endif
+                if (isReportSerial())
+				    HEasy.ReportSerial();
+                else
+				    reportDomoticHomeEasy(HEasy.getData(), HEasy.getBytes());
 				PulseLed();
 			}
 #endif
 
 #ifdef MD230_ENABLE
 			if (MD230.nextPulse(p, pinData)) {
-#ifndef DOMOTIC
-				MD230.ReportSerial();
-#else
-				reportDomoticMD230(MD230.getData(), MD230.getBytes());
-#endif
+                if (isReportSerial())
+				    MD230.ReportSerial();
+                else
+				    reportDomoticMD230(MD230.getData(), MD230.getBytes());
 				PulseLed();
 			}
 #endif
@@ -406,11 +393,10 @@ void loop () {
 			if (pinData == 1) p -= 100; else p += 100;
 
 			if (hager.nextPulse(p)) {
-#ifndef DOMOTIC
+            if (isReportSerial())
 				hager.reportSerial();
-#else
+            else
 				reportHagerDomotic(hager.getData(), hager.pos);
-#endif
 				hager.resetDecoder();
 				PulseLed();
 			}
@@ -419,25 +405,9 @@ void loop () {
 
 #ifdef RUBICSON_ENABLE        
 			if (Rubicson.nextPulse(p, PulsePinData)) {
-
 				if (Rubicson.newPacket() ) 
                 {
-#ifndef DOMOTIC
-					if (Rubicson.isOtio())
-						Rubicson.ReportSerialOtio();
-					else
-                    {
-                        Rubicson.ReportSerial();
-                        dumpPulse=0;
-                    }
-#else
-					if (Rubicson.isOtio())
-						reportDomoticTemp(Rubicson.getTemperatureOtio(), Rubicson.getIdOtio(), 0           , Rubicson.getBatteryLevelOtio());
-					else
-//  					reportDomoticTemp(Rubicson.getTemperature(), Rubicson.getId(), Rubicson.getChannel(), Rubicson.getBatteryLevel());
-					  reportDomoticTempHum (Rubicson.getTemperature(), Rubicson.gethumidity(), Rubicson.getId(), Rubicson.getChannel(), Rubicson.getBatteryLevel(),sTypeTH10_RUBiCSON);
-
-#endif
+                    Rubicson.report ();
 					PulseLed();
 				}
 				Rubicson.resetDecoder();
@@ -564,11 +534,11 @@ void reportTemperatureToDomotic()
       // -1 = user cal factor, adjust for correct ambient
       byte temperature =  radio.readTemperature(-1); 
 
-#ifndef DOMOTIC
-       Serial.print  ("T:");
-       Serial.println(temperature,DEC);
-#else
-       reportDomoticTemp ( temperature , 0x45  , 0 ,15 );
-#endif
+        if (isReportSerial()){
+           Serial.print  ("T:");
+           Serial.println(temperature,DEC);
+        }
+        else
+        reportDomoticTemp ( temperature , 0x45  , 0 ,15 );
 #endif
 }

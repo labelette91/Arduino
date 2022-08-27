@@ -119,7 +119,7 @@ byte channel(const byte* data)
      return channel;
 }
 
-byte getId (const byte* data)
+byte getOrId (const byte* data)
 {
 	byte sId = data[2] && 0x0f ;
 	sId =  sId <<4 ;

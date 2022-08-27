@@ -151,27 +151,34 @@ unsigned long DeltaReceivedTime()
     LastReceivedTime = ms ;
     return delta;
 }
-void ReportSerial()
- {
-					byte Id    = getId();
-					byte Canal = getChannel();
-					float Temp = getTemperature();
-					byte Hum   = gethumidity();
-                    byte bat   = getBatteryLevel();
-                    printHexa ( data, total_bits/8);
- //                   printBinary ( data, total_bits/8 , 8 );
-					Serial.print(" TFA:");
-					Serial.print(Id);
-					Serial.print(" " );
-					Serial.print(Canal);
-					Serial.print(" " );
-					Serial.print(Temp);
-					Serial.print(" " );
-					Serial.print(Hum);
-					Serial.print(" " );
-					Serial.println(bat);
- }
-  
+// void ReportSerial()
+//  {
+// 					byte Id    = getId();
+// 					byte Canal = getChannel();
+// 					float Temp = getTemperature();
+// 					byte Hum   = gethumidity();
+//                     byte bat   = getBatteryLevel();
+//                     printHexa ( data, total_bits/8);
+//  //                   printBinary ( data, total_bits/8 , 8 );
+// 					Serial.print(" TFA:");
+// 					Serial.print(Id);
+// 					Serial.print(" " );
+// 					Serial.print(Canal);
+// 					Serial.print(" " );
+// 					Serial.print(Temp);
+// 					Serial.print(" " );
+// 					Serial.print(Hum);
+// 					Serial.print(" " );
+// 					Serial.println(bat);
+//  }
+void report()
+{
+    if(isReportSerial())
+    {
+        printTab(TAB,Serial.print("TFA  "));
+    }
+    reportDomoticTempHum (getTemperature()*10 , gethumidity(), getId(), getChannel(), getBatteryLevel(),sTypeTH11_TFA,data,pos);
+}
   
   virtual bool isValid()
   {
@@ -193,17 +200,9 @@ void PulseLed();
       {
         if (ptfa3208->newPacket())
         {// ce sont bien nos sondes (signature, identification dans le 1er octet du header
-          {
             PulseLed();
             
- #ifndef DOMOTIC
-//              if (ptfa3208->newPacket())  Serial.print("NEW ");
-                Serial.print(ptfa3208->DeltaReceivedTime());                Serial.print(" ");
-                ptfa3208->ReportSerial();
- #else
-              reportDomoticTempHum (ptfa3208->getTemperature()*10 , ptfa3208->gethumidity(), ptfa3208->getId(), ptfa3208->getChannel(), ptfa3208->getBatteryLevel(),sTypeTH11_TFA);
- #endif
-          }
+            ptfa3208->report();
         }
         ptfa3208->resetDecoder(); 
       }

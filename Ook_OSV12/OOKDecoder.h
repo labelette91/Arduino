@@ -192,22 +192,41 @@ public:
         return total_bits == max_bits ? 1: 0;
     }
 
-    virtual float getTemperature() {	  return (INVALID_INT);  }
-    virtual byte  gethumidity()  {	  return (INVALID_INT);  }
-    virtual byte getId()         {	  return (INVALID_INT);  }
     virtual byte getCrc()         
     {	  
         return (data[pos-2]);  
     }
     
-    virtual byte getBatteryLevel() {		  return 15;  } //return 15 if batterie OK  
-    virtual byte getChannel()      {	  return  1;  }    
-    virtual float getPressure()      {	  return  INVALID_INT;  }    
     virtual bool isValid()      		 
     {	
         return  (checksum(getData(), pos - 1)) ;
     }    
-
+    virtual void report()
+    {
+        //id1 = sensor id id2 = channel pour oregon
+        if (getSensorByte1(data) == CMR180_ID1) {
+            if (isReportSerial()) printTab(TAB, Serial.print("[CMR180] ") ) ;
+            reportDomoticPower((byte*)data, pos);
+        }
+        else   if (getSensorByte1(data) == HOMESWITCH_ID0)
+        {
+            //homeEasy sensor
+            if (isReportSerial())  printTab(TAB,Serial.print("[HMEASY] ")) ;
+            reportDomoticHomeEasy((byte*)data, pos);
+        }
+        // Inside Temp-Hygro : THGR228N,...
+        else if (data[0] == 0x1A && data[1] == 0x2D)
+        {
+            if (isReportSerial()) printTab(TAB,Serial.print("[THGR228N]"));
+            reportDomoticTempHum(temperatureint(data), getHumidity(data), getOrId(data), channel(data), battery(data), sTypeTH1_OREGON, data, pos);
+        }
+        // Outside/Water Temp : THN132N,...
+        else if (data[0] == 0xEA && data[1] == 0x4C)
+        {
+            if (isReportSerial()) printTab(TAB,Serial.print("[THN132N] "));
+            reportDomoticTemp(temperatureint(data), getOrId(data), channel(data), battery(data), data, pos);
+        }
+    }
 };
 
 /*

@@ -6,8 +6,16 @@ REPORT_SERIAL       ,
 SERIAL_DEBUG 
 } T_REPORTTYPE;
 
+#define INVALID_BYTE 0x7F
+#define INVALID_TEMP  0x7FFF
+#define INVALID_HUM   0x7F
+#define INVALID_POWER  0x7FFF
+#define INVALID_PRESSURE  0x7FFF
+
+#define TAB 10
+
 void setReportType(T_REPORTTYPE pReportType );
-T_REPORTTYPE getsetReportType();
+T_REPORTTYPE getReportType();
 bool isReportSerial();
         
 void registerStdout() ;
@@ -16,3 +24,5 @@ void printBinary ( byte * data , byte pos, byte space  );
 //sump hex
 void printHexa ( byte * data, byte pos);
 void printTab(byte tab, byte n);
+
+void reportSerial(char* Name, byte id1, byte id2, byte bateryLevel, int temp, byte hum, word power, word totalpower, word pressure, byte* data, byte pos);

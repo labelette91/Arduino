@@ -1,15 +1,7 @@
 #include <stdio.h>
 #include <Arduino.h>
+#include  "reportSerial.h"
 
-typedef enum {
-REPORT_DOMOTIC,
-REPORT_SERIAL       ,
-SERIAL_DEBUG 
-} T_REPORTTYPE;
-
-void setReportType(T_REPORTTYPE pReportType );
-T_REPORTTYPE getsetReportType();
-bool isReportSerial();
         
 #ifdef WIN32
 void registerStdout() {};
@@ -36,7 +28,7 @@ void setReportType(T_REPORTTYPE pReportType )
     ReportType = pReportType ;
 }
 
-T_REPORTTYPE getsetReportType()
+T_REPORTTYPE getReportType()
 {
     return ReportType;
 }
@@ -92,5 +84,67 @@ void printTab(byte tab, byte n)
 		tab--;
 	}
 
+}
+
+extern word 	NbPulsePerSec ;;
+
+void reportSerial(char* Name, byte id1, byte id2, byte bateryLevel, int temp, byte hum, word power, word totalpower, word pressure, byte* data, byte pos) {
+
+//    Serial.print(Name);
+    Serial.print(' ');
+    Serial.print(millis() / 1000);
+
+    Serial.print(" Np:");
+    byte nb = Serial.print(NbPulsePerSec);
+    printTab(6, nb);
+    Serial.print(' ');
+
+
+    Serial.print(" Id:");
+    Serial.print(id1, HEX);
+    Serial.print(" Chn:");
+    Serial.print(id2);
+    Serial.print(" Bat:");
+    Serial.print(bateryLevel);
+
+    if (temp != INVALID_TEMP)
+    {
+        Serial.print(" T:");
+        Serial.print(temp/10);
+        Serial.print(".");
+        Serial.print(temp%10);
+    }
+
+    if (hum != INVALID_HUM)
+    {
+        Serial.print(" Hum:");
+        Serial.print(hum);
+        Serial.print('%');
+    }
+    if (pressure != INVALID_PRESSURE)
+    {
+        Serial.print(" Pressure:");
+        Serial.print(pressure);
+    }
+    if (power != INVALID_POWER)
+    {
+        Serial.print(" Power:");
+        Serial.print(power);
+        Serial.print(" Total Power:");
+        Serial.print(totalpower);
+    }
+
+#ifdef RFM69_ENABLE
+     Serial.print(" RSSI:");Serial.print(radio.readRSSI());
+#endif
+
+    if (getReportType() == SERIAL_DEBUG) {
+        if (data) {
+            Serial.print(' ');
+//            printBinary(data, pos, 8);
+            printHexa(data, pos );
+        }
+    }
+    Serial.println();
 }
 

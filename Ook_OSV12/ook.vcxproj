@@ -102,7 +102,6 @@
     <ClInclude Include="OOKDecoder.h" />
     <ClInclude Include="Oregon.h" />
     <ClInclude Include="Record.h" />
-    <ClInclude Include="reportSerialAscii.h" />
     <ClInclude Include="rubicson.h" />
     <ClInclude Include="SerialRfmCmd.h" />
   </ItemGroup>

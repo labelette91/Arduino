@@ -6,7 +6,6 @@
 #else
 #endif    
 
-#define INVALID_INT 0x7F
 
 typedef enum {
 	LSB_FIRST = 0,
@@ -30,14 +29,14 @@ public:
 	
 	virtual char decode(word width, byte level) { return -1; };
 
-    virtual float getTemperature() {	  return (INVALID_INT);  }
-    virtual byte  gethumidity()  {	  return (INVALID_INT);  }
-    virtual byte getId()         {	  return (INVALID_INT);  }
-    virtual byte getCrc()         {	  return (INVALID_INT);  }
+    virtual float getTemperature() {	  return (INVALID_TEMP);  }
+    virtual byte  gethumidity()  {	  return (INVALID_HUM);  }
+    virtual byte getId()         {	  return (INVALID_BYTE);  }
+    virtual byte getCrc()         {	  return (INVALID_BYTE);  }
     
     virtual byte getBatteryLevel() {		  return 15;  } //return 15 if batterie OK  
     virtual byte getChannel()      {	  return  1;  }    
-    virtual float getPressure()      {	  return  INVALID_INT;  }    
+    virtual float getPressure()      {	  return  INVALID_PRESSURE;  }    
     virtual char* getName()      {	  return  Name;  }    
     virtual bool isValid()      		 {	  return  true;  }    
     virtual bool  newPacket()       
@@ -45,23 +44,19 @@ public:
 
         if (!isValid())
         {
-#ifndef DOMOTIC
-            Serial.println("BADCHK ");          //ReportSerial();
-#endif 
+            if (isReportSerial()) Serial.println("BADCHK ");          //ReportSerial();
             resetDecoder();
             return  false  ;  
         }
         //send at least every 2min
-        if ((millis() - LastSend) > 120000)  { lastdata[0]=lastdata[1]=lastdata[2]=lastdata[3] = 0;LastSend = millis();Serial.print("RESET ");}
+        if ((millis() - LastSend) > 120000)  { lastdata[0]=lastdata[1]=lastdata[2]=lastdata[3] = 0;LastSend = millis();}
         
         countPacket();
-                Serial.print(getName());
-                Serial.print(PacketCount);
-                Serial.print(' ');
+//                Serial.print(getName());    Serial.print(PacketCount);   Serial.print(' ');
 
         if (PacketCount == PacketCountSeuil) {
             LastSend = millis();
-            Serial.println();
+//            Serial.println();
             return true;
         }
 
@@ -69,54 +64,9 @@ public:
 
     }
 
-    virtual  void ReportSerial(byte rtype) 
-	{
-        Serial.print(getName());
-		Serial.print(' ');
-        Serial.print(millis() / 1000);
-		int temp = (int)getTemperature();
-		if (temp != INVALID_INT )
-		{
-			Serial.print(" T:");
-			Serial.print(temp );
-		}
-        Serial.print(" Id:");
-        Serial.print(getId() );
-        Serial.print(" Chn:");
-        Serial.print(getChannel());
-        Serial.print(" Bat:");
-        Serial.print(getBatteryLevel());
-		byte hum = gethumidity() ;
-		if (hum != INVALID_INT )
-		{
-			Serial.print(" Hum:");
-			Serial.print(hum);
-		}
-		float pressure = getPressure() ;
-		if (pressure != INVALID_INT )
-		{
-			Serial.print(" Pressure:");
-			Serial.print(pressure);
-		}
-		
-		if (rtype == SERIAL_DEBUG ){
-			Serial.print(' ');
-			printBinary (data, pos , 8 );
-		}
-        Serial.print('\n');
-        Serial.print('\r');
+    virtual void report()
+    {
     }
-	virtual void report(byte rtype)
-	{
-		if (rtype == REPORT_DOMOTIC ){
-//				if (gethumidity() != INVALID_INT)
-//					  reportDomoticTempHum (getTemperature(), gethumidity(), getId(), getChannel(), getBatteryLevel());
-		}
-		else	
-		{
-					  ReportSerial(rtype);
-		}    
-	}
 
 public:
 

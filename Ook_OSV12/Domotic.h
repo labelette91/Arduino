@@ -1,3 +1,5 @@
+#pragma once
+
 #define VERSION 15
 
 
@@ -293,6 +295,9 @@ struct {	//response on a mode command from the application
 #define sTypeTHB2 0x2   //BTHR918N,BTHR968
 #define sTypeTHBFloat 0x10	    // Weather Station
 
+#define HOMESWITCH_ID0 0x3B
+#define HOMESWITCH_ID1 0x80
+
 extern  tRBUF Cmd ;
 extern bool DomoticPacketReceived;
 
@@ -301,15 +306,16 @@ bool DomoticReceptionInProgress();
 extern void DomoticReceive();
 extern unsigned long getLightingId ();
 extern void  DomoticInit();
-extern void reportDomoticTemp ( int temp , byte id1 , byte id2 , byte bateryLevel);
-extern void reportDomoticTempHum ( int temp , byte hum , byte id1 , byte id2, byte bateryLevel, byte subType);
+extern void reportDomoticTemp ( int temp , byte id1 , byte id2 , byte bateryLevel,  byte* data=0, byte pos = 0);
+extern void reportDomoticTempHum ( int temp , byte hum , byte id1 , byte id2, byte bateryLevel, byte subType,  byte* data=0, byte pos = 0);
+void reportDomoticPower(byte* data, int size);
 extern void DomoticStartReceive();
 extern void DomoticStatus();
 void reportHagerDomotic ( const byte* data, byte pos );
 void resetLastSensorValue();
 void reportDomoticTempBaro(byte id1, float temp, float baro, float altitude, uint8_t forecast);
 void reportDomoticTempHumBaro(byte id1, byte unit, float temperature, float pressure, uint8_t forecast, byte humidity, byte BatteryLevel, byte RssiLevel);
-void reportDomotic ( const byte* data,byte size );
+//void reportDomotic ( const byte* data,byte size );
 void reportDomoticHomeEasy ( const byte* data, byte pos );
 void reportDomoticMD230(const byte* data, byte pos);
 

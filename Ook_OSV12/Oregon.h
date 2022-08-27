@@ -1,3 +1,4 @@
+#pragma once 
 
 extern int Sum(byte count, const byte* data);
 extern byte checksum(const byte* data);
@@ -13,7 +14,7 @@ extern byte getHumidity(const byte* data);
        // Ne retourne qu'un apercu de l'etat de la baterie : 10 = faible
 extern byte battery(const byte* data);
 extern byte channel(const byte* data);
-extern byte getId (const byte* data);
+extern byte getOrId (const byte* data);
 extern word getSensor (const byte* data);
 
 #define CMR180_ID0 0x3A

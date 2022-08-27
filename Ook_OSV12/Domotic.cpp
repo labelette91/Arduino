@@ -119,10 +119,11 @@ tRBUF Send ;
 
 //envoi temperature : humudit a domotic
 //, byte bateryLevel : 0..15 0 = batteri low
-void reportDomoticTemp(int temp, byte id1, byte id2, byte bateryLevel) {
+void reportDomoticTemp(int temp, byte id1, byte id2, byte bateryLevel,  byte* data, byte pos) {
 
     if(isReportSerial())
     {
+        reportSerial ( "TEMPHUM",  id1, id2, bateryLevel,  temp, INVALID_HUM, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE, data, pos ) ;
     }
     else
     {
@@ -149,10 +150,11 @@ void reportDomoticTemp(int temp, byte id1, byte id2, byte bateryLevel) {
 }
 
 //temp = temperature * 10 
-void reportDomoticTempHum(int temp, byte hum, byte id1, byte id2, byte bateryLevel, byte subType) {
+void reportDomoticTempHum(int temp, byte hum, byte id1, byte id2, byte bateryLevel, byte subType,  byte* data, byte pos ) {
 
     if (isReportSerial())
     {
+        reportSerial ( "TEMPHUM",  id1, id2, bateryLevel,  temp, hum, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE, data, pos  ) ;
     }
     else
     {
@@ -180,12 +182,13 @@ void reportDomoticTempHum(int temp, byte hum, byte id1, byte id2, byte bateryLev
         Serial.write((byte*)&Send.Temp_Hum, sizeof(Send.Temp_Hum));
     }
 }
-void reportDomoticPower(byte* data, int size) {
+void reportDomoticPower(byte* data, int size ) {
     T_INT  tint;
     T_LONG tlong;
 
     if (isReportSerial())
     {
+        reportSerial ( "POWER  ",  data[0], data[1], 15 ,  INVALID_TEMP, INVALID_HUM,  getPower(data), getTotalPower(data), INVALID_PRESSURE, data, size ) ;
     }
     else
     {
@@ -288,19 +291,19 @@ void reportDomoticTempHumBaro (byte id1 , byte unit ,float temperature , float p
     }
 }
 
-void reportDomotic ( const byte* data,byte size ){
-
-	//id1 = sensor id id2 = channel pour oregon
-  if (getSensorByte1(data)==CMR180_ID1)
-    reportDomoticPower ( (byte*)data, size );
-  else
-    //homeEasy sensor
-  if (getSensorByte1(data)==HOMESWITCH_ID0)
-    reportDomoticHomeEasy( (byte*)data, size );
-  else
-    reportDomoticTempHum (temperatureint(data) , getHumidity(data) , getId(data),channel(data), battery(data), sTypeTH1_OREGON );
-	
-}
+// void reportDomotic ( const byte* data,byte size ){
+// 
+// 	//id1 = sensor id id2 = channel pour oregon
+//   if (getSensorByte1(data)==CMR180_ID1)
+//     reportDomoticPower ( (byte*)data, size );
+//   else
+//     //homeEasy sensor
+//   if (getSensorByte1(data)==HOMESWITCH_ID0)
+//     reportDomoticHomeEasy( (byte*)data, size );
+//   else
+//     reportDomoticTempHum (temperatureint(data) , getHumidity(data) , getOrId(data),channel(data), battery(data), sTypeTH1_OREGON );
+// 	
+// }
 
 void DomoticStartReceive()
 {

@@ -127,7 +127,7 @@ public:
 					    return 1;
 				    }
 				    else {
-                        SyncReceived = false;
+                        SyncReceived = true;
                         return -1;
                     }
                 }
@@ -203,7 +203,7 @@ Each (group) of numbers has a specific meaning:
 */
 
   /* temperature in Lsb = 0.1 degrec C */
-  float getTemperature() {
+  float getTemperatureRubi() {
 	  int temp = data[2];
 	  temp = (temp << 4) + ((data[3] & 0xF0) >> 4);
 	  if (data[2] & 0x80)
@@ -211,7 +211,7 @@ Each (group) of numbers has a specific meaning:
 	  return temp;
 
   }
-  byte  gethumidity() {
+  byte  gethumidityRubi() {
 	  byte hum = (data[3] & 0x0F) << 4;
 		   hum += (data[4] & 0xF0) >> 4;
 
@@ -219,49 +219,49 @@ Each (group) of numbers has a specific meaning:
 
   }
   //return identification 0x00 to 0xff
-  byte getId() {
+  byte getIdRubi() {
 	  byte id = (data[0] & 0x0F );
          id = id << 4 ;
 		   id += (data[1] & 0xF0) >> 4;
 	  return (id);
   }
   //return 15 if batterie OK  
-  byte getBatteryLevel() {
+  byte getBatteryLevelRubi() {
 	  if (data[1] & 0x8)
 		  return 15;
 	  else
 		  return 0;
   }
-  byte getChannel() {
+  byte getChannelRubi() {
 	  return  (data[1] & 0x3)+1;
   }
 
-  void ReportSerial() {
-	  Serial.print("RUBI ");
-		Serial.print(millis() / 1000);
-
-	  Serial.print(" T:");
-	  int t = getTemperature();
-	  Serial.print(t / 10);
-	  Serial.print('.');
-	  t = t % 10; if (t < 0)t = -t;
-	  Serial.print(t);
-	  Serial.print(" Id:");
-	  Serial.print(getId(), HEX);
-	  Serial.print(" Chn:");
-	  Serial.print(getChannel());
-	  Serial.print(" Bat:");
-	  Serial.print(getBatteryLevel());
-	  Serial.print(" Hum:");
-	  Serial.print(gethumidity());
-
-		Serial.print(' ');
-		printBinary(data, pos,4);
-
-	  Serial.print('\n');
-	  Serial.print('\r');
-
-  }
+//  void ReportSerial() {
+//	  Serial.print("RUBI ");
+//		Serial.print(millis() / 1000);
+//
+//	  Serial.print(" T:");
+//	  int t = getTemperatureRubi();
+//	  Serial.print(t / 10);
+//	  Serial.print('.');
+//	  t = t % 10; if (t < 0)t = -t;
+//	  Serial.print(t);
+//	  Serial.print(" Id:");
+//	  Serial.print(getIdRubi(), HEX);
+//	  Serial.print(" Chn:");
+//	  Serial.print(getChannelRubi());
+//	  Serial.print(" Bat:");
+//	  Serial.print(getBatteryLevelRubi());
+//	  Serial.print(" Hum:");
+//	  Serial.print(gethumidityRubi());
+//
+//		Serial.print(' ');
+//		printBinary(data, pos,4);
+//
+//	  Serial.print('\n');
+//	  Serial.print('\r');
+//
+//  }
 
 
 //otio
@@ -307,26 +307,26 @@ frame  0 = short pulse = 2ms
 			return 0;
 	}
 
-	void ReportSerialOtio() {
-		Serial.print("OTIOR ");
-		Serial.print(millis() / 1000);
-		Serial.print(" ");
-		printHexa( data, 3 );
-
-		Serial.print(" T:");
-		int t = getTemperatureOtio();
-		Serial.print(t / 10);
-		Serial.print('.');
-		t = t % 10; if (t<0)t = -t;
-		Serial.print(t);
-		Serial.print(" Id:");
-		Serial.print(getIdOtio(), HEX);
-		Serial.print(" Bat:");
-		Serial.print(getBatteryLevelOtio());
-		Serial.print('\n');
-		Serial.print('\r');
-
-	}
+//	void ReportSerialOtio() {
+//		Serial.print("OTIOR ");
+//		Serial.print(millis() / 1000);
+//		Serial.print(" ");
+//		printHexa( data, 3 );
+//
+//		Serial.print(" T:");
+//		int t = getTemperatureOtio();
+//		Serial.print(t / 10);
+//		Serial.print('.');
+//		t = t % 10; if (t<0)t = -t;
+//		Serial.print(t);
+//		Serial.print(" Id:");
+//		Serial.print(getIdOtio(), HEX);
+//		Serial.print(" Bat:");
+//		Serial.print(getBatteryLevelOtio());
+//		Serial.print('\n');
+//		Serial.print('\r');
+//
+//	}
 
 	bool isOtio()
 	{
@@ -335,6 +335,22 @@ frame  0 = short pulse = 2ms
 		else
 			return false;
 	}
+
+    virtual void report()
+    {
+        if (isOtio())
+        {
+            if(isReportSerial())  printTab(TAB,Serial.print("OTIO "));
+            reportDomoticTemp(getTemperatureOtio(), getIdOtio(), 0, getBatteryLevelOtio(),data,pos);
+        }
+        else
+        {
+            if(isReportSerial())  printTab(TAB,Serial.print("RUBI "));
+            reportDomoticTempHum(getTemperatureRubi(), gethumidityRubi(), getIdRubi(), getChannelRubi(), getBatteryLevelRubi(), sTypeTH10_RUBiCSON,data,pos );
+        }
+
+    }
+
 };
 
 

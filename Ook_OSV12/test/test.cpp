@@ -352,12 +352,12 @@ void testOOK (char* TestString , float coefA=1.0 , float coefB=0   )
 int main(int, char**)
 {
 //    testOOK (RubicsonPulse  ) ;
-    testOOK (RubicsonPulse2  ) ;
+//    testOOK (RubicsonPulse2  ) ;
 
-//    testOOK (&TfaPulse , 500 , 500 ) ;
+    testOOK (&TfaPulse , 500 , 500 ) ;
     testOOK (OtioPulse2 ,  1 , 0   ) ;
     testOOK (OregonTempPulse ,  10 , 1   ) ;
-//    testOOK (OregonPowerPulse ,  10 , 1   ) ;
+    testOOK (OregonPowerPulse ,  10 , 1   ) ;
     
     
 }

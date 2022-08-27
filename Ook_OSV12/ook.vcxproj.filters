@@ -72,9 +72,6 @@
     <ClInclude Include="Record.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="reportSerialAscii.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SerialRfmCmd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
