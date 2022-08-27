@@ -7,6 +7,9 @@
 #include <wiringPiSPI.h>
 
 #endif
+
+void reportDomoticHomeEasy(const byte* data, byte pos) ;
+
 /* bit 1 : |-|____ : short Pulse One / long  Pulse Low  */
 /* bit 0 : |-|_    : short Pulse One / short Pulse Low  */
 
@@ -174,13 +177,9 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
   
 
   
-  void DecodeHomeEasy::ReportSerial(){
-    Serial.print ("Home:");
-    Serial.print (Code,HEX);
-    Serial.print (" T:");
-    Serial.print ('\n');
-    Serial.print ('\r');
+  void DecodeHomeEasy::report(){
 
+      reportDomoticHomeEasy(data,pos);
   }
 
 

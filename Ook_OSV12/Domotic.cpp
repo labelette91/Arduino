@@ -123,7 +123,7 @@ void reportDomoticTemp(int temp, byte id1, byte id2, byte bateryLevel,  byte* da
 
     if(isReportSerial())
     {
-        reportSerial ( "TEMPHUM",  id1, id2, bateryLevel,  temp, INVALID_HUM, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE, data, pos ) ;
+        reportSerial ( "TEMPHUM",  id1, id2, bateryLevel,  temp, INVALID_HUM, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE, INVALID_PRESSURE,data, pos ) ;
     }
     else
     {
@@ -154,7 +154,7 @@ void reportDomoticTempHum(int temp, byte hum, byte id1, byte id2, byte bateryLev
 
     if (isReportSerial())
     {
-        reportSerial ( "TEMPHUM",  id1, id2, bateryLevel,  temp, hum, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE, data, pos  ) ;
+        reportSerial ( "TEMPHUM",  id1, id2, bateryLevel,  temp, hum, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE, INVALID_PRESSURE,data, pos  ) ;
     }
     else
     {
@@ -188,7 +188,7 @@ void reportDomoticPower(byte* data, int size ) {
 
     if (isReportSerial())
     {
-        reportSerial ( "POWER  ",  data[0], data[1], 15 ,  INVALID_TEMP, INVALID_HUM,  getPower(data), getTotalPower(data), INVALID_PRESSURE, data, size ) ;
+        reportSerial ( "POWER  ",  data[0], data[1], 15 ,  INVALID_TEMP, INVALID_HUM,  getPower(data), getTotalPower(data), INVALID_PRESSURE, INVALID_PRESSURE,data, size ) ;
     }
     else
     {
@@ -219,10 +219,11 @@ void reportDomoticPower(byte* data, int size ) {
     }
 }
 
-void reportDomoticTempBaro (byte id1 , float temp , float baro , float altitude , uint8_t forecast )
+void reportDomoticTempBaro (byte id1 , float temp , float baro , float PressureSeaLevel , float altitude , uint8_t forecast , byte* data, byte pos )
 {
     if (isReportSerial())
     {
+         reportSerial ( "BARO",  id1, 1, 15 ,  temp, INVALID_HUM, INVALID_POWER, INVALID_POWER, baro ,PressureSeaLevel,  data, pos  ) ;
     }
     else
     {
@@ -256,10 +257,11 @@ unsigned char Get_Humidity_Level(const unsigned char hlevel)
 	return humstat_normal;
 }
 
-void reportDomoticTempHumBaro (byte id1 , byte unit ,float temperature , float pressure , uint8_t forecast , byte humidity , byte BatteryLevel , byte RssiLevel  )
+void reportDomoticTempHumBaro (byte id1 , byte unit ,float temperature , float pressure , float PressureSeaLevel, uint8_t forecast , byte humidity , byte BatteryLevel , byte RssiLevel ,  byte* data, byte pos )
 {
     if (isReportSerial())
     {
+         reportSerial ( "BAROH",  id1, 1, 15 ,  temperature, INVALID_HUM, INVALID_POWER, INVALID_POWER, pressure , PressureSeaLevel,data, pos  ) ;
     }
     else
     {
@@ -290,20 +292,6 @@ void reportDomoticTempHumBaro (byte id1 , byte unit ,float temperature , float p
         Serial.write((byte*)&Send.TEMP_HUM_BARO, sizeof(Send.TEMP_HUM_BARO));
     }
 }
-
-// void reportDomotic ( const byte* data,byte size ){
-// 
-// 	//id1 = sensor id id2 = channel pour oregon
-//   if (getSensorByte1(data)==CMR180_ID1)
-//     reportDomoticPower ( (byte*)data, size );
-//   else
-//     //homeEasy sensor
-//   if (getSensorByte1(data)==HOMESWITCH_ID0)
-//     reportDomoticHomeEasy( (byte*)data, size );
-//   else
-//     reportDomoticTempHum (temperatureint(data) , getHumidity(data) , getOrId(data),channel(data), battery(data), sTypeTH1_OREGON );
-// 	
-// }
 
 void DomoticStartReceive()
 {
@@ -416,6 +404,19 @@ void reportHagerDomotic(const byte* data, byte pos) {
 void reportDomoticHomeEasy(const byte* data, byte pos) {
     if (isReportSerial())
     {
+        reportPrintName("HEASY");
+        reportPrintHeader();
+
+        Serial.print (" Id:" );
+        Serial.print (data[5],HEX);
+        Serial.print (data[6],HEX);
+        Serial.print (data[7],HEX);
+        Serial.print (data[7],HEX);
+        Serial.print ( " unitcode:" );
+        Serial.print (data[2],HEX);
+        Serial.print ( " CMD:" );
+        Serial.println (data[3],HEX);
+
     }
     else
     {

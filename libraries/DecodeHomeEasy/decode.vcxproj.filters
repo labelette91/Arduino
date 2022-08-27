@@ -32,13 +32,13 @@
     <ClCompile Include="DecodeHomeEasy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="fifo.cpp">
+    <ClCompile Include="test\test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test.cpp">
+    <ClCompile Include="test\fifo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="vspde.cpp">
+    <ClCompile Include="..\def\vspde.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -25,4 +25,8 @@ void printBinary ( byte * data , byte pos, byte space  );
 void printHexa ( byte * data, byte pos);
 void printTab(byte tab, byte n);
 
-void reportSerial(char* Name, byte id1, byte id2, byte bateryLevel, int temp, byte hum, word power, word totalpower, word pressure, byte* data, byte pos);
+void reportPrintHeader();
+
+void reportPrintName(char* Name);
+
+void reportSerial(char* Name, byte id1, byte id2, byte bateryLevel, int temp, byte hum, word power, long totalpower, word pressure,word PressureSeaLevel, byte* data, byte pos);

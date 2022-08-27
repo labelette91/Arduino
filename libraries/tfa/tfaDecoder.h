@@ -151,26 +151,7 @@ unsigned long DeltaReceivedTime()
     LastReceivedTime = ms ;
     return delta;
 }
-// void ReportSerial()
-//  {
-// 					byte Id    = getId();
-// 					byte Canal = getChannel();
-// 					float Temp = getTemperature();
-// 					byte Hum   = gethumidity();
-//                     byte bat   = getBatteryLevel();
-//                     printHexa ( data, total_bits/8);
-//  //                   printBinary ( data, total_bits/8 , 8 );
-// 					Serial.print(" TFA:");
-// 					Serial.print(Id);
-// 					Serial.print(" " );
-// 					Serial.print(Canal);
-// 					Serial.print(" " );
-// 					Serial.print(Temp);
-// 					Serial.print(" " );
-// 					Serial.print(Hum);
-// 					Serial.print(" " );
-// 					Serial.println(bat);
-//  }
+
 void report()
 {
     if(isReportSerial())

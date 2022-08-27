@@ -1,26 +1,26 @@
 #ifdef WIN32
 #include "vspde.h"
 #endif
-//si = define  : report serial forma domoticz (binaire)
-//si =  : report serial format text 
 
-#define DOMOTIC 1
 
 //type de report serie 
-//#define REPORT_TYPE  REPORT_DOMOTIC
+//si = define  : report serial forma domoticz (binaire)
+#define REPORT_TYPE  REPORT_DOMOTIC
+
+//si =  : report serial format text 
 //#define REPORT_TYPE REPORT_SERIAL 
 #define REPORT_TYPE SERIAL_DEBUG 
 
 //#define RFM69_ENABLE
 
-#define OTIO_ENABLE 1
+//#define OTIO_ENABLE 1
 #define OOK_ENABLE  1
 //#define HAGER_ENABLE 1
-//#define HOMEEASY_ENABLE 1
+#define HOMEEASY_ENABLE 1
 //#define MD230_ENABLE 1
 #define RUBICSON_ENABLE 1
 #define  HIDEKI_ENABLE        
-//#define  BMP180_ENABLE        
+#define  BMP180_ENABLE        
 
 // Oregon V2 decoder added - Dominique Pierre
 // Oregon V3 decoder revisited - Dominique Pierre
@@ -204,14 +204,6 @@ inline static void write(word w)
   
 }
 
-// void reportSerial (const char* s, class DecodeOOK& decoder) 
-// {
-// #ifndef DOMOTIC
-//             reportSerialAscii("OSV2", decoder.getData(),decoder.pos);  
-// #else            
-//             reportDomotic ( decoder.getData(),decoder.pos);
-// #endif      
-// }
 
 void setup () {
     setReportType(REPORT_TYPE);
@@ -327,15 +319,10 @@ void loop () {
 #ifdef BMP180_ENABLE
                     float temp = myBMP.getTemperature();
                     uint32_t pressureInPa = myBMP.getPressure();
-                    if (isReportSerial()) {
-                        Serial.print(F("Temperature.......: ")); Serial.print(temp, 1);              Serial.println(F(" +-1.0C"));
-                        Serial.print(F("Pressure..........: ")); Serial.print(pressureInPa);         Serial.println(F(" +-1hPa"));
-                        Serial.print(F("Pressure Sea Level: ")); Serial.print((float)pressureInPa / coefPressureSeaLevel);         Serial.println(F(" +-1hPa"));
-                    }
-                    else{
-                        reportDomoticTempBaro(1, temp, pressureInPa / 100, 50.0, 1);
-                        reportDomoticTempHumBaro(1, 1, temp, pressureInPa / 100, 1, 0, 0xff, 0xFF);
-                    }
+                        reportPrintName("BMP180") ;
+                        reportDomoticTempBaro   (1,    temp, pressureInPa / 100, pressureInPa / coefPressureSeaLevel/100 , 50.0, 1);
+                        reportPrintName("BMP180") ;
+                        reportDomoticTempHumBaro(1, 1, temp, pressureInPa / 100, pressureInPa / coefPressureSeaLevel/100 , 1, 0, 0xff, 0xFF);
 #endif
                 }
                 lastMinute = Seconds/60;
@@ -368,17 +355,14 @@ void loop () {
 #endif      	
 
 #ifdef HOMEEASY_ENABLE
-			if (HEasy.nextPulse(p, pinData)) {
-                if (isReportSerial())
-				    HEasy.ReportSerial();
-                else
-				    reportDomoticHomeEasy(HEasy.getData(), HEasy.getBytes());
-				PulseLed();
+			if (HEasy.nextPulse(p, PulsePinData)) {
+                HEasy.report();
+                PulseLed();
 			}
 #endif
 
 #ifdef MD230_ENABLE
-			if (MD230.nextPulse(p, pinData)) {
+			if (MD230.nextPulse(p, PulsePinData)) {
                 if (isReportSerial())
 				    MD230.ReportSerial();
                 else
@@ -390,7 +374,7 @@ void loop () {
 #ifdef HAGER_ENABLE        
 			//si pulse bas on enleve 100micros sinon on ajoute 100micros
 			//pour compenser etat haut tronquer
-			if (pinData == 1) p -= 100; else p += 100;
+			if (PulsePinData == 1) p -= 100; else p += 100;
 
 			if (hager.nextPulse(p)) {
             if (isReportSerial())

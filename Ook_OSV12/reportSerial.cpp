@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include  "reportSerial.h"
 
+void printRSSI();
         
 #ifdef WIN32
 void registerStdout() {};
@@ -88,9 +89,8 @@ void printTab(byte tab, byte n)
 
 extern word 	NbPulsePerSec ;;
 
-void reportSerial(char* Name, byte id1, byte id2, byte bateryLevel, int temp, byte hum, word power, word totalpower, word pressure, byte* data, byte pos) {
-
-//    Serial.print(Name);
+void reportPrintHeader()
+{
     Serial.print(' ');
     Serial.print(millis() / 1000);
 
@@ -98,7 +98,16 @@ void reportSerial(char* Name, byte id1, byte id2, byte bateryLevel, int temp, by
     byte nb = Serial.print(NbPulsePerSec);
     printTab(6, nb);
     Serial.print(' ');
+}
+void reportPrintName(char * Name)
+{
+     if (isReportSerial())  printTab(TAB,Serial.print(Name)) ;
+}
+void reportSerial(char* Name, byte id1, byte id2, byte bateryLevel, int temp, byte hum, word power, long totalpower, word pressure, word PressureSeaLevel, byte* data, byte pos) {
 
+//    Serial.print(Name);
+
+    reportPrintHeader();
 
     Serial.print(" Id:");
     Serial.print(id1, HEX);
@@ -126,6 +135,11 @@ void reportSerial(char* Name, byte id1, byte id2, byte bateryLevel, int temp, by
         Serial.print(" Pressure:");
         Serial.print(pressure);
     }
+    if (PressureSeaLevel != INVALID_PRESSURE)
+    {
+        Serial.print(" PressureSeaLevel :");
+        Serial.print(PressureSeaLevel);
+    }
     if (power != INVALID_POWER)
     {
         Serial.print(" Power:");
@@ -134,9 +148,8 @@ void reportSerial(char* Name, byte id1, byte id2, byte bateryLevel, int temp, by
         Serial.print(totalpower);
     }
 
-#ifdef RFM69_ENABLE
-     Serial.print(" RSSI:");Serial.print(radio.readRSSI());
-#endif
+    printRSSI();
+//     Serial.print(" RSSI:");Serial.print(radio.readRSSI());
 
     if (getReportType() == SERIAL_DEBUG) {
         if (data) {

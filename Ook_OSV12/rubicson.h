@@ -1,67 +1,3 @@
-void printHexa(byte * data, byte pos);
-void printBinary(byte * data, byte pos,byte space ); 
-class DecodeOOKV2 {
-public:
-	byte total_bits, bits, state, pos, data[25];
-
-	virtual char decode(word width, byte level) { return -1; };
-
-public:
-
-	enum { UNKNOWN, T0, T1, T2, T3, OK, DONE };
-
-	DecodeOOKV2() { resetDecoder(); }
-
-	bool nextPulse(word width, byte level) {
-		if (state != DONE)
-
-			switch (decode(width, level)) {
-			case -1: resetDecoder(); break;
-			case 1:  done(); break;
-			}
-		return isDone();
-	}
-
-	bool isDone() const { return state == DONE; }
-
-	const byte* getData(byte& count) const {
-		count = pos;
-		return data;
-	}
-	const byte* getData() const {
-		return data;
-	}
-
-	void resetDecoder() {
-		total_bits = bits = pos = 0;
-		state = UNKNOWN;
-	}
-
-	// add one bit to the packet data buffer
-
-	virtual void gotBit(char value) {
-		total_bits++;
-		byte *ptr = data + pos;
-		*ptr = (*ptr << 1) | (value);
-
-		if (++bits >= 8) {
-			bits = 0;
-			if (++pos >= sizeof data) {
-				resetDecoder();
-				return;
-			}
-		}
-		state = OK;
-	}
-
-
-	void done() {
-		while (bits)
-			gotBit(0); // padding
-		state = DONE;
-	}
-};
-
 
 class DecodeRubicson : public DecodeOOK {
 public:
@@ -203,7 +139,7 @@ Each (group) of numbers has a specific meaning:
 */
 
   /* temperature in Lsb = 0.1 degrec C */
-  float getTemperatureRubi() {
+  int getTemperatureRubi() {
 	  int temp = data[2];
 	  temp = (temp << 4) + ((data[3] & 0xF0) >> 4);
 	  if (data[2] & 0x80)
@@ -235,34 +171,6 @@ Each (group) of numbers has a specific meaning:
   byte getChannelRubi() {
 	  return  (data[1] & 0x3)+1;
   }
-
-//  void ReportSerial() {
-//	  Serial.print("RUBI ");
-//		Serial.print(millis() / 1000);
-//
-//	  Serial.print(" T:");
-//	  int t = getTemperatureRubi();
-//	  Serial.print(t / 10);
-//	  Serial.print('.');
-//	  t = t % 10; if (t < 0)t = -t;
-//	  Serial.print(t);
-//	  Serial.print(" Id:");
-//	  Serial.print(getIdRubi(), HEX);
-//	  Serial.print(" Chn:");
-//	  Serial.print(getChannelRubi());
-//	  Serial.print(" Bat:");
-//	  Serial.print(getBatteryLevelRubi());
-//	  Serial.print(" Hum:");
-//	  Serial.print(gethumidityRubi());
-//
-//		Serial.print(' ');
-//		printBinary(data, pos,4);
-//
-//	  Serial.print('\n');
-//	  Serial.print('\r');
-//
-//  }
-
 
 //otio
 /*
@@ -307,26 +215,6 @@ frame  0 = short pulse = 2ms
 			return 0;
 	}
 
-//	void ReportSerialOtio() {
-//		Serial.print("OTIOR ");
-//		Serial.print(millis() / 1000);
-//		Serial.print(" ");
-//		printHexa( data, 3 );
-//
-//		Serial.print(" T:");
-//		int t = getTemperatureOtio();
-//		Serial.print(t / 10);
-//		Serial.print('.');
-//		t = t % 10; if (t<0)t = -t;
-//		Serial.print(t);
-//		Serial.print(" Id:");
-//		Serial.print(getIdOtio(), HEX);
-//		Serial.print(" Bat:");
-//		Serial.print(getBatteryLevelOtio());
-//		Serial.print('\n');
-//		Serial.print('\r');
-//
-//	}
 
 	bool isOtio()
 	{

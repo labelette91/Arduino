@@ -1083,3 +1083,13 @@ void loop () {
 }
 
 
+
+int Main(int, char**);
+
+
+int main(int, char**)
+{
+    
+    Main(0,0);
+
+}
