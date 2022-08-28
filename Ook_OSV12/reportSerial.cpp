@@ -132,12 +132,12 @@ void reportSerial(char* Name, byte id1, byte id2, byte bateryLevel, int temp, by
     }
     if (pressure != INVALID_PRESSURE)
     {
-        Serial.print(" Pressure:");
+        Serial.print(" Baro:");
         Serial.print(pressure);
     }
     if (PressureSeaLevel != INVALID_PRESSURE)
     {
-        Serial.print(" PressureSeaLevel :");
+        Serial.print(" BaroSea:");
         Serial.print(PressureSeaLevel);
     }
     if (power != INVALID_POWER)

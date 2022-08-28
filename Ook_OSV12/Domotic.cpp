@@ -148,7 +148,6 @@ void reportDomoticTemp(int temp, byte id1, byte id2, byte bateryLevel,  byte* da
         Serial.write((byte*)&Send.Temp, 9);
     }
 }
-
 //temp = temperature * 10 
 void reportDomoticTempHum(int temp, byte hum, byte id1, byte id2, byte bateryLevel, byte subType,  byte* data, byte pos ) {
 
@@ -218,7 +217,6 @@ void reportDomoticPower(byte* data, int size ) {
         Serial.write((byte*)&Send.Temp_Hum, sizeof(Send.ENERGY));
     }
 }
-
 void reportDomoticTempBaro (byte id1 , float temp , float baro , float PressureSeaLevel , float altitude , uint8_t forecast , byte* data, byte pos )
 {
     if (isReportSerial())
@@ -256,7 +254,6 @@ unsigned char Get_Humidity_Level(const unsigned char hlevel)
 		return humstat_comfort;
 	return humstat_normal;
 }
-
 void reportDomoticTempHumBaro (byte id1 , byte unit ,float temperature , float pressure , float PressureSeaLevel, uint8_t forecast , byte humidity , byte BatteryLevel , byte RssiLevel ,  byte* data, byte pos )
 {
     if (isReportSerial())
@@ -292,7 +289,6 @@ void reportDomoticTempHumBaro (byte id1 , byte unit ,float temperature , float p
         Serial.write((byte*)&Send.TEMP_HUM_BARO, sizeof(Send.TEMP_HUM_BARO));
     }
 }
-
 void DomoticStartReceive()
 {
   Send.IRESPONSE.packetlength = sizeof(Send.IRESPONSE)-1;
@@ -335,7 +331,6 @@ void DomoticStatus()
   Serial.write((byte*)&Send.IRESPONSE,sizeof(Send.IRESPONSE));
 	
 }
-
 void reportHagerDomoticUnk ( const byte* data, byte pos ){
   Send.UNDECODED.packetlength = pos+3;
   Send.UNDECODED.packettype = pTypeUndecoded;

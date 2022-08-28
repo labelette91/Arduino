@@ -228,12 +228,12 @@ frame  0 = short pulse = 2ms
     {
         if (isOtio())
         {
-            if(isReportSerial())  printTab(TAB,Serial.print("OTIO "));
+            reportPrintName("OTIO");
             reportDomoticTemp(getTemperatureOtio(), getIdOtio(), 0, getBatteryLevelOtio(),data,pos);
         }
         else
         {
-            if(isReportSerial())  printTab(TAB,Serial.print("RUBI "));
+            reportPrintName("RUBI");
             reportDomoticTempHum(getTemperatureRubi(), gethumidityRubi(), getIdRubi(), getChannelRubi(), getBatteryLevelRubi(), sTypeTH10_RUBiCSON,data,pos );
         }
 

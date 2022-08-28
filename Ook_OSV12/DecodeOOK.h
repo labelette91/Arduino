@@ -33,7 +33,6 @@ public:
     virtual byte  gethumidity()  {	  return (INVALID_HUM);  }
     virtual byte getId()         {	  return (INVALID_BYTE);  }
     virtual byte getCrc()         {	  return (INVALID_BYTE);  }
-    
     virtual byte getBatteryLevel() {		  return 15;  } //return 15 if batterie OK  
     virtual byte getChannel()      {	  return  1;  }    
     virtual float getPressure()      {	  return  INVALID_PRESSURE;  }    
@@ -63,7 +62,6 @@ public:
         return  false  ;  
 
     }
-
     virtual void report()
     {
     }

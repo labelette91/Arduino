@@ -154,10 +154,7 @@ unsigned long DeltaReceivedTime()
 
 void report()
 {
-    if(isReportSerial())
-    {
-        printTab(TAB,Serial.print("TFA  "));
-    }
+    reportPrintName("TFA  ");
     reportDomoticTempHum (getTemperature()*10 , gethumidity(), getId(), getChannel(), getBatteryLevel(),sTypeTH11_TFA,data,pos);
 }
   

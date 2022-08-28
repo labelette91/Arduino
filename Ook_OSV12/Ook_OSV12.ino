@@ -20,7 +20,10 @@
 //#define MD230_ENABLE 1
 #define RUBICSON_ENABLE 1
 #define  HIDEKI_ENABLE        
+
+#ifndef WIN32
 #define  BMP180_ENABLE        
+#endif
 
 // Oregon V2 decoder added - Dominique Pierre
 // Oregon V3 decoder revisited - Dominique Pierre

@@ -205,25 +205,25 @@ public:
     {
         //id1 = sensor id id2 = channel pour oregon
         if (getSensorByte1(data) == CMR180_ID1) {
-            if (isReportSerial()) printTab(TAB, Serial.print("[CMR180] ") ) ;
+            reportPrintName ("CMR180") ;
             reportDomoticPower((byte*)data, pos);
         }
         else   if (getSensorByte1(data) == HOMESWITCH_ID0)
         {
             //homeEasy sensor
-            if (isReportSerial())  printTab(TAB,Serial.print("[HMEASY] ")) ;
+           reportPrintName("HMEASY") ;
             reportDomoticHomeEasy((byte*)data, pos);
         }
         // Inside Temp-Hygro : THGR228N,...
         else if (data[0] == 0x1A && data[1] == 0x2D)
         {
-            if (isReportSerial()) printTab(TAB,Serial.print("[THGR228N]"));
+            reportPrintName("THGR228N");
             reportDomoticTempHum(temperatureint(data), getHumidity(data), getOrId(data), channel(data), battery(data), sTypeTH1_OREGON, data, pos);
         }
         // Outside/Water Temp : THN132N,...
         else if (data[0] == 0xEA && data[1] == 0x4C)
         {
-            if (isReportSerial()) printTab(TAB,Serial.print("[THN132N] "));
+            reportPrintName("THN132N");
             reportDomoticTemp(temperatureint(data), getOrId(data), channel(data), battery(data), data, pos);
         }
     }
