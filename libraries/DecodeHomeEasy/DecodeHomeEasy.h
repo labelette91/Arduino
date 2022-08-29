@@ -58,10 +58,8 @@ Les données correspondent aux informations suivantes :
 class DecodeHomeEasy  : public DecodeOOK{
 //class DecodeHomeEasy {
 public:
-    byte  MaxCode , NbCodeOk , lastBit , total_bit  ;
-//    byte total_bits, state, MaxCode , NbCodeOk , lastBit , pos, data[10]; ;
-    unsigned long CurCode , Code , tmpCode, lastCode;
-    unsigned long LastReceived ; 
+    byte  lastBit , total_bit  ;
+
 
 public:
     enum { UNKNOWN, T0, T1, T2, T3, OK, DONE };
@@ -72,8 +70,7 @@ public:
 
     void resetDecoder () ;
     
-    DecodeHomeEasy (byte pMaxCode=5) ;
-    bool nextOnePulse (word pWidth , byte data)   ;
+    DecodeHomeEasy (byte pMaxCode=3) ;
     
   char decode (word width , byte BitData)   ;
   void report();

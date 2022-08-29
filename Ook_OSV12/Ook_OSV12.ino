@@ -354,16 +354,19 @@ void loop () {
                 else
 				    reportDomoticTemp(Otio.getTemperature(), Otio.getId(), 0, Otio.getBatteryLevel());
                 PulseLed();
+                Otio.resetDecoder();
 			}
 #endif      	
 
 #ifdef HOMEEASY_ENABLE
-			if (HEasy.nextPulse(p, PulsePinData)) 
+			if (HEasy.nextPulse(p, PulsePinData)){ 
                 if (HEasy.newPacket())
                 {
                     HEasy.report();
                     PulseLed();
 			    }
+                HEasy.resetDecoder();
+            }
 #endif
 
 #ifdef MD230_ENABLE

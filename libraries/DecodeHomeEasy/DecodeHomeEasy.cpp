@@ -33,13 +33,16 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
           DecodeOOK::resetDecoder ();
           total_bit =  0;
           state = UNKNOWN;
-          CurCode = 0 ;
           lastBit = 0xFF ;
           pos=0 ;
     }    
     //pMaxCode : the number of successive received equal value to return the current Code
     
-    DecodeHomeEasy::DecodeHomeEasy (byte pMaxCode) { lastBit = 0xFF ; Code = 0 ; NbCodeOk=0;MaxCode=pMaxCode;tmpCode=0;lastCode=0;LastReceived=0;resetDecoder(); }
+    DecodeHomeEasy::DecodeHomeEasy (byte pMaxCode) { 
+        resetDecoder(); 
+        PacketCountSeuil=pMaxCode;
+        Name ="H";
+    }
 
 
     /* T0 : attente bit de synchro */
@@ -56,11 +59,11 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
         case UNKNOWN :  /* test reception pulse high */
                         //if ( TEST_PULSE(width,PULSE_HIGH,TOLERANCE)  && (data==1) )
         case T0      :  /* test reception pulse low synchro */
-//						if (width> PULSE_SYNCHRO) 
-//							state = T1 ;/*  synchro receive */
+						if ( (width> PULSE_SYNCHRO) && (data==0) )
+							state = T1 ;/*  synchro receive */
 //                       else
 //                           resetDecoder ();
-//            break;   
+            break;   
         case T1      : //reception data bit pulse high
             if ( TEST_PULSE(width,PULSE_HIGH,TOLERANCE)  )
                 state = T2 ;
@@ -79,7 +82,6 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
                     if (lastBit==0)
                     {
                         /* add bit 0 to Code */
-                        CurCode = CurCode << 1;
                         gotBit(0);
 #ifdef _debug
                         printf ( "Bits : %02d %d %08X\n", total_bits , lastBit , CurCode ) ;
@@ -102,8 +104,6 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
                     if (lastBit==1)
                     {
                         /* add bit 1 to Code */
-                        CurCode = CurCode << 1;
-                        CurCode = CurCode | 1 ;
                         gotBit(1);
 #ifdef _debug
                         printf ( "Bits : %02d %d %08X \n", total_bits , lastBit, CurCode ) ;
@@ -128,60 +128,12 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
 
         if (total_bit==NBBIT*2)
         {
-            //update code
-            tmpCode = CurCode ;
-//            resetDecoder ();
             return true;
         }
         return false;   
     }
 
-    /* return true if successive equal MaxCode 24 bits words have been receive between two 8ms pulse */
-    /* result in Code */
-    
-  bool DecodeHomeEasy::nextOnePulse (word width , byte BitData)   {
-    //if one frame has been received
-    if (nextPulse ( width ,  BitData) ){
-       if (NbCodeOk==0) lastCode = tmpCode ;
-       //if same value increment counter or decrement
-       if (lastCode == tmpCode ) NbCodeOk ++ ; else NbCodeOk -- ;
-       //if max number of same frame has been received
-       if (NbCodeOk >= MaxCode ){
-          NbCodeOk = 0 ;
-          if ( Code != lastCode ) {
-            //set final value
-            Code = lastCode ;
-            LastReceived = millis();
-            data[0] = HOMESWITCH_ID0 ;
-            data[1] = HOMESWITCH_ID1 ;
-            //unit code 
-            data[2]  = (byte) (lastCode & 0x0000000F ); 
-            lastCode = lastCode >> 4 ;
-            //switch value 
-            data[3 ] = (byte)(lastCode & 0x00000001) ; 
-            lastCode = lastCode >> 1 ;
-            //group value 
-            data[4 ] = (byte)(lastCode & 0x00000001) ; 
-            lastCode = lastCode >> 1 ;
-            //id 3FFFFFF
-            data[8]  = (byte)(lastCode & 0x000000FF) ;  lastCode = lastCode >> 8 ;
-            data[7]  = (byte)(lastCode & 0x000000FF) ;  lastCode = lastCode >> 8 ;
-            data[6]  = (byte)(lastCode & 0x000000FF) ;  lastCode = lastCode >> 8 ;
-            data[5]  = (byte)(lastCode & 0x00000003) ;  
-            pos = 9;
-            return true;
-          }
-          //report only if new value has not been report since 2 min
-//          if ( (millis()-LastReceived) > 120000 )
-          {
-            LastReceived = millis();
-            return true;
-          }
-       } 
-    }
-    return false ;
-  }  
-  
+ 
 
   
   void DecodeHomeEasy::report(){
