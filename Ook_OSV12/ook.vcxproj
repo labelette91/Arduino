@@ -48,7 +48,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Arduino\libraries\DecodeHomeEasy;C:\Arduino\libraries\def;C:\Arduino\libraries\RFM69;C:\Arduino\libraries\RFM69\pi;C:\Arduino\libraries\HagerDecoder;C:\Arduino\libraries\HomeEasyTransmitter;C:\Arduino\libraries\DecodeMD230;C:\Arduino\libraries\tfa;C:\Arduino\libraries\DecodeOTIO;C:\Arduino\Ook_OSV12;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Arduino\libraries\DecodeHomeEasy;C:\Arduino\libraries\def;C:\Arduino\libraries\RFM69;C:\Arduino\libraries\RFM69\pi;C:\Arduino\libraries\HagerDecoder;C:\Arduino\libraries\HomeEasyTransmitter;C:\Arduino\libraries\DecodeMD230;C:\Arduino\libraries\tfa;C:\Arduino\libraries\DecodeOTIO;C:\Arduino\Ook_OSV12;C:\Arduino\libraries\DecodeOOK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -79,6 +79,7 @@
     <ClCompile Include="..\libraries\RFM69\RFM69.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="bitstream.cpp" />
     <ClCompile Include="Domotic.cpp" />
     <ClCompile Include="fifo.cpp" />
     <ClCompile Include="hager.cpp" />

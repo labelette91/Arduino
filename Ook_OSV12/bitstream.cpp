@@ -13,7 +13,7 @@
     while ( size != 0 )                                                                        \
     {                                                                                          \
         uint8_t val  = data[srcByte];                                                          \
-        if (availableBit<8)                                                                    \ 
+        if (availableBit<8)                                                                    \
             val &=  (1<<availableBit)-1 ;                                                      \
         if (size>=SIZE_WORD_IN_BIT)                                                            \
             Value <<= SIZE_WORD_IN_BIT ;                                                       \

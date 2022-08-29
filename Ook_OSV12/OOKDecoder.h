@@ -208,12 +208,6 @@ public:
             reportPrintName ("CMR180") ;
             reportDomoticPower((byte*)data, pos);
         }
-        else   if (getSensorByte1(data) == HOMESWITCH_ID0)
-        {
-            //homeEasy sensor
-           reportPrintName("HMEASY") ;
-            reportDomoticHomeEasy((byte*)data, pos);
-        }
         // Inside Temp-Hygro : THGR228N,...
         else if (data[0] == 0x1A && data[1] == 0x2D)
         {

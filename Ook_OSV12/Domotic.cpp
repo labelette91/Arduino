@@ -396,36 +396,38 @@ void reportHagerDomotic(const byte* data, byte pos) {
         reportHagerDomoticSerial(data, pos);
     }
 }
-void reportDomoticHomeEasy(const byte* data, byte pos) {
+
+void reportDomoticHomeEasy( byte id1   ,byte id2   ,byte id3   ,byte id4   ,byte group ,byte cmd   ,byte unitcode)
+{
+
     if (isReportSerial())
     {
         reportPrintName("HEASY");
         reportPrintHeader();
 
         Serial.print (" Id:" );
-        Serial.print (data[5],HEX);
-        Serial.print (data[6],HEX);
-        Serial.print (data[7],HEX);
-        Serial.print (data[7],HEX);
+        Serial.print (id1,HEX);
+        Serial.print (id2,HEX);
+        Serial.print (id3,HEX);
+        Serial.print (id4,HEX);
         Serial.print ( " unitcode:" );
-        Serial.print (data[2],HEX);
+        Serial.print (unitcode);
         Serial.print ( " CMD:" );
-        Serial.println (data[3],HEX);
+        Serial.println (cmd);
 
     }
     else
     {
 
-
         Send.LIGHTING2.packetlength = 11;
         Send.LIGHTING2.packettype = pTypeLighting2;
         Send.LIGHTING2.subtype = sTypeHEU;
         Send.LIGHTING2.seqnbr = Seqnbr++;
-        Send.LIGHTING2.id1 = data[5];            /* id emetteur 0..3  */
-        Send.LIGHTING2.id2 = data[6];            /* id emetteur 0..FF */
-        Send.LIGHTING2.id3 = data[7];            /* id emetteur 0..FF */
-        Send.LIGHTING2.id4 = data[7];            /* id emetteur 0..FF */
-        Send.LIGHTING2.unitcode = data[2];        		/* unit = zone 1..3  */
+        Send.LIGHTING2.id1 = id1;            /* id emetteur 0..3  */
+        Send.LIGHTING2.id2 = id2;            /* id emetteur 0..FF */
+        Send.LIGHTING2.id3 = id3;            /* id emetteur 0..FF */
+        Send.LIGHTING2.id4 = id4;            /* id emetteur 0..FF */
+        Send.LIGHTING2.unitcode = unitcode;        		/* unit = zone 1..3  */
         Send.LIGHTING2.level = 0;   /* dim level 0..15   */
         Send.LIGHTING2.rssi = 0;
         //devbug
@@ -436,7 +438,7 @@ void reportDomoticHomeEasy(const byte* data, byte pos) {
                 Send.LIGHTING2.data[2]  = data[5];
                 Send.LIGHTING2.data[3]  = data[6];
         */
-        Send.LIGHTING2.cmnd = data[3];
+        Send.LIGHTING2.cmnd = cmd;
 
         Serial.write((byte*)&Send.LIGHTING2, Send.LIGHTING2.packetlength + 1);
     }

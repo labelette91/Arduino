@@ -8,7 +8,9 @@
 
 #endif
 
-void reportDomoticHomeEasy(const byte* data, byte pos) ;
+void reportDomoticHomeEasy(byte id1, byte id2, byte id3, byte id4, byte group, byte cmd, byte unitcode);
+uint16_t getRaw16bValue(uint8_t* data, uint8_t offset, uint8_t size);
+uint8_t getRaw08bValue(uint8_t* data, uint8_t offset, uint8_t size);
 
 /* bit 1 : |-|____ : short Pulse One / long  Pulse Low  */
 /* bit 0 : |-|_    : short Pulse One / short Pulse Low  */
@@ -28,7 +30,8 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
     }
 
     void DecodeHomeEasy::resetDecoder () {
-          total_bits =  0;
+          DecodeOOK::resetDecoder ();
+          total_bit =  0;
           state = UNKNOWN;
           CurCode = 0 ;
           lastBit = 0xFF ;
@@ -42,7 +45,7 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
     /* T0 : attente bit de synchro */
 
     /* result in CurCode */
-    bool DecodeHomeEasy::nextOnePulse (word pWidth , byte data)   {
+    char DecodeHomeEasy::decode (word pWidth , byte data)   {
         //pulse lsb wil be 100 micros to save computation time
 //        byte width = pWidth / 100;
 //        byte width = pWidth ;
@@ -69,14 +72,15 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
             if ( TEST_PULSE(width,PULSE_ONE,TOLERANCE)  )
             {
                 state = T1 ;
-                total_bits++;
-                if ((total_bits%2)==0)
+                total_bit++;
+                if ((total_bit%2)==0)
                 {
                     //the previus bit shall be 0 bit 0 
                     if (lastBit==0)
                     {
                         /* add bit 0 to Code */
                         CurCode = CurCode << 1;
+                        gotBit(0);
 #ifdef _debug
                         printf ( "Bits : %02d %d %08X\n", total_bits , lastBit , CurCode ) ;
 #endif
@@ -84,14 +88,15 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
                     else
                         resetDecoder ();
                 }
+                state = T1 ;
                 lastBit = 1 ;
             }
             /* test short pulse */
             else  if ( TEST_PULSE(width,PULSE_ZERO,TOLERANCE)  )
             {
                 state = T1 ;
-                total_bits++;
-                if ((total_bits%2)==0)
+                total_bit++;
+                if ((total_bit%2)==0)
                 {
                     //the previus bit shall be 1
                     if (lastBit==1)
@@ -99,6 +104,7 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
                         /* add bit 1 to Code */
                         CurCode = CurCode << 1;
                         CurCode = CurCode | 1 ;
+                        gotBit(1);
 #ifdef _debug
                         printf ( "Bits : %02d %d %08X \n", total_bits , lastBit, CurCode ) ;
 #endif
@@ -106,6 +112,7 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
                     else
                         resetDecoder ();
                 }
+                state = T1 ;
                 lastBit = 0 ;
             }
             /* test synchro pulse */
@@ -119,11 +126,11 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
             break;   
         }
 
-        if (total_bits==NBBIT*2)
+        if (total_bit==NBBIT*2)
         {
             //update code
             tmpCode = CurCode ;
-            resetDecoder ();
+//            resetDecoder ();
             return true;
         }
         return false;   
@@ -132,9 +139,9 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
     /* return true if successive equal MaxCode 24 bits words have been receive between two 8ms pulse */
     /* result in Code */
     
-  bool DecodeHomeEasy::nextPulse (word width , byte BitData)   {
+  bool DecodeHomeEasy::nextOnePulse (word width , byte BitData)   {
     //if one frame has been received
-    if (nextOnePulse ( width ,  BitData) ){
+    if (nextPulse ( width ,  BitData) ){
        if (NbCodeOk==0) lastCode = tmpCode ;
        //if same value increment counter or decrement
        if (lastCode == tmpCode ) NbCodeOk ++ ; else NbCodeOk -- ;
@@ -179,7 +186,15 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
   
   void DecodeHomeEasy::report(){
 
-      reportDomoticHomeEasy(data,pos);
+        byte id1 = getRaw08bValue((uint8_t*)data,0,2);
+        byte id2 = getRaw08bValue((uint8_t*)data,2,8);
+        byte id3 = getRaw08bValue((uint8_t*)data,10,8);
+        byte id4 = getRaw08bValue((uint8_t*)data,18,8);
+        byte group = getRaw08bValue((uint8_t*)data,26,1);
+        byte cmd   = getRaw08bValue((uint8_t*)data,27,1);
+        byte unitcode  = getRaw08bValue((uint8_t*)data,28,4);
+
+      reportDomoticHomeEasy(  id1   , id2   , id3   , id4   , group , cmd   , unitcode);
   }
 
 

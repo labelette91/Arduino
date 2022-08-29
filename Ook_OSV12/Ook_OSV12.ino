@@ -358,10 +358,12 @@ void loop () {
 #endif      	
 
 #ifdef HOMEEASY_ENABLE
-			if (HEasy.nextPulse(p, PulsePinData)) {
-                HEasy.report();
-                PulseLed();
-			}
+			if (HEasy.nextPulse(p, PulsePinData)) 
+                if (HEasy.newPacket())
+                {
+                    HEasy.report();
+                    PulseLed();
+			    }
 #endif
 
 #ifdef MD230_ENABLE

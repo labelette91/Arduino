@@ -1,3 +1,4 @@
+#include  "reportSerial.h"
 
 class DecodeRubicson : public DecodeOOK {
 public:

@@ -7,6 +7,8 @@
 #include "deftype.h"
 #endif
 
+#include "DecodeOOK.h"
+
 #define NBBIT  32
 #define PULSE_HIGH 400
 #define PULSE_ONE  1300
@@ -53,9 +55,11 @@ Les données correspondent aux informations suivantes :
 
 #define TEST_PULSE(WIDTH,PULSE_LEN,TOL)((WIDTH> (PULSE_LEN-TOL))&&(WIDTH<(PULSE_LEN+TOL)))
 
-class DecodeHomeEasy {
+class DecodeHomeEasy  : public DecodeOOK{
+//class DecodeHomeEasy {
 public:
-    byte total_bits, state, MaxCode , NbCodeOk , lastBit , pos, data[10]; ;
+    byte  MaxCode , NbCodeOk , lastBit , total_bit  ;
+//    byte total_bits, state, MaxCode , NbCodeOk , lastBit , pos, data[10]; ;
     unsigned long CurCode , Code , tmpCode, lastCode;
     unsigned long LastReceived ; 
 
@@ -71,7 +75,7 @@ public:
     DecodeHomeEasy (byte pMaxCode=5) ;
     bool nextOnePulse (word pWidth , byte data)   ;
     
-  bool nextPulse (word width , byte BitData)   ;
+  char decode (word width , byte BitData)   ;
   void report();
  };
 

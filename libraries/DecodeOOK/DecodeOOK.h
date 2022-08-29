@@ -1,11 +1,12 @@
 #pragma once
 
-#include  "reportSerial.h"
+//#include  "reportSerial.h"
 
 #ifdef WIN32
 #else
 #endif    
 
+void reportPrint(char * mes);
 
 typedef enum {
 	LSB_FIRST = 0,
@@ -29,13 +30,13 @@ public:
 	
 	virtual char decode(word width, byte level) { return -1; };
 
-    virtual float getTemperature() {	  return (INVALID_TEMP);  }
-    virtual byte  gethumidity()  {	  return (INVALID_HUM);  }
-    virtual byte getId()         {	  return (INVALID_BYTE);  }
-    virtual byte getCrc()         {	  return (INVALID_BYTE);  }
-    virtual byte getBatteryLevel() {		  return 15;  } //return 15 if batterie OK  
-    virtual byte getChannel()      {	  return  1;  }    
-    virtual float getPressure()      {	  return  INVALID_PRESSURE;  }    
+//    virtual float getTemperature() {	  return (INVALID_TEMP);  }
+//    virtual byte  gethumidity()  {	  return (INVALID_HUM);  }
+//    virtual byte getId()         {	  return (INVALID_BYTE);  }
+    virtual byte getCrc()         {	  return (0);  }
+//    virtual byte getBatteryLevel() {		  return 15;  } //return 15 if batterie OK  
+//    virtual byte getChannel()      {	  return  1;  }    
+//    virtual float getPressure()      {	  return  INVALID_PRESSURE;  }    
     virtual char* getName()      {	  return  Name;  }    
     virtual bool isValid()      		 {	  return  true;  }    
     virtual bool  newPacket()       
@@ -43,7 +44,7 @@ public:
 
         if (!isValid())
         {
-            if (isReportSerial()) Serial.println("BADCHK ");          //ReportSerial();
+            reportPrint ("BADCHK\n");          //ReportSerial();
             resetDecoder();
             return  false  ;  
         }
