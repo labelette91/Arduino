@@ -165,7 +165,7 @@ int getPower(byte* data )
  * \param    data       Oregon message
  * \param    totalpower     
  */
-long getTotalPower(byte* data)
+unsigned long getTotalPower(byte* data)
 {
   T_LONG tint  ;
   tint.Car[0] = data[5];

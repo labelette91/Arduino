@@ -107,7 +107,7 @@ void reportPrint(char * mes)
 {
      if (isReportSerial()) Serial.print(mes); 
 }
-void reportSerial(char* Name, byte id1, byte id2, byte bateryLevel, int temp, byte hum, word power, long totalpower, word pressure, word PressureSeaLevel, byte* data, byte pos) {
+void reportSerial(char* Name, byte id1, byte id2, byte bateryLevel, int temp, byte hum, word power, unsigned long totalpower, word pressure, word PressureSeaLevel, byte* data, byte pos) {
 
 //    Serial.print(Name);
 

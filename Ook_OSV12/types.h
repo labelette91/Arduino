@@ -9,7 +9,7 @@ int  Int;
 
 typedef union T_long {
 char Car[4] ;
-long Long ;
+unsigned long Long ;
 }T_LONG;
 
 typedef union T_double {
