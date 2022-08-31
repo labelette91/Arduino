@@ -23,6 +23,10 @@ byte    Seqnbr ;
 //true if packet as been received and not treated
 bool    DomoticPacketReceived;
 
+unsigned long ToTalPowerWHeure = 0 ;
+         word CummulPowerWMin = 0 ;
+
+
 typedef union tPAR {
 byte Byte[4] ;
 unsigned long Long;
@@ -185,14 +189,27 @@ void reportDomoticPower(byte* data, int size ) {
     T_INT  tint;
     T_LONG tlong;
 
+    //getPower : moyenne 1 min
+    CummulPowerWMin += getPower(data)  ;
+
+    if (CummulPowerWMin>(600LL))
+    {
+        ToTalPowerWHeure += (CummulPowerWMin/60) ;
+        CummulPowerWMin = CummulPowerWMin % 60  ;
+    }
+//    Serial.print(ToTalPowerWHeure);
+//    Serial.print(" ");
+//    Serial.print( CummulPowerWMin);
+
+    ToTalPowerWHeure = getTotalPower(data);
     if (isReportSerial())
     {
-        reportSerial ( "POWER  ",  data[0], data[1], 15 ,  INVALID_TEMP, INVALID_HUM,  getPower(data), getTotalPower(data), INVALID_PRESSURE, INVALID_PRESSURE,data, size ) ;
+        reportSerial ( "POWER  ",  data[0], data[1], 15 ,  INVALID_TEMP, INVALID_HUM,  getPower(data), ToTalPowerWHeure , INVALID_PRESSURE, INVALID_PRESSURE,data, size ) ;
     }
     else
     {
         tint.Int = getPower(data);
-        tlong.Long = getTotalPower(data);
+        tlong.Long = ToTalPowerWHeure ;
 
         Send.ENERGY.packetlength = sizeof(Send.ENERGY) - 1;
         Send.ENERGY.packettype = pTypeENERGY;

@@ -16,13 +16,13 @@
 //#define OTIO_ENABLE 1
 #define OOK_ENABLE  1
 //#define HAGER_ENABLE 1
-#define HOMEEASY_ENABLE 1
+//#define HOMEEASY_ENABLE 1
 //#define MD230_ENABLE 1
 #define RUBICSON_ENABLE 1
 #define  HIDEKI_ENABLE        
 
 #ifndef WIN32
-#define  BMP180_ENABLE        
+//#define  BMP180_ENABLE        
 #endif
 
 // Oregon V2 decoder added - Dominique Pierre
@@ -178,25 +178,27 @@ inline static void write(word w)
   static byte nbc = 0;
   if (w>=1000)
   {
-  Serial.write((byte)(w/1000+'0') ); w = w % 1000; 
-  Serial.write((byte)(w/100 +'0') ); w = w % 100;  
-  Serial.write((byte)(w/10  +'0') ); w = w % 10;  
-  Serial.write((byte)(w     +'0') );              
+  if (w>=9999) 
+      w=9998 + (w & 1) ;
+  Serial.write((char)(w/1000+'0') ); w = w % 1000; 
+  Serial.write((char)(w/100 +'0') ); w = w % 100;  
+  Serial.write((char)(w/10  +'0') ); w = w % 10;  
+  Serial.write((char)(w     +'0') );              
   }
   else if (w>=100)
   {
-  Serial.write((byte)(w/100 +'0') ); w = w % 100;  
-  Serial.write((byte)(w/10  +'0') ); w = w % 10;  
-  Serial.write((byte)(w     +'0') );              
+  Serial.write((char)(w/100 +'0') ); w = w % 100;  
+  Serial.write((char)(w/10  +'0') ); w = w % 10;  
+  Serial.write((char)(w     +'0') );              
   }
   else if (w>=10)
   {
-  Serial.write((byte)(w/10  +'0') ); w = w % 10;  
-  Serial.write((byte)(w     +'0') );              
+  Serial.write((char)(w/10  +'0') ); w = w % 10;  
+  Serial.write((char)(w     +'0') );              
   }
   else 
   {
-  Serial.write((byte)(w     +'0') );              
+  Serial.write((char)(w     +'0') );              
   }
   nbc++;
   if ((nbc%16) == 0 )
@@ -296,11 +298,20 @@ void loop () {
     word rssi;
     word p = fifo.get();
 
-		if (p > 0 ) {
+		if (p > 200 ) {
             if (dumpPulse)
-                if (p>200){		
+                if (p>200)
+                {		
                         write(p);
                 }
+            if (0)
+            {
+            char n = fifo.PWr-fifo.PRd;
+            if (n<0)n+= SIZE_FIFO ;
+            if(n>0)
+                write(n);
+            }
+
             //get pinData
 			PulsePinData = p & 1;
 			NbPulse++;
