@@ -32,9 +32,7 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
     void DecodeHomeEasy::resetDecoder () {
           DecodeOOK::resetDecoder ();
           total_bit =  0;
-          state = UNKNOWN;
           lastBit = 0xFF ;
-          pos=0 ;
     }    
     //pMaxCode : the number of successive received equal value to return the current Code
     
@@ -59,7 +57,7 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
         case UNKNOWN :  /* test reception pulse high */
                         //if ( TEST_PULSE(width,PULSE_HIGH,TOLERANCE)  && (data==1) )
         case T0      :  /* test reception pulse low synchro */
-						if ( (width> PULSE_SYNCHRO) && (data==0) )
+						if ( TEST_PULSE(width,PULSE_SYNCHRO_LONG,1000)  && (data==0) )
 							state = T1 ;/*  synchro receive */
 //                       else
 //                           resetDecoder ();
@@ -83,6 +81,7 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
                     {
                         /* add bit 0 to Code */
                         gotBit(0);
+                        state = T1 ;
 #ifdef _debug
                         printf ( "Bits : %02d %d %08X\n", total_bits , lastBit , CurCode ) ;
 #endif
@@ -90,7 +89,6 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
                     else
                         resetDecoder ();
                 }
-                state = T1 ;
                 lastBit = 1 ;
             }
             /* test short pulse */
@@ -105,6 +103,7 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
                     {
                         /* add bit 1 to Code */
                         gotBit(1);
+                        state = T1 ;
 #ifdef _debug
                         printf ( "Bits : %02d %d %08X \n", total_bits , lastBit, CurCode ) ;
 #endif
@@ -112,7 +111,6 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
                     else
                         resetDecoder ();
                 }
-                state = T1 ;
                 lastBit = 0 ;
             }
             /* test synchro pulse */
