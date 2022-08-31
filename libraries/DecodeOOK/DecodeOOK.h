@@ -8,6 +8,9 @@
 
 void reportPrint(char * mes);
 
+//#define DEBUG_STATE 
+//#define DEBUG_COUNT 
+
 typedef enum {
 	LSB_FIRST = 0,
 	MSB_FIRST = 1,
@@ -52,11 +55,15 @@ public:
         if ((millis() - LastSend) > 120000)  { lastdata[0]=lastdata[1]=lastdata[2]=lastdata[3] = 0;LastSend = millis();}
         
         countPacket();
-//                Serial.print(getName());    Serial.print(PacketCount);   Serial.print(' ');
 
+#ifdef DEBUG_COUNT
+         Serial.print('C');Serial.print(getName());    Serial.print(PacketCount);   Serial.print(' ');
+#endif
         if (PacketCount == PacketCountSeuil) {
             LastSend = millis();
-//            Serial.println();
+#ifdef DEBUG_COUNT
+            Serial.println();
+#endif
             return true;
         }
 
@@ -80,6 +87,24 @@ public:
                 case -1: resetDecoder(); break;
                 case 1:  done(); break;
             }
+#ifdef  DEBUG_STATE 
+        {
+            static byte nbs=0;
+            if (state != UNKNOWN)
+            if (Name[0] == 'H')
+            {
+                Serial.print (Name[0]);
+                Serial.print (state);
+                Serial.print (' ');
+                nbs++;
+                if ((nbs%32)==0 )
+                    Serial.println ();
+                if (state == DONE)
+                    Serial.println ();
+            }
+        }
+
+#endif
         return isDone();
     }
     
