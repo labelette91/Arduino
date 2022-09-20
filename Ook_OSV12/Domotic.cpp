@@ -127,7 +127,7 @@ void reportDomoticTemp(int temp, byte id1, byte id2, byte bateryLevel,  byte* da
 
     if(isReportSerial())
     {
-        reportSerial ( "TEMPHUM",  id1, id2, bateryLevel,  temp, INVALID_HUM, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE, INVALID_PRESSURE,data, pos ) ;
+        reportSerial ( "TEMPHUM",  id1, id2, bateryLevel,  temp, INVALID_HUM, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE, INVALID_PRESSURE,INVALID_RAIN, data, pos ) ;
     }
     else
     {
@@ -157,7 +157,7 @@ void reportDomoticTempHum(int temp, byte hum, byte id1, byte id2, byte bateryLev
 
     if (isReportSerial())
     {
-        reportSerial ( "TEMPHUM",  id1, id2, bateryLevel,  temp, hum, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE, INVALID_PRESSURE,data, pos  ) ;
+        reportSerial ( "TEMPHUM",  id1, id2, bateryLevel,  temp, hum, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE, INVALID_PRESSURE,INVALID_RAIN,data, pos  ) ;
     }
     else
     {
@@ -204,7 +204,7 @@ void reportDomoticPower(byte* data, int size ) {
     ToTalPowerWHeure = getTotalPower(data);
     if (isReportSerial())
     {
-        reportSerial ( "POWER  ",  data[0], data[1], 15 ,  INVALID_TEMP, INVALID_HUM,  getPower(data), ToTalPowerWHeure , INVALID_PRESSURE, INVALID_PRESSURE,data, size ) ;
+        reportSerial ( "POWER  ",  data[0], data[1], 15 ,  INVALID_TEMP, INVALID_HUM,  getPower(data), ToTalPowerWHeure , INVALID_PRESSURE, INVALID_PRESSURE,INVALID_RAIN,data, size ) ;
     }
     else
     {
@@ -238,7 +238,7 @@ void reportDomoticTempBaro (byte id1 , float temp , float baro , float PressureS
 {
     if (isReportSerial())
     {
-         reportSerial ( "BARO",  id1, 1, 15 ,  temp, INVALID_HUM, INVALID_POWER, INVALID_POWER, baro ,PressureSeaLevel,  data, pos  ) ;
+         reportSerial ( "BARO",  id1, 1, 15 ,  temp, INVALID_HUM, INVALID_POWER, INVALID_POWER, baro ,PressureSeaLevel,INVALID_RAIN,  data, pos  ) ;
     }
     else
     {
@@ -275,7 +275,7 @@ void reportDomoticTempHumBaro (byte id1 , byte unit ,float temperature , float p
 {
     if (isReportSerial())
     {
-         reportSerial ( "BAROH",  id1, 1, 15 ,  temperature, INVALID_HUM, INVALID_POWER, INVALID_POWER, pressure , PressureSeaLevel,data, pos  ) ;
+         reportSerial ( "BAROH",  id1, 1, 15 ,  temperature, INVALID_HUM, INVALID_POWER, INVALID_POWER, pressure , PressureSeaLevel,INVALID_RAIN,data, pos  ) ;
     }
     else
     {
@@ -494,4 +494,32 @@ void reportDomoticMD230(const byte* data, byte pos) {
     }
 }
 
+void reportDomoticRain( byte id1   ,byte id2   ,byte id3   ,byte id4   ,word rain  ,byte battery_low,  byte* data, byte pos)
+{
+    if ( battery_low)
+    battery_low = 15;
+    else
+    battery_low = 0;
+
+    if (isReportSerial())
+    {
+         reportSerial ( "RAIN",  id1, id2, battery_low ,  INVALID_TEMP, INVALID_HUM, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE , INVALID_PRESSURE, rain ,data, pos  ) ;
+    }
+    else
+    {
+
+        Send.LIGHTING2.packetlength = 11;
+        Send.LIGHTING2.packettype = pTypeLighting2;
+        Send.LIGHTING2.subtype = sTypeHEU;
+        Send.LIGHTING2.seqnbr = Seqnbr++;
+        Send.LIGHTING2.id1 = id1;            /* id emetteur 0..3  */
+        Send.LIGHTING2.id2 = id2;            /* id emetteur 0..FF */
+        Send.LIGHTING2.id3 = id3;            /* id emetteur 0..FF */
+        Send.LIGHTING2.id4 = id4;            /* id emetteur 0..FF */
+        Send.LIGHTING2.level = 0;   /* dim level 0..15   */
+        Send.LIGHTING2.rssi = 0;
+
+        Serial.write((byte*)&Send.LIGHTING2, Send.LIGHTING2.packetlength + 1);
+    }
+}
 

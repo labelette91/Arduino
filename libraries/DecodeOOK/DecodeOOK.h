@@ -70,9 +70,7 @@ public:
         return  false  ;  
 
     }
-    virtual void report()
-    {
-    }
+    virtual void report()=0;
 
 public:
 
@@ -121,7 +119,6 @@ public:
     void resetDecoder () {
         total_bits = bits = pos = flip = 0;
         state = UNKNOWN;
-        max_bits = 160;
     }
     
     // add one bit to the packet data buffer

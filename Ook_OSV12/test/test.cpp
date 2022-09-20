@@ -369,6 +369,43 @@ char * HomeEasyPulse = "\
  145 84 253 120 309 72 197 3796  241 92 349 88 373 76 97 52               \
 ";
 
+
+//pwm
+
+//pwm  bit value : pulse High pulse low
+#define    PWMSYNHRO 751 , 750 ,
+#define    B0 251 , 500 ,
+#define    B1  501 , 250 ,
+
+#define P0 B0 B0 B0 B0 
+#define P1 B0 B0 B0 B1 
+#define P2 B0 B0 B1 B0 
+#define P3 B0 B0 B1 B1 
+#define P4 B0 B1 B0 B0 
+#define P5 B0 B1 B0 B1 
+#define P6 B0 B1 B1 B0 
+#define P7 B0 B1 B1 B1 
+#define P8 B1 B0 B0 B0
+#define P9 B1 B0 B0 B1
+#define PA B1 B0 B1 B0
+#define PB B1 B0 B1 B1
+#define PC B1 B1 B0 B0
+#define PD B1 B1 B0 B1
+#define PE B1 B1 B1 B0
+#define PF B1 B1 B1 B1
+
+
+TPulses PwmPulsec240aaff09550021c= {
+    PWMSYNHRO PWMSYNHRO  PC P2 P4 P0 PA PA PF PF P0 P9 P5 P5 P0 P0 P2 P1 PC 
+};
+
+TPulses PwmPulsec3DBF5500F6AAFFDE3 = {
+    PWMSYNHRO PWMSYNHRO  P3 PD PB PF P5 P5 P0 P0 PF P6 PA PA PF PF PD PE P3
+};
+
+
+
+
 #include "Fifo.h"
 extern TFifo  fifo;
 
@@ -418,10 +455,13 @@ int main(int, char**)
 //    testOOK (OregonPowerPulse ,  10 , 1   ) ;
     
     
-    testOOK (HomeEasyPulse   ) ;
+//    testOOK (HomeEasyPulse   ) ;
 
 //    testOOK (&HomeEasyPulse55555555 ,  1 , 0   ) ;
 //    testOOK (&HomeEasyPulseAAAAAAAA ,  1 , 0   ) ;
+
+    testOOK (&PwmPulsec3DBF5500F6AAFFDE3 ,  1 , 0   ) ;
+    
 
 byte data[10];
 data[4]=1;

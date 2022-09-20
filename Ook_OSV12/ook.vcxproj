@@ -80,6 +80,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="bitstream.cpp" />
+    <ClCompile Include="DecodePwm.cpp" />
+    <ClCompile Include="DecodeRain.cpp" />
     <ClCompile Include="Domotic.cpp" />
     <ClCompile Include="fifo.cpp" />
     <ClCompile Include="hager.cpp" />

@@ -11,6 +11,8 @@ SERIAL_DEBUG
 #define INVALID_HUM   0x7F
 #define INVALID_POWER  0x7FFF
 #define INVALID_PRESSURE  0x7FFF
+#define INVALID_RAIN      0x7FFF
+
 
 #define TAB 10
 
@@ -29,4 +31,4 @@ void reportPrintHeader();
 
 void reportPrintName(char* Name);
 
-void reportSerial(char* Name, byte id1, byte id2, byte bateryLevel, int temp, byte hum, word power, unsigned long totalpower, word pressure,word PressureSeaLevel, byte* data, byte pos);
+void reportSerial(char* Name, byte id1, byte id2, byte bateryLevel, int temp, byte hum, word power, unsigned long totalpower, word pressure,word PressureSeaLevel, word Rain , byte* data, byte pos);

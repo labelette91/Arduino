@@ -20,6 +20,8 @@
 //#define MD230_ENABLE 1
 #define RUBICSON_ENABLE 1
 #define  HIDEKI_ENABLE        
+#define  RAIN_ENABLE        
+
 
 #ifndef WIN32
 //#define  BMP180_ENABLE        
@@ -70,6 +72,12 @@ DecodeMD230 MD230(2) ;
 #include <DecodeOTIO.h>
 DecodeOTIO Otio(3);  
 #endif
+
+#ifdef RAIN_ENABLE        
+#include "DecodeRain.h"
+DecodeRain Rain(1);  
+#endif
+
 
 #include "Fifo.h"
 TFifo  fifo;
@@ -271,6 +279,10 @@ else
         }
 #endif
 
+#ifdef RAIN_ENABLE        
+#endif
+
+
 delay(100);
 if (isReportSerial() )
 {
@@ -416,6 +428,18 @@ void loop () {
 				Rubicson.resetDecoder();
 			}
 #endif      	
+
+#ifdef RAIN_ENABLE        
+			if (Rain.nextPulse(p, PulsePinData)) {
+				if (Rain.newPacket() ) 
+                {
+                    Rain.report ();
+					PulseLed();
+				}
+				Rain.resetDecoder();
+			}
+#endif
+
 
 #ifdef HIDEKI_ENABLE        
       managedHideki(&tfa3208,p);
