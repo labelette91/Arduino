@@ -212,6 +212,27 @@ struct {	//response on a mode command from the application
 #endif
 	} TEMP_HUM_BARO;
 
+	struct {
+		byte	packetlength;
+		byte	packettype;
+		byte	subtype;
+		byte	seqnbr;
+		byte	id1;
+		byte	id2;
+		byte	rainrateh;
+		byte	rainratel;
+		byte	raintotal1;
+		byte	raintotal2;
+		byte	raintotal3;
+#ifdef IS_BIG_ENDIAN
+		BYTE	rssi : 4;
+		BYTE	battery_level : 4;
+#else
+		byte	battery_level : 4;
+		byte	rssi : 4;
+#endif
+	} RAIN;
+
 
 }_tRBUF;	
 
@@ -297,6 +318,11 @@ struct {	//response on a mode command from the application
 
 #define HOMESWITCH_ID0 0x3B
 #define HOMESWITCH_ID1 0x80
+
+//types for rain
+#define pTypeRAIN 0x55
+#define sTypeRAIN9 0x9   //TFA 30.3233.01 
+
 
 extern  tRBUF Cmd ;
 extern bool DomoticPacketReceived;

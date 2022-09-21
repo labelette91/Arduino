@@ -47,7 +47,9 @@ public:
 
         if (!isValid())
         {
-            reportPrint ("BADCHK\n");          //ReportSerial();
+            reportPrint ("BADCHK ");          //ReportSerial();
+            reportPrint (Name);          //ReportSerial();
+            reportPrint ("\n");          //ReportSerial();
             resetDecoder();
             return  false  ;  
         }
@@ -76,7 +78,7 @@ public:
 
     enum { UNKNOWN, T0, T1, T2, T3, OK, DONE };
 
-    DecodeOOK () { resetDecoder(); }
+    DecodeOOK () { max_bits=160; resetDecoder(); }
 
 	virtual bool nextPulse(word width, byte level=0) {
         if (state != DONE)

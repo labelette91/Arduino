@@ -113,10 +113,10 @@ void reportSerial(char* Name, byte id1, byte id2, byte bateryLevel, int temp, by
 
     reportPrintHeader();
 
-    Serial.print(" Id:");
+    Serial.print(" Id1:");
     Serial.print(id1, HEX);
-    Serial.print(" Chn:");
-    Serial.print(id2);
+    Serial.print(" Id2:");
+    Serial.print(id2,HEX);
     Serial.print(" Bat:");
     Serial.print(bateryLevel);
 

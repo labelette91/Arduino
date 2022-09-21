@@ -31,7 +31,7 @@
 #define HEX 16
 #define OCT 8
 #define BIN 2
-#define BYTE 0
+//#define BYTE 0
 
 // From "c:\program files\arduino\hardware\cores\arduino\wiring.h"
 

@@ -399,6 +399,20 @@ TPulses PwmPulsec240aaff09550021c= {
     PWMSYNHRO PWMSYNHRO  PC P2 P4 P0 PA PA PF PF P0 P9 P5 P5 P0 P0 P2 P1 PC 
 };
 
+// count = FFF6 = -10 = 0 il faut ajouter 10 --> 0 
+// FFF6 = 0
+// FFF7 = 1
+// FFF8 = 2
+// FFF9 = 3
+// FFFA = 4
+// FFFB = 5
+// FFFC = 6
+// FFFD = 7
+// FFFE = 8
+// FFFF = 9
+// 0000 = 10
+
+
 TPulses PwmPulsec3DBF5500F6AAFFDE3 = {
     PWMSYNHRO PWMSYNHRO  P3 PD PB PF P5 P5 P0 P0 PF P6 PA PA PF PF PD PE P3
 };

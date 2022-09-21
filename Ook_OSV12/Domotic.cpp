@@ -494,32 +494,39 @@ void reportDomoticMD230(const byte* data, byte pos) {
     }
 }
 
-void reportDomoticRain( byte id1   ,byte id2   ,byte id3   ,byte id4   ,word rain  ,byte battery_low,  byte* data, byte pos)
+void reportDomoticRain( byte id1   ,byte id2   ,byte id3   ,byte id4   ,word RainCounter  ,byte battery_low,  byte* data, byte pos)
 {
+    byte BatteryLevel;
     if ( battery_low)
-    battery_low = 15;
+    BatteryLevel = 15;
     else
-    battery_low = 0;
+    BatteryLevel = 0;
 
     if (isReportSerial())
     {
-         reportSerial ( "RAIN",  id1, id2, battery_low ,  INVALID_TEMP, INVALID_HUM, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE , INVALID_PRESSURE, rain ,data, pos  ) ;
+        RainCounter+=10; // count = FFF6 = -10 = 0 il faut ajouter 10 --> 0 
+         reportSerial ( "RAIN",  id2, id3, battery_low ,  INVALID_TEMP, INVALID_HUM, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE , INVALID_PRESSURE, RainCounter ,data, pos  ) ;
     }
     else
     {
+	Send.RAIN.packetlength = sizeof(Send.RAIN) - 1;
+	Send.RAIN.packettype = pTypeRAIN;
+	Send.RAIN.subtype = sTypeRAIN9;
+	Send.RAIN.battery_level = BatteryLevel;
+	Send.RAIN.rssi = 0xff;
+	Send.RAIN.id1 = id2 ;
+	Send.RAIN.id2 = id3 ;
 
-        Send.LIGHTING2.packetlength = 11;
-        Send.LIGHTING2.packettype = pTypeLighting2;
-        Send.LIGHTING2.subtype = sTypeHEU;
-        Send.LIGHTING2.seqnbr = Seqnbr++;
-        Send.LIGHTING2.id1 = id1;            /* id emetteur 0..3  */
-        Send.LIGHTING2.id2 = id2;            /* id emetteur 0..FF */
-        Send.LIGHTING2.id3 = id3;            /* id emetteur 0..FF */
-        Send.LIGHTING2.id4 = id4;            /* id emetteur 0..FF */
-        Send.LIGHTING2.level = 0;   /* dim level 0..15   */
-        Send.LIGHTING2.rssi = 0;
+	Send.RAIN.rainrateh = 0;
+	Send.RAIN.rainratel = 0;
 
-        Serial.write((byte*)&Send.LIGHTING2, Send.LIGHTING2.packetlength + 1);
+	
+	Send.RAIN.raintotal1 = (byte)(0 / 65535);
+	Send.RAIN.raintotal2 = (byte)(RainCounter / 256);
+	Send.RAIN.raintotal3 = (byte)(RainCounter % 256);
+
+
+        Serial.write((byte*)&Send.RAIN, Send.RAIN.packetlength + 1);
     }
 }
 

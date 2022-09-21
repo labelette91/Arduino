@@ -131,8 +131,8 @@ KKKK
         byte id2 = data[1];
         byte id3 = data[2];
         byte id4 = 0;
-        byte rainlsb = getRaw08bValue((uint8_t*)data,32,8);
-        word rain    = getRaw08bValue((uint8_t*)data,48,8);
+        byte rainlsb = data[4] ;
+        word rain    = data[6] ;
         rain <<=8;
         rain += rainlsb;
 

@@ -100,14 +100,14 @@ TFifo  fifo;
 #define PCLK  4 //pin for clk  input/output
 #endif
 
-word 	NbPulse  ;
-word 	NbPulsePerSec ;
+word    NbPulse  ;
+word    NbPulsePerSec ;
 
 //etat du pulse
 byte        PulsePinData;
-word 		Seconds;
-word 		lastSeconds;
-word 		lastMinute ;
+word        Seconds;
+word        lastSeconds;
+word        lastMinute ;
 
 //le signal du RFM69 entre sur int ext    d3 : int1
 //sur 8266 : interrupt shall be in IRAM
@@ -125,17 +125,17 @@ void ext_int_1(void) {
     pulse = micros() - last;
     last += pulse;
 
-		pinData = digitalRead(PDATA);
-		
-		//calcul etat du pulse que l'on mesure
-		if (pinData == 1)
-			//tranistion 0--1 : etat pulse = 0 : bit 0 = 0
-			pulse &=0xFFFE ;
-		else
-			//tranistion 1--0 : etat pulse = 1 : bit 0 = 1
-			pulse |= 1 ;
+        pinData = digitalRead(PDATA);
+        
+        //calcul etat du pulse que l'on mesure
+        if (pinData == 1)
+            //tranistion 0--1 : etat pulse = 0 : bit 0 = 0
+            pulse &=0xFFFE ;
+        else
+            //tranistion 1--0 : etat pulse = 1 : bit 0 = 1
+            pulse |= 1 ;
 
-		fifo.put(pulse);
+        fifo.put(pulse);
 }
 #include "Oregon.h"
 
@@ -238,7 +238,7 @@ else
 
     radio.setMode(RF69_MODE_RX);
 
-		    PulseLed();
+            PulseLed();
     //2400 bauds bit rate 3,4
     radio.writeReg(REG_BITRATEMSB,RF_BITRATEMSB_2400);
     radio.writeReg(REG_BITRATELSB,RF_BITRATELSB_2400);
@@ -256,9 +256,9 @@ else
     HEasy.resetDecoder();
 #endif
 #ifdef MD230_ENABLE
-	  MD230.resetDecoder();
+      MD230.resetDecoder();
 #endif
-		DomoticInit();
+        DomoticInit();
 
 #ifdef BMP180_ENABLE
         bool status = myBMP.begin();
@@ -310,10 +310,10 @@ void loop () {
     word rssi;
     word p = fifo.get();
 
-		if (p > 200 ) {
+        if (p > 200 ) {
             if (dumpPulse)
                 if (p>200)
-                {		
+                {       
                         write(p);
                 }
             if (0)
@@ -325,17 +325,17 @@ void loop () {
             }
 
             //get pinData
-			PulsePinData = p & 1;
-			NbPulse++;
-			Seconds = millis() / 1000;
+            PulsePinData = p & 1;
+            NbPulse++;
+            Seconds = millis() / 1000;
             //every seconds
-			if (Seconds != lastSeconds)
-			{
-					lastSeconds = Seconds ;
-					NbPulsePerSec = NbPulse;
-					NbPulse = 0;
+            if (Seconds != lastSeconds)
+            {
+                    lastSeconds = Seconds ;
+                    NbPulsePerSec = NbPulse;
+                    NbPulse = 0;
 //          Serial.print(".");
-			}
+            }
             //every minute
             if ((Seconds/60)!= lastMinute )
             {
@@ -370,74 +370,74 @@ void loop () {
 
 
 #ifdef OTIO_ENABLE        
-			if (Otio.nextPulse(p, PulsePinData)) {
+            if (Otio.nextPulse(p, PulsePinData)) {
                 //dumpPulse=0;
                 if (isReportSerial())
-    				Otio.ReportSerial();
+                    Otio.ReportSerial();
                 else
-				    reportDomoticTemp(Otio.getTemperature(), Otio.getId(), 0, Otio.getBatteryLevel());
+                    reportDomoticTemp(Otio.getTemperature(), Otio.getId(), 0, Otio.getBatteryLevel());
                 PulseLed();
                 Otio.resetDecoder();
-			}
-#endif      	
+            }
+#endif          
 
 #ifdef HOMEEASY_ENABLE
-			if (HEasy.nextPulse(p, PulsePinData)){ 
+            if (HEasy.nextPulse(p, PulsePinData)){ 
                 if (HEasy.newPacket())
                 {
                     HEasy.report();
                     PulseLed();
-			    }
+                }
                 HEasy.resetDecoder();
             }
 #endif
 
 #ifdef MD230_ENABLE
-			if (MD230.nextPulse(p, PulsePinData)) {
+            if (MD230.nextPulse(p, PulsePinData)) {
                 if (isReportSerial())
-				    MD230.ReportSerial();
+                    MD230.ReportSerial();
                 else
-				    reportDomoticMD230(MD230.getData(), MD230.getBytes());
-				PulseLed();
-			}
+                    reportDomoticMD230(MD230.getData(), MD230.getBytes());
+                PulseLed();
+            }
 #endif
 
 #ifdef HAGER_ENABLE        
-			//si pulse bas on enleve 100micros sinon on ajoute 100micros
-			//pour compenser etat haut tronquer
-			if (PulsePinData == 1) p -= 100; else p += 100;
+            //si pulse bas on enleve 100micros sinon on ajoute 100micros
+            //pour compenser etat haut tronquer
+            if (PulsePinData == 1) p -= 100; else p += 100;
 
-			if (hager.nextPulse(p)) {
+            if (hager.nextPulse(p)) {
             if (isReportSerial())
-				hager.reportSerial();
+                hager.reportSerial();
             else
-				reportHagerDomotic(hager.getData(), hager.pos);
-				hager.resetDecoder();
-				PulseLed();
-			}
+                reportHagerDomotic(hager.getData(), hager.pos);
+                hager.resetDecoder();
+                PulseLed();
+            }
 #endif        
 
 
 #ifdef RUBICSON_ENABLE        
-			if (Rubicson.nextPulse(p, PulsePinData)) {
-				if (Rubicson.newPacket() ) 
+            if (Rubicson.nextPulse(p, PulsePinData)) {
+                if (Rubicson.newPacket() ) 
                 {
                     Rubicson.report ();
-					PulseLed();
-				}
-				Rubicson.resetDecoder();
-			}
-#endif      	
+                    PulseLed();
+                }
+                Rubicson.resetDecoder();
+            }
+#endif          
 
 #ifdef RAIN_ENABLE        
-			if (Rain.nextPulse(p, PulsePinData)) {
-				if (Rain.newPacket() ) 
+            if (Rain.nextPulse(p, PulsePinData)) {
+                if (Rain.newPacket() ) 
                 {
                     Rain.report ();
-					PulseLed();
-				}
-				Rain.resetDecoder();
-			}
+                    PulseLed();
+                }
+                Rain.resetDecoder();
+            }
 #endif
 
 
@@ -447,90 +447,90 @@ void loop () {
 
     }
 
-	//read serial input & fill receive buffe(
-	DomoticReceive();
+    //read serial input & fill receive buffe(
+    DomoticReceive();
 
-	//check domotic send command reception
-	//attente une secone max pour emetre si emission en cours -80--> -70
-	//pas de reception en cours
-	if (   (DomoticPacketReceived)
+    //check domotic send command reception
+    //attente une secone max pour emetre si emission en cours -80--> -70
+    //pas de reception en cours
+    if (   (DomoticPacketReceived)
 #ifdef RFM69_ENABLE
-		  && (radio.canSend(-70)   )
+          && (radio.canSend(-70)   )
 #endif
 #ifdef OTIO_ENABLE        
-		  && (Otio.total_bits ==0)
+          && (Otio.total_bits ==0)
 #endif
 #ifdef OOK_ENABLE        
-		  && (orscV2.total_bits == 0)
+          && (orscV2.total_bits == 0)
 #endif
 #ifdef RUBICSON_ENABLE        
-		  && (Rubicson.total_bits == 0)
+          && (Rubicson.total_bits == 0)
 #endif
 
 #ifdef HOMEEASY_ENABLE
-//		  && (HEasy.total_bits == 0)
+//        && (HEasy.total_bits == 0)
 #endif
 #ifdef MD230_ENABLE
-//		  && (MD230.total_bits == 0)
+//        && (MD230.total_bits == 0)
 #endif
 #ifdef HIDEKI_ENABLE        
-		  && (tfa3208.total_bits == 0)
+          && (tfa3208.total_bits == 0)
 #endif
-		)
+        )
   {
-  	digitalWrite(ledPin,HIGH);
+    digitalWrite(ledPin,HIGH);
     //start receive cmd
     if ( (Cmd.ICMND.packettype == 0)&& (Cmd.ICMND.cmnd==cmdStartRec) ) {  
-    	DomoticStartReceive();
+        DomoticStartReceive();
     }
     else if ( (Cmd.ICMND.packettype == 0)&& (Cmd.ICMND.cmnd==cmdSTATUS) ) {  
-    	DomoticStatus();
+        DomoticStatus();
     }
     else
     {
-	    detachInterrupt(digitalPinToInterrupt(PDATA));
+        detachInterrupt(digitalPinToInterrupt(PDATA));
 
-	    easy.initPin();
+        easy.initPin();
 #ifdef RFM69_ENABLE
-	    radio.setMode(RF69_MODE_TX);
+        radio.setMode(RF69_MODE_TX);
 #endif
         delay(10);
-	    	
-	    if (Cmd.LIGHTING2.packettype==pTypeLighting2) 
-		{  //
-				if (Cmd.LIGHTING2.subtype == sTypeHEU) 	         //if home easy protocol : subtype==1
-				{
-					easy.setSwitch(Cmd.LIGHTING2.cmnd, getLightingId(), Cmd.LIGHTING2.unitcode);    // turn on device 0
-					Cmd.LIGHTING2.subtype = 1;
-				}
-				else if (Cmd.LIGHTING2.subtype == sTypeAC) 	         //if hager protocol : subtype==0
-				{
-					ManageHager(Cmd.LIGHTING2.id4, Cmd.LIGHTING2.unitcode, Cmd.LIGHTING2.cmnd);
-					Cmd.LIGHTING2.subtype = 0;
-				}
-				else
-					Cmd.LIGHTING2.subtype = 2;
-	    }
-		else
-				Cmd.LIGHTING2.subtype = 3;
+            
+        if (Cmd.LIGHTING2.packettype==pTypeLighting2) 
+        {  //
+                if (Cmd.LIGHTING2.subtype == sTypeHEU)           //if home easy protocol : subtype==1
+                {
+                    easy.setSwitch(Cmd.LIGHTING2.cmnd, getLightingId(), Cmd.LIGHTING2.unitcode);    // turn on device 0
+                    Cmd.LIGHTING2.subtype = 1;
+                }
+                else if (Cmd.LIGHTING2.subtype == sTypeAC)           //if hager protocol : subtype==0
+                {
+                    ManageHager(Cmd.LIGHTING2.id4, Cmd.LIGHTING2.unitcode, Cmd.LIGHTING2.cmnd);
+                    Cmd.LIGHTING2.subtype = 0;
+                }
+                else
+                    Cmd.LIGHTING2.subtype = 2;
+        }
+        else
+                Cmd.LIGHTING2.subtype = 3;
 
-		//acknoledge 
-		Cmd.LIGHTING2.packettype = pTypeUndecoded;
-		Cmd.LIGHTING2.packetlength = 7;
-		Cmd.LIGHTING2.id1 = rssi >> 8;
-		Cmd.LIGHTING2.id2 = rssi & 0x00ff ;
-		Cmd.LIGHTING2.id3 = NbPulsePerSec >> 8;
-		Cmd.LIGHTING2.id4 = NbPulsePerSec & 0x00ff;
-		Serial.write((byte*)&Cmd.LIGHTING2, Cmd.LIGHTING2.packetlength + 1);
-	
-	    pinMode(PDATA, INPUT);
+        //acknoledge 
+        Cmd.LIGHTING2.packettype = pTypeUndecoded;
+        Cmd.LIGHTING2.packetlength = 7;
+        Cmd.LIGHTING2.id1 = rssi >> 8;
+        Cmd.LIGHTING2.id2 = rssi & 0x00ff ;
+        Cmd.LIGHTING2.id3 = NbPulsePerSec >> 8;
+        Cmd.LIGHTING2.id4 = NbPulsePerSec & 0x00ff;
+        Serial.write((byte*)&Cmd.LIGHTING2, Cmd.LIGHTING2.packetlength + 1);
+    
+        pinMode(PDATA, INPUT);
         attachInterrupt(digitalPinToInterrupt(PDATA) , ext_int_1, CHANGE);
 #ifdef RFM69_ENABLE
-	    radio.setMode(RF69_MODE_RX);
+        radio.setMode(RF69_MODE_RX);
 #endif
     }
-  	digitalWrite(ledPin,LOW);
-		DomoticPacketReceived = false;
+    digitalWrite(ledPin,LOW);
+        DomoticPacketReceived = false;
     
   }
 
