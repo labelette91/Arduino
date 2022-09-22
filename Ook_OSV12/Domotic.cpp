@@ -498,9 +498,9 @@ void reportDomoticRain( byte id1   ,byte id2   ,byte id3   ,byte id4   ,word Rai
 {
     byte BatteryLevel;
     if ( battery_low)
-    BatteryLevel = 15;
-    else
     BatteryLevel = 0;
+    else
+    BatteryLevel = 9;
 
     if (isReportSerial())
     {

@@ -9,17 +9,17 @@
 
 //si =  : report serial format text 
 //#define REPORT_TYPE REPORT_SERIAL 
-#define REPORT_TYPE SERIAL_DEBUG 
+//#define REPORT_TYPE SERIAL_DEBUG 
 
 //#define RFM69_ENABLE
 
 //#define OTIO_ENABLE 1
-#define OOK_ENABLE  1
+//#define OOK_ENABLE  1
 //#define HAGER_ENABLE 1
 //#define HOMEEASY_ENABLE 1
 //#define MD230_ENABLE 1
-#define RUBICSON_ENABLE 1
-#define  HIDEKI_ENABLE        
+//#define RUBICSON_ENABLE 1
+//#define  HIDEKI_ENABLE        
 #define  RAIN_ENABLE        
 
 
@@ -75,7 +75,7 @@ DecodeOTIO Otio(3);
 
 #ifdef RAIN_ENABLE        
 #include "DecodeRain.h"
-DecodeRain Rain(1);  
+DecodeRain Rain(3);  
 #endif
 
 
@@ -209,10 +209,9 @@ inline static void write(word w)
   Serial.write((char)(w     +'0') );              
   }
   nbc++;
+  Serial.write(',');
   if ((nbc%16) == 0 )
     Serial.write('\n');
-  else
-    Serial.write(' ');
 
   
 }
@@ -431,7 +430,10 @@ void loop () {
 
 #ifdef RAIN_ENABLE        
             if (Rain.nextPulse(p, PulsePinData)) {
-                if (Rain.newPacket() ) 
+                dumpPulse=0;
+
+                if (Rain.newPacket() )
+//                if (Rain.isValid())
                 {
                     Rain.report ();
                     PulseLed();

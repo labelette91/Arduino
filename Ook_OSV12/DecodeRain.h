@@ -20,6 +20,7 @@ public:
     DecodeRain (byte pMaxCode=2)  ;
     virtual void report();
     virtual bool isValid();
+    virtual byte getCrc();
 
  };
 

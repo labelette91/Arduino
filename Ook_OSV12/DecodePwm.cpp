@@ -13,7 +13,26 @@
 
 #define TEST_PULSE(WIDTH,PULSE_LEN,TOL)((WIDTH> (PULSE_LEN-TOL))&&(WIDTH<(PULSE_LEN+TOL)))
 
-#define TOLERANCE TO10(200)
+#define TOLERANCE TO10(100)
+
+char* Sstate[] = {
+"UNKNOWN", 
+"T0", 
+"T1", 
+"T2", 
+"T3", 
+"OK", 
+"DONE ", 
+"WAITSyncHigh",  
+"WAITSyncLow ", 
+"WAITBitHigh ", 
+"WAITBit0High  ", 
+"WAITBit0Low ", 
+"WAITBit1High ", 
+"WAITBit1Low"
+
+};
+
 
     void DecodePwm::SetPulseDuration ( word pPulseHigh1 , word pPulseLow1  , word pPulseHigh0 , word pPulseLow0 ,  word   pSynchroHigh, word  pSynchroLow  )    
     {
@@ -95,6 +114,7 @@
                            resetDecoder ();
                         break;   
         }
+//        printf( "%2d %2d :%s\n",state , total_bits , Sstate[state]); 
 
         if (total_bits==max_bits)
         {

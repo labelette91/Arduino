@@ -98,7 +98,7 @@ uint8_t getRaw08bValue(uint8_t* data, uint8_t offset, uint8_t size);
         resetDecoder(); 
         PacketCountSeuil=pMaxCode;
         Name ="R";
-        max_bits = 17*4;
+        max_bits = 16*4;
 
         SetPulseDuration(500,250,250,500,750,750);
     }
@@ -137,6 +137,7 @@ KKKK
         rain += rainlsb;
 
         byte battery_low   = getRaw08bValue((uint8_t*)data,24,1);
+//        byte transmitcnt   = getRaw08bValue((uint8_t*)data,28,4);
 
       reportDomoticRain(  id1   , id2   , id3   , id4   , rain  , battery_low, data , pos );
   }
@@ -146,7 +147,7 @@ KKKK
       /*
      * Validate checksum
      */
-    uint8_t checksum = data[7];
+    uint8_t checksum = getCrc() ;
     uint8_t computed_checksum = lfsr_digest8_reflect(data, 7, 0x31, 0xf4);
     if (checksum != computed_checksum) 
         return false ;
@@ -155,4 +156,8 @@ KKKK
 
   }    
 
+  byte DecodeRain::getCrc()         
+  {	  
+      return (data[7]);  
+  }
 
