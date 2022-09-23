@@ -310,7 +310,8 @@ void DomoticStartReceive()
 {
   Send.IRESPONSE.packetlength = sizeof(Send.IRESPONSE)-1;
   Send.IRESPONSE.packettype = pTypeInterfaceMessage;
-  Send.IRESPONSE.subtype = cmdStartRec ;
+  Send.IRESPONSE.subtype = sTypeInterfaceResponse ;
+  Send.IRESPONSE.cmnd    = cmdStartRec ;
   Send.IRESPONSE.msg1 ='C';
   Send.IRESPONSE.msg2 ='o';
   Send.IRESPONSE.msg3 ='p';
