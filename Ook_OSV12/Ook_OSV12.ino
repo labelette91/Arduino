@@ -75,7 +75,7 @@ DecodeOTIO Otio(3);
 
 #ifdef RAIN_ENABLE        
 #include "DecodeRain.h"
-DecodeRain Rain(3);  
+DecodeRain Rain(1);  
 #endif
 
 
