@@ -466,7 +466,7 @@ void testOOK (char* TestString , float coefA=1.0 , float coefB=0   )
     testOOK (&Pulse, coefA , coefB   );
 
 }
-void reportDomoticPower(byte* data, int size ) ;
+void reportDomoticPower(char* Name, byte* data, int size ) ;
 
 int main(int, char**)
 {
@@ -493,7 +493,7 @@ byte data[10];
 data[4]=1;
  data[3]=130;
 for (int i=0;i<10;i++)
- reportDomoticPower( data, 10 ) ;
+ reportDomoticPower( "power",data, 10 ) ;
     
     
 }

@@ -9,7 +9,7 @@
 
 //si =  : report serial format text 
 //#define REPORT_TYPE REPORT_SERIAL 
-//#define REPORT_TYPE SERIAL_DEBUG 
+#define REPORT_TYPE SERIAL_DEBUG 
 
 //#define RFM69_ENABLE
 
@@ -344,10 +344,8 @@ void loop () {
 #ifdef BMP180_ENABLE
                     float temp = myBMP.getTemperature();
                     uint32_t pressureInPa = myBMP.getPressure();
-                        reportPrintName("BMP180") ;
-                        reportDomoticTempBaro   (1,    temp, pressureInPa / 100, pressureInPa / coefPressureSeaLevel/100 , 50.0, 1);
-                        reportPrintName("BMP180") ;
-                        reportDomoticTempHumBaro(1, 1, temp, pressureInPa / 100, pressureInPa / coefPressureSeaLevel/100 , 1, 0, 0xff, 0xFF);
+                        reportDomoticTempBaro   ("BMP180", 1,    temp, pressureInPa / 100, pressureInPa / coefPressureSeaLevel/100 , 50.0, 1);
+                        reportDomoticTempHumBaro("BMP180", 1, 1, temp, pressureInPa / 100, pressureInPa / coefPressureSeaLevel/100 , 1, 0, 0xff, 0xFF);
 #endif
                 }
                 lastMinute = Seconds/60;
@@ -374,7 +372,7 @@ void loop () {
                 if (isReportSerial())
                     Otio.ReportSerial();
                 else
-                    reportDomoticTemp(Otio.getTemperature(), Otio.getId(), 0, Otio.getBatteryLevel());
+                    reportDomoticTemp("OTIO",Otio.getTemperature(), Otio.getId(), 0, Otio.getBatteryLevel());
                 PulseLed();
                 Otio.resetDecoder();
             }
@@ -570,6 +568,6 @@ void reportTemperatureToDomotic()
            Serial.println(temperature,DEC);
         }
         else
-        reportDomoticTemp ( temperature , 0x45  , 0 ,15 );
+        reportDomoticTemp ( "RFM69",temperature , 0x45  , 0 ,15 );
 #endif
 }

@@ -123,11 +123,11 @@ tRBUF Send ;
 
 //envoi temperature : humudit a domotic
 //, byte bateryLevel : 0..15 0 = batteri low
-void reportDomoticTemp(int temp, byte id1, byte id2, byte bateryLevel,  byte* data, byte pos) {
+void reportDomoticTemp(char* Name, int temp, byte id1, byte id2, byte bateryLevel,  byte* data, byte pos) {
 
     if(isReportSerial())
     {
-        reportSerial ( "TEMPHUM",  id1, id2, bateryLevel,  temp, INVALID_HUM, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE, INVALID_PRESSURE,INVALID_RAIN, data, pos ) ;
+        reportSerial ( Name,  id1, id2, bateryLevel,  temp, INVALID_HUM, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE, INVALID_PRESSURE,INVALID_RAIN, data, pos ) ;
     }
     else
     {
@@ -153,11 +153,11 @@ void reportDomoticTemp(int temp, byte id1, byte id2, byte bateryLevel,  byte* da
     }
 }
 //temp = temperature * 10 
-void reportDomoticTempHum(int temp, byte hum, byte id1, byte id2, byte bateryLevel, byte subType,  byte* data, byte pos ) {
+void reportDomoticTempHum(char* Name, int temp, byte hum, byte id1, byte id2, byte bateryLevel, byte subType,  byte* data, byte pos ) {
 
     if (isReportSerial())
     {
-        reportSerial ( "TEMPHUM",  id1, id2, bateryLevel,  temp, hum, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE, INVALID_PRESSURE,INVALID_RAIN,data, pos  ) ;
+        reportSerial ( Name ,  id1, id2, bateryLevel,  temp, hum, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE, INVALID_PRESSURE,INVALID_RAIN,data, pos  ) ;
     }
     else
     {
@@ -185,7 +185,7 @@ void reportDomoticTempHum(int temp, byte hum, byte id1, byte id2, byte bateryLev
         Serial.write((byte*)&Send.Temp_Hum, sizeof(Send.Temp_Hum));
     }
 }
-void reportDomoticPower(byte* data, int size ) {
+void reportDomoticPower(char* Name, byte* data, int size ) {
     T_INT  tint;
     T_LONG tlong;
 
@@ -204,7 +204,7 @@ void reportDomoticPower(byte* data, int size ) {
     ToTalPowerWHeure = getTotalPower(data);
     if (isReportSerial())
     {
-        reportSerial ( "POWER  ",  data[0], data[1], 15 ,  INVALID_TEMP, INVALID_HUM,  getPower(data), ToTalPowerWHeure , INVALID_PRESSURE, INVALID_PRESSURE,INVALID_RAIN,data, size ) ;
+        reportSerial ( Name ,  data[0], data[1], 15 ,  INVALID_TEMP, INVALID_HUM,  getPower(data), ToTalPowerWHeure , INVALID_PRESSURE, INVALID_PRESSURE,INVALID_RAIN,data, size ) ;
     }
     else
     {
@@ -234,11 +234,11 @@ void reportDomoticPower(byte* data, int size ) {
         Serial.write((byte*)&Send.Temp_Hum, sizeof(Send.ENERGY));
     }
 }
-void reportDomoticTempBaro (byte id1 , float temp , float baro , float PressureSeaLevel , float altitude , uint8_t forecast , byte* data, byte pos )
+void reportDomoticTempBaro (char* Name, byte id1 , float temp , float baro , float PressureSeaLevel , float altitude , uint8_t forecast , byte* data, byte pos )
 {
     if (isReportSerial())
     {
-         reportSerial ( "BARO",  id1, 1, 15 ,  temp, INVALID_HUM, INVALID_POWER, INVALID_POWER, baro ,PressureSeaLevel,INVALID_RAIN,  data, pos  ) ;
+         reportSerial ( Name,  id1, 1, 15 ,  temp, INVALID_HUM, INVALID_POWER, INVALID_POWER, baro ,PressureSeaLevel,INVALID_RAIN,  data, pos  ) ;
     }
     else
     {
@@ -271,11 +271,11 @@ unsigned char Get_Humidity_Level(const unsigned char hlevel)
 		return humstat_comfort;
 	return humstat_normal;
 }
-void reportDomoticTempHumBaro (byte id1 , byte unit ,float temperature , float pressure , float PressureSeaLevel, uint8_t forecast , byte humidity , byte BatteryLevel , byte RssiLevel ,  byte* data, byte pos )
+void reportDomoticTempHumBaro (char* Name,byte id1 , byte unit ,float temperature , float pressure , float PressureSeaLevel, uint8_t forecast , byte humidity , byte BatteryLevel , byte RssiLevel ,  byte* data, byte pos )
 {
     if (isReportSerial())
     {
-         reportSerial ( "BAROH",  id1, 1, 15 ,  temperature, INVALID_HUM, INVALID_POWER, INVALID_POWER, pressure , PressureSeaLevel,INVALID_RAIN,data, pos  ) ;
+         reportSerial ( Name ,  id1, 1, 15 ,  temperature, INVALID_HUM, INVALID_POWER, INVALID_POWER, pressure , PressureSeaLevel,INVALID_RAIN,data, pos  ) ;
     }
     else
     {
@@ -420,7 +420,7 @@ void reportDomoticHomeEasy( byte id1   ,byte id2   ,byte id3   ,byte id4   ,byte
 
     if (isReportSerial())
     {
-        reportPrintName("HEASY");
+        printTab(TAB,Serial.print("HEASY")) ;
         reportPrintHeader();
 
         Serial.print (" Id:" );

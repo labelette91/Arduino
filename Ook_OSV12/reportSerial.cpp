@@ -6,6 +6,8 @@ void printRSSI();
         
 #ifdef WIN32
 void registerStdout() {};
+#elif defined(ESP8266)
+void registerStdout() {};
 #else
 
 static FILE uartout = {0} ;
@@ -99,18 +101,13 @@ void reportPrintHeader()
     printTab(6, nb);
     Serial.print(' ');
 }
-void reportPrintName(char * Name)
-{
-     if (isReportSerial())  printTab(TAB,Serial.print(Name)) ;
-}
 void reportPrint(char * mes)
 {
      if (isReportSerial()) Serial.print(mes); 
 }
 void reportSerial(char* Name, byte id1, byte id2, byte bateryLevel, int temp, byte hum, word power, unsigned long totalpower, word pressure, word PressureSeaLevel, word Rain ,  byte* data, byte pos) {
 
-//    Serial.print(Name);
-
+    printTab(TAB,Serial.print(Name)) ;
     reportPrintHeader();
 
     Serial.print(" Id1:");

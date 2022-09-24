@@ -229,13 +229,11 @@ frame  0 = short pulse = 2ms
     {
         if (isOtio())
         {
-            reportPrintName("OTIO");
-            reportDomoticTemp(getTemperatureOtio(), getIdOtio(), 0, getBatteryLevelOtio(),data,pos);
+            reportDomoticTemp("OTIO",getTemperatureOtio(), getIdOtio(), 0, getBatteryLevelOtio(),data,pos);
         }
         else
         {
-            reportPrintName("RUBI");
-            reportDomoticTempHum(getTemperatureRubi(), gethumidityRubi(), getIdRubi(), getChannelRubi(), getBatteryLevelRubi(), sTypeTH10_RUBiCSON,data,pos );
+            reportDomoticTempHum("RUBI",getTemperatureRubi(), gethumidityRubi(), getIdRubi(), getChannelRubi(), getBatteryLevelRubi(), sTypeTH10_RUBiCSON,data,pos );
         }
 
     }

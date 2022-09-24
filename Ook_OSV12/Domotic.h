@@ -332,16 +332,16 @@ bool DomoticReceptionInProgress();
 extern void DomoticReceive();
 extern unsigned long getLightingId ();
 extern void  DomoticInit();
-extern void reportDomoticTemp ( int temp , byte id1 , byte id2 , byte bateryLevel,  byte* data=0, byte pos = 0);
-extern void reportDomoticTempHum ( int temp , byte hum , byte id1 , byte id2, byte bateryLevel, byte subType,  byte* data=0, byte pos = 0);
-void reportDomoticPower(byte* data, int size);
+extern void reportDomoticTemp ( char* Name,int temp , byte id1 , byte id2 , byte bateryLevel,  byte* data=0, byte pos = 0);
+extern void reportDomoticTempHum ( char* Name, int temp , byte hum , byte id1 , byte id2, byte bateryLevel, byte subType,  byte* data=0, byte pos = 0);
+void reportDomoticPower(char* Name,byte* data, int size);
 extern void DomoticStartReceive();
 extern void DomoticStatus();
 void reportHagerDomotic ( const byte* data, byte pos );
 void reportDomoticHomeEasy(byte id1, byte id2, byte id3, byte id4, byte group, byte cmd, byte unitcode);
 void resetLastSensorValue();
-void reportDomoticTempBaro(byte id1, float temp, float baro, float PressureSeaLevel, float altitude, uint8_t forecast,  byte* data=0, byte pos = 0);
-void reportDomoticTempHumBaro(byte id1, byte unit, float temperature, float pressure, float PressureSeaLevel, uint8_t forecast, byte humidity, byte BatteryLevel, byte RssiLevel,  byte* data=0, byte pos = 0);
+void reportDomoticTempBaro(char* Name, byte id1, float temp, float baro, float PressureSeaLevel, float altitude, uint8_t forecast,  byte* data=0, byte pos = 0);
+void reportDomoticTempHumBaro(char* Name, byte id1, byte unit, float temperature, float pressure, float PressureSeaLevel, uint8_t forecast, byte humidity, byte BatteryLevel, byte RssiLevel,  byte* data=0, byte pos = 0);
 void reportDomoticMD230(const byte* data, byte pos);
 
 

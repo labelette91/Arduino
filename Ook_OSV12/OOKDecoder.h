@@ -205,20 +205,17 @@ public:
     {
         //id1 = sensor id id2 = channel pour oregon
         if (getSensorByte1(data) == CMR180_ID1) {
-            reportPrintName ("CMR180") ;
-            reportDomoticPower((byte*)data, pos);
+            reportDomoticPower("CMR180",(byte*)data, pos);
         }
         // Inside Temp-Hygro : THGR228N,...
         else if (data[0] == 0x1A && data[1] == 0x2D)
         {
-            reportPrintName("THGR228N");
-            reportDomoticTempHum(temperatureint(data), getHumidity(data), getOrId(data), channel(data), battery(data), sTypeTH1_OREGON, data, pos);
+            reportDomoticTempHum("THGR228N",temperatureint(data), getHumidity(data), getOrId(data), channel(data), battery(data), sTypeTH1_OREGON, data, pos);
         }
         // Outside/Water Temp : THN132N,...
         else if (data[0] == 0xEA && data[1] == 0x4C)
         {
-            reportPrintName("THN132N");
-            reportDomoticTemp(temperatureint(data), getOrId(data), channel(data), battery(data), data, pos);
+            reportDomoticTemp("THN132N",temperatureint(data), getOrId(data), channel(data), battery(data), data, pos);
         }
     }
 };
