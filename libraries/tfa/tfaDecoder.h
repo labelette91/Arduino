@@ -154,8 +154,7 @@ unsigned long DeltaReceivedTime()
 
 void report()
 {
-    reportPrintName("TFA  ");
-    reportDomoticTempHum (getTemperature()*10 , gethumidity(), getId(), getChannel(), getBatteryLevel(),sTypeTH11_TFA,data,pos);
+    reportDomoticTempHum ("TFA  ",getTemperature()*10 , gethumidity(), getId(), getChannel(), getBatteryLevel(),sTypeTH11_TFA,data,pos);
 }
   
   virtual bool isValid()
@@ -169,20 +168,4 @@ void report()
   }
 
 };
-void PulseLed();
- void managedHideki(Hideki* ptfa3208 , word p)
- {
-    if (p != 0) 
-    {
-      if (ptfa3208->nextPulse(p))
-      {
-        if (ptfa3208->newPacket())
-        {// ce sont bien nos sondes (signature, identification dans le 1er octet du header
-            PulseLed();
-            
-            ptfa3208->report();
-        }
-        ptfa3208->resetDecoder(); 
-      }
-    }
- }
+

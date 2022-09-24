@@ -304,6 +304,22 @@ void PulseLed()
 //1 = dump pulse len to serial
 byte dumpPulse=0;
 
+ void managedDecoder(DecodeOOK* Decoder , word p , byte  PinData )
+ {
+    {
+      if (Decoder->nextPulse(p,PinData))
+      {
+        if (Decoder->newPacket())
+        {// ce sont bien nos sondes (signature, identification dans le 1er octet du header
+            PulseLed();
+            
+            Decoder->report();
+        }
+        Decoder->resetDecoder(); 
+      }
+    }
+ }
+
 void loop () {
 
     word rssi;
@@ -353,16 +369,7 @@ void loop () {
 
 
 #ifdef OOK_ENABLE        
-            if (orscV2.nextPulse(p))
-            {
-                //if ( orscV2.data[0] == CMR180_ID0 ) dumpPulse=0;
-                //if ( orscV2.data[0] == 0x1A       ) dumpPulse=0;  //THGR228N
-                if (orscV2.newPacket()) {
-                    PulseLed();
-                    orscV2.report();
-                }
-                orscV2.resetDecoder();
-            }
+                  managedDecoder(&orscV2,p,PulsePinData);
 #endif
 
 
@@ -379,14 +386,7 @@ void loop () {
 #endif          
 
 #ifdef HOMEEASY_ENABLE
-            if (HEasy.nextPulse(p, PulsePinData)){ 
-                if (HEasy.newPacket())
-                {
-                    HEasy.report();
-                    PulseLed();
-                }
-                HEasy.resetDecoder();
-            }
+            managedDecoder(&HEasy,p,PulsePinData);
 #endif
 
 #ifdef MD230_ENABLE
@@ -416,33 +416,15 @@ void loop () {
 
 
 #ifdef RUBICSON_ENABLE        
-            if (Rubicson.nextPulse(p, PulsePinData)) {
-                if (Rubicson.newPacket() ) 
-                {
-                    Rubicson.report ();
-                    PulseLed();
-                }
-                Rubicson.resetDecoder();
-            }
+            managedDecoder(&Rubicson,p,PulsePinData);
 #endif          
 
 #ifdef RAIN_ENABLE        
-            if (Rain.nextPulse(p, PulsePinData)) {
-                dumpPulse=0;
-
-                if (Rain.newPacket() )
-//                if (Rain.isValid())
-                {
-                    Rain.report ();
-                    PulseLed();
-                }
-                Rain.resetDecoder();
-            }
+            managedDecoder(&Rain,p,PulsePinData);
 #endif
 
-
 #ifdef HIDEKI_ENABLE        
-      managedHideki(&tfa3208,p);
+      managedDecoder(&tfa3208,p,PulsePinData);
 #endif
 
     }

@@ -78,7 +78,7 @@ public:
 
     enum { UNKNOWN, T0, T1, T2, T3, OK, DONE };
 
-    DecodeOOK () { max_bits=160; resetDecoder(); }
+    DecodeOOK () { max_bits=160; memset(data,0,sizeof(data)); resetDecoder(); }
 
 	virtual bool nextPulse(word width, byte level=0) {
         if (state != DONE)
