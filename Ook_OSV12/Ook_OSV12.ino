@@ -11,7 +11,9 @@
 //#define REPORT_TYPE REPORT_SERIAL 
 #define REPORT_TYPE SERIAL_DEBUG 
 
-//#define RFM69_ENABLE
+#ifndef WIN32
+#define RFM69_ENABLE
+#endif 
 
 //#define OTIO_ENABLE 1
 #define OOK_ENABLE  1
@@ -325,9 +327,9 @@ void loop () {
     word rssi;
     word p = fifo.get();
 
-        if (p > 200 ) {
+        if (p > 100 ) {
             if (dumpPulse)
-                if (p>200)
+                if (p>100)
                 {       
                         write(p);
                 }
@@ -531,7 +533,8 @@ void printRSSI()
 {
     static long int LastPrintRSSI ;
 //print RSSI
-if ((millis() - LastPrintRSSI ) > 5000 ) {
+//if ((millis() - LastPrintRSSI ) > 5000 ) 
+{
 #ifdef RFM69_ENABLE
       Serial.print(radio.readRSSI());  
 #endif

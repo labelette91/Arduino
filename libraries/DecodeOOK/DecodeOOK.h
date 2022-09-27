@@ -1,6 +1,7 @@
 #pragma once
 
 //#include  "reportSerial.h"
+void printHexa ( byte * data, byte pos);
 
 #ifdef WIN32
 #else
@@ -49,6 +50,8 @@ public:
         {
             reportPrint ("BADCHK ");          //ReportSerial();
             reportPrint (Name);          //ReportSerial();
+            printHexa(data, pos );
+
             reportPrint ("\n");          //ReportSerial();
             resetDecoder();
             return  false  ;  
