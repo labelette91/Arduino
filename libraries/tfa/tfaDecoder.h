@@ -1,6 +1,6 @@
 
 
-// 433 MHz decoders
+// 433 MHz decoders TFA Dostmann 30.3208.02 30.5045.54  
 
 //#include "DecodeOOK.h"
 uint8_t lfsr_digest8(uint8_t const message[], unsigned bytes, uint8_t gen, uint8_t key);
@@ -45,7 +45,7 @@ public:
         state = OK;
     }
     virtual char decode (word width, byte BitData) {
-        if (400 <= width && width < 1100 ) 
+        if (300 <= width && width < 1100 ) 
         {
             byte w = width >= 750;
             switch (state) {
