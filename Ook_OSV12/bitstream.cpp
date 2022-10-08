@@ -67,7 +67,7 @@ uint8_t getRaw08bValue(uint8_t * data , uint8_t offset, uint8_t size)
 }
 
 #if 1 
-#include "arduino.h"
+#include "Arduino.h"
 uint8_t Data[10];
 void bitSreamtest()
 {

@@ -75,6 +75,7 @@ OWL CM119	0x1A**	Power meter
 #include "DecodeOOK.h"
 // 433 MHz decoders
 #include "Oregon.h"
+#include "Domotic.h"
 
 
 class OregonDecoderV2 : public DecodeOOK {
@@ -146,7 +147,7 @@ public:
         state = OK;
     }
     
-    virtual char decode (word width, byte BitData) {
+    virtual sbyte decode (word width, byte BitData) {
 //        if (200 <= width && width < 1200) {
         if (200 <= width && width < 1699) {
             byte w = width >= 700;
@@ -237,7 +238,7 @@ public:
         state = OK;
     }
     
-    virtual char decode (word width) {
+    virtual sbyte decode (word width) {
         if (200 <= width && width < 1200) {
             byte w = width >= 700;
             switch (state) {

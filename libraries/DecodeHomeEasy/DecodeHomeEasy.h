@@ -74,7 +74,7 @@ public:
     
     DecodeHomeEasy (byte pMaxCode=2) ;
     
-  char decode (word width , byte BitData)   ;
+  sbyte decode (word width , byte BitData)   ;
   void report();
  };
 

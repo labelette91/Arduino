@@ -1,6 +1,6 @@
 #ifndef _Fifo
 #define _Fifo
-#include "arduino.h"
+#include "Arduino.h"
 
 typedef word TBufferType  ;
 typedef byte TBufferPtrType  ;

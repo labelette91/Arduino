@@ -503,7 +503,7 @@ TPulses RainPulsec = {
 201,540,201,520,201,9998,381,4180,261,1140,261,1058,141,201,2080,361,
 };
 
-#include "Fifo.h"
+#include "fifo.h"
 extern TFifo  fifo;
 
 //duree = coefA * duree + float coefB 
@@ -538,7 +538,7 @@ void testOOK (char* TestString , float coefA=1.0 , float coefB=0   )
     testOOK (&Pulse, coefA , coefB   );
 
 }
-void reportDomoticPower(char* Name, byte* data, int size ) ;
+void reportDomoticPower(const char* Name, byte* data, int size ) ;
 
 int main(int, char**)
 {

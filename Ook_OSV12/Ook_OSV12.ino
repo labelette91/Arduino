@@ -3,9 +3,9 @@
 #endif
 
 
-#include "config.h"
+#include "Config.h"
 
-#include "domotic.h"
+#include "Domotic.h"
 #include "DecodeOOK.h"
 #include <HomeEasyTransmitter.h>
 
@@ -44,24 +44,23 @@ DecodeOTIO Otio(3);
 DecodeRain Rain(1);  
 #endif
 
-#include "Fifo.h"
+#include "fifo.h"
 TFifo  fifo;
 
-#define PORT 2
 // #if defined(__AVR_ATmega2560__) 
 // #define ledPin  13 sur UNO
 // #define ledPin  9 sur anarduino
 // #define ledPin  2 sur 8266
 
-#define ledPin  LED_BUILTIN
+byte ledPin = LED_BUILTIN ;
 
 #ifdef ESP8266
-#define PDATA 5 // GPIO5 = D1 sur la carte wiimos
-#define PCLK  4 // GPIO4 = D2 sur la carte wiimos
+byte PDATA = 5 ;// GPIO5 = D1 sur la carte wiimos
+byte PCLK  = 4 ;// GPIO4 = D2 sur la carte wiimos
 
 #else
-#define PDATA 3 //pin for data input/output
-#define PCLK  4 //pin for clk  input/output
+byte PDATA = 3 ;//pin for data input/output
+byte PCLK  = 4 ;//pin for clk  input/output
 #endif
 
 word    NbPulse  ;
@@ -84,7 +83,7 @@ RFM69 radio;
 // This example will use a 433AM transmitter on
 // pin 3 : data pin
 // pin 4 : clk  pin
-HomeEasyTransmitter easy(PDATA,PCLK,ledPin);
+HomeEasyTransmitter * easy;
 
 #include  "reportSerial.h"
 
@@ -165,7 +164,18 @@ void ext_int_1(void) {
     fifo.put(pulse);
 }
 
+void Setup (byte pData , byte pClk , byte pLed  ) ;
+
 void setup () {
+    Setup ( PDATA , PCLK  , ledPin  );
+
+}
+void Setup (byte pData , byte pClk , byte pLed  ) {
+
+    PDATA = pData;
+    PCLK  = pClk ;
+    ledPin = pLed;
+
     setReportType(REPORT_TYPE);
 
 if (isReportSerial() )
@@ -206,6 +216,7 @@ else
 #ifdef RAIN_ENABLE        
 #endif
 
+easy = new HomeEasyTransmitter (PDATA,PCLK,ledPin);
 
 delay(100);
 if (isReportSerial() )
@@ -217,12 +228,25 @@ if (isReportSerial() )
 
 }
 
-void PulseLed()
+//2 : toogle pin 1!0 set
+void PulseLed(int Level)
 {
-      if (digitalRead(ledPin)== LOW) 
-         digitalWrite(ledPin, HIGH);  
-      else
-         digitalWrite(ledPin, LOW);  
+    static int ledPinLevel = 0;
+
+	if (Level == 2)
+		ledPinLevel = !ledPinLevel;
+	else
+		ledPinLevel = Level;
+
+#ifdef RASPBERRY_PI
+	if (ledPinLevel)
+		system("echo 1 | sudo tee /sys/class/leds/led0/brightness > /dev/null");
+	else
+		system("echo 0 | sudo tee /sys/class/leds/led0/brightness > /dev/null");
+
+#else
+    digitalWrite(ledPin, ledPinLevel);  
+#endif
 }
 
 //1 = dump pulse len to serial
@@ -235,7 +259,7 @@ byte dumpPulse=0;
       {
         if (Decoder->newPacket())
         {// ce sont bien nos sondes (signature, identification dans le 1er octet du header
-            PulseLed();
+            PulseLed(2);
             
             Decoder->report();
         }
@@ -244,10 +268,8 @@ byte dumpPulse=0;
     }
  }
 
-void loop () {
+void Loop ( word p) {
 
-    word rssi;
-    word p = fifo.get();
 
         if (p > 00 ) {
             if (dumpPulse)
@@ -301,7 +323,7 @@ void loop () {
                     Otio.ReportSerial();
                 else
                     reportDomoticTemp("OTIO",Otio.getTemperature(), Otio.getId(), 0, Otio.getBatteryLevel());
-                PulseLed();
+                PulseLed(2);
                 Otio.resetDecoder();
             }
 #endif          
@@ -316,7 +338,7 @@ void loop () {
                     MD230.ReportSerial();
                 else
                     reportDomoticMD230(MD230.getData(), MD230.getBytes());
-                PulseLed();
+                PulseLed(2);
             }
 #endif
 
@@ -331,7 +353,7 @@ void loop () {
             else
                 reportHagerDomotic(hager.getData(), hager.pos);
                 hager.resetDecoder();
-                PulseLed();
+                PulseLed(2);
             }
 #endif        
 
@@ -381,7 +403,7 @@ void loop () {
 #endif
         )
   {
-    digitalWrite(ledPin,HIGH);
+    PulseLed(HIGH);
     //start receive cmd
     if ( (Cmd.ICMND.packettype == 0)&& (Cmd.ICMND.cmnd==cmdStartRec) ) {  
         DomoticStartReceive();
@@ -395,7 +417,7 @@ void loop () {
     {
         detachInterrupt(digitalPinToInterrupt(PDATA));
 
-        easy.initPin();
+        easy->initPin();
 #ifdef RFM69_ENABLE
         radio.setMode(RF69_MODE_TX);
 #endif
@@ -405,7 +427,7 @@ void loop () {
         {  //
                 if (Cmd.LIGHTING2.subtype == sTypeHEU)           //if home easy protocol : subtype==1
                 {
-                    easy.setSwitch(Cmd.LIGHTING2.cmnd, getLightingId(), Cmd.LIGHTING2.unitcode);    // turn on device 0
+                    easy->setSwitch(Cmd.LIGHTING2.cmnd, getLightingId(), Cmd.LIGHTING2.unitcode);    // turn on device 0
                     Cmd.LIGHTING2.subtype = 1;
                 }
                 else if (Cmd.LIGHTING2.subtype == sTypeAC)           //if hager protocol : subtype==0
@@ -420,27 +442,37 @@ void loop () {
                 Cmd.LIGHTING2.subtype = 3;
 
         //acknoledge 
-        Cmd.LIGHTING2.packettype = pTypeUndecoded;
-        Cmd.LIGHTING2.packetlength = 7;
-        Cmd.LIGHTING2.id1 = rssi >> 8;
-        Cmd.LIGHTING2.id2 = rssi & 0x00ff ;
-        Cmd.LIGHTING2.id3 = NbPulsePerSec >> 8;
-        Cmd.LIGHTING2.id4 = NbPulsePerSec & 0x00ff;
-        Serial.write((byte*)&Cmd.LIGHTING2, Cmd.LIGHTING2.packetlength + 1);
-    
+        {
+            int rssi = 0  ;
+            #ifdef RFM69_ENABLE
+            rssi = radio.readRSSI() ;  
+            #endif  
+            Cmd.LIGHTING2.packettype = pTypeUndecoded;
+            Cmd.LIGHTING2.packetlength = 7;
+            Cmd.LIGHTING2.id1 = rssi >> 8;
+            Cmd.LIGHTING2.id2 = rssi & 0x00ff ;
+            Cmd.LIGHTING2.id3 = NbPulsePerSec >> 8;
+            Cmd.LIGHTING2.id4 = NbPulsePerSec & 0x00ff;
+            Serial.write((byte*)&Cmd.LIGHTING2, Cmd.LIGHTING2.packetlength + 1);
+        }
         pinMode(PDATA, INPUT);
         attachInterrupt(digitalPinToInterrupt(PDATA) , ext_int_1, CHANGE);
 #ifdef RFM69_ENABLE
         radio.setMode(RF69_MODE_RX);
 #endif
     }
-    digitalWrite(ledPin,LOW);
+    PulseLed(LOW);
         DomoticPacketReceived = false;
     
   }
 
 }
 
+void loop ( ) {
+
+    word p = fifo.get();
+    Loop(p);
+}
 void printRSSI()
 {
     static long int LastPrintRSSI ;

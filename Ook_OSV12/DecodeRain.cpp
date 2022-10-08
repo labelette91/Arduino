@@ -1,12 +1,8 @@
-#include "DecodeRain.h"
-#if defined(ARDUINO) && ARDUINO >= 100
+//#if defined(ARDUINO) && ARDUINO >= 100
 #include <Arduino.h>            //assumes Arduino IDE v1.0 or greater
-#else
-#include <stdio.h>
-#include <wiringPi.h>
-#include <wiringPiSPI.h>
 
-#endif
+#include "DecodeRain.h"
+
 #include "util.h"
 
 /**

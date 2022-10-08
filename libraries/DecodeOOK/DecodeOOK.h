@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string.h>
 //#include  "reportSerial.h"
 void printHexa ( byte * data, byte pos);
 
@@ -7,7 +8,9 @@ void printHexa ( byte * data, byte pos);
 #else
 #endif    
 
-void reportPrint(char * mes);
+#define sbyte signed char 
+
+void reportPrint(const char * mes);
 
 //#define DEBUG_STATE 
 //#define DEBUG_COUNT 
@@ -30,9 +33,9 @@ public:
 	byte PacketCount ;
     byte PacketCountSeuil = 1 ; //nombre de packets identique recu pout detecter un nouveau packet 
     unsigned long LastSend ;
-    char* Name ="U";
+    const char* Name ="U";
 	
-	virtual char decode(word width, byte level) { return -1; };
+	virtual sbyte decode(word width, byte level) { return -1; };
 
 //    virtual float getTemperature() {	  return (INVALID_TEMP);  }
 //    virtual byte  gethumidity()  {	  return (INVALID_HUM);  }
@@ -41,7 +44,7 @@ public:
 //    virtual byte getBatteryLevel() {		  return 15;  } //return 15 if batterie OK  
 //    virtual byte getChannel()      {	  return  1;  }    
 //    virtual float getPressure()      {	  return  INVALID_PRESSURE;  }    
-    virtual char* getName()      {	  return  Name;  }    
+    virtual const char* getName()      {	  return  Name;  }    
     virtual bool isValid()      		 {	  return  true;  }    
     virtual bool  newPacket()       
     {	 

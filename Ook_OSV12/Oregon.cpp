@@ -1,5 +1,5 @@
-#include "arduino.h"
-#include "Types.h"
+#include "Arduino.h"
+#include "types.h"
 
 /*
 Message Formats

@@ -25,7 +25,7 @@ public:
     
     DecodePwm (byte pMaxCode=2)  ;
     void SetPulseDuration ( word pPulseHigh1 , word pPulseLow1  , word pPulseHigh0 , word pPulseLow0   ,  word  pSynchroHigh, word  pSynchroLow )    ;
-  char decode (word width , byte BitData)   ;
+  sbyte decode (word width , byte BitData)   ;
  };
 
 #endif

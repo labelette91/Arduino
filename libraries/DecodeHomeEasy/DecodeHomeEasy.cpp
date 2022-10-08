@@ -46,7 +46,7 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
     /* T0 : attente bit de synchro */
 
     /* result in CurCode */
-    char DecodeHomeEasy::decode (word pWidth , byte data)   {
+    sbyte DecodeHomeEasy::decode (word pWidth , byte data)   {
         //pulse lsb wil be 100 micros to save computation time
 //        byte width = pWidth / 100;
 //        byte width = pWidth ;

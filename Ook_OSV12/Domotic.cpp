@@ -2,14 +2,14 @@
 #include "vspde.h"
 #endif
 
-#include "arduino.h"
+#include "Arduino.h"
 #include "Domotic.h"
 
 #include "Oregon.h"
-#include "Types.h"
+#include "types.h"
 #include "DecodeHomeEasy.h"
 #include  "reportSerial.h"
-#include "config.h"
+#include "Config.h"
 
 
 tRBUF Cmd ;
@@ -124,7 +124,7 @@ tRBUF Send ;
 
 //envoi temperature : humudit a domotic
 //, byte bateryLevel : 0..15 0 = batteri low
-void reportDomoticTemp(char* Name, int temp, byte id1, byte id2, byte bateryLevel,  byte* data, byte pos) {
+void reportDomoticTemp(const char* Name, int temp, byte id1, byte id2, byte bateryLevel,  byte* data, byte pos) {
 
     if(isReportSerial())
     {
@@ -154,7 +154,7 @@ void reportDomoticTemp(char* Name, int temp, byte id1, byte id2, byte bateryLeve
     }
 }
 //temp = temperature * 10 
-void reportDomoticTempHum(char* Name, int temp, byte hum, byte id1, byte id2, byte bateryLevel, byte subType,  byte* data, byte pos ) {
+void reportDomoticTempHum(const char* Name, int temp, byte hum, byte id1, byte id2, byte bateryLevel, byte subType,  byte* data, byte pos ) {
 
     if (isReportSerial())
     {
@@ -186,7 +186,7 @@ void reportDomoticTempHum(char* Name, int temp, byte hum, byte id1, byte id2, by
         Serial.write((byte*)&Send.Temp_Hum, sizeof(Send.Temp_Hum));
     }
 }
-void reportDomoticPower(char* Name, byte* data, int size ) {
+void reportDomoticPower(const char* Name, byte* data, int size ) {
     T_INT  tint;
     T_LONG tlong;
 
@@ -235,7 +235,7 @@ void reportDomoticPower(char* Name, byte* data, int size ) {
         Serial.write((byte*)&Send.Temp_Hum, sizeof(Send.ENERGY));
     }
 }
-void reportDomoticTempBaro (char* Name, byte id1 , float temp , float baro , float PressureSeaLevel , float altitude , uint8_t forecast , byte* data, byte pos )
+void reportDomoticTempBaro (const char* Name, byte id1 , float temp , float baro , float PressureSeaLevel , float altitude , uint8_t forecast , byte* data, byte pos )
 {
     if (isReportSerial())
     {
@@ -272,7 +272,7 @@ unsigned char Get_Humidity_Level(const unsigned char hlevel)
 		return humstat_comfort;
 	return humstat_normal;
 }
-void reportDomoticTempHumBaro (char* Name,byte id1 , byte unit ,float temperature , float pressure , float PressureSeaLevel, uint8_t forecast , byte humidity , byte BatteryLevel , byte RssiLevel ,  byte* data, byte pos )
+void reportDomoticTempHumBaro (const char* Name,byte id1 , byte unit ,float temperature , float pressure , float PressureSeaLevel, uint8_t forecast , byte humidity , byte BatteryLevel , byte RssiLevel ,  byte* data, byte pos )
 {
     if (isReportSerial())
     {
@@ -518,7 +518,7 @@ void reportDomoticRain( byte id1   ,byte id2   ,byte id3   ,byte id4   ,word Rai
 	Send.RAIN.packettype = pTypeRAIN;
 	Send.RAIN.subtype = sTypeRAIN9;
 	Send.RAIN.battery_level = BatteryLevel;
-	Send.RAIN.rssi = 0xff;
+	Send.RAIN.rssi = 0xf;
 	Send.RAIN.id1 = id2 ;
 	Send.RAIN.id2 = id3 ;
 

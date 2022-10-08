@@ -23,7 +23,7 @@ public:
 	// return -1 : error in decoder 
 	// 1 : end of reception 
 	// 0 : continue
-	char decode(word pWidth, byte data) {
+	sbyte decode(word pWidth, byte data) {
 
 		word width = TO(pWidth);
 

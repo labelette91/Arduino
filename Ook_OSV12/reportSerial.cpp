@@ -3,12 +3,9 @@
 #include  "reportSerial.h"
 
 void printRSSI();
-        
-#ifdef WIN32
-void registerStdout() {};
-#elif defined(ESP8266)
-void registerStdout() {};
-#else
+
+#if defined(__AVR_ATmega328__) || defined(__AVR_ATmega2560__)
+
 
 static FILE uartout = {0} ;
 
@@ -22,6 +19,9 @@ void registerStdout() {
   fdev_setup_stream (&uartout, uart_putchar, NULL, _FDEV_SETUP_WRITE);
   stdout = &uartout ;
 }
+#else
+void registerStdout() {};
+
 #endif
 
 static T_REPORTTYPE ReportType =  REPORT_DOMOTIC ;
@@ -101,11 +101,11 @@ void reportPrintHeader()
     printTab(6, nb);
     Serial.print(' ');
 }
-void reportPrint(char * mes)
+void reportPrint(const char * mes)
 {
      if (isReportSerial()) Serial.print(mes); 
 }
-void reportSerial(char* Name, byte id1, byte id2, byte bateryLevel, int temp, byte hum, word power, unsigned long totalpower, word pressure, word PressureSeaLevel, word Rain ,  byte* data, byte pos) {
+void reportSerial(const char* Name, byte id1, byte id2, byte bateryLevel, int temp, byte hum, word power, unsigned long totalpower, word pressure, word PressureSeaLevel, word Rain ,  byte* data, byte pos) {
 
     printTab(TAB,Serial.print(Name)) ;
     reportPrintHeader();

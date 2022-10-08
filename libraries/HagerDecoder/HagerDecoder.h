@@ -77,7 +77,7 @@ public:
         state = OK;
     }
     
-    virtual char decode (word width) {
+    virtual sbyte decode (word width) {
         if (PULSE_MIN <= width && width < PULSE_MAX) {
             byte w = width >= PULSE_SHORT;
             switch (state) {

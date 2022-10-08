@@ -1,13 +1,6 @@
-#include "DecodePwm.h"
-#if defined(ARDUINO) && ARDUINO >= 100
 #include <Arduino.h>            //assumes Arduino IDE v1.0 or greater
-#else
-#include <stdio.h>
-#include <wiringPi.h>
-#include <wiringPiSPI.h>
 
-#endif
-
+#include "DecodePwm.h"
 
 #define TO10(duree)(duree/10)
 
@@ -15,7 +8,8 @@
 
 #define TOLERANCE TO10(100)
 
-char* Sstate[] = {
+#ifdef _debug_
+const char* Sstate[] = {
 "UNKNOWN", 
 "T0", 
 "T1", 
@@ -32,7 +26,7 @@ char* Sstate[] = {
 "WAITBit1Low"
 
 };
-
+#endif
 
     void DecodePwm::SetPulseDuration ( word pPulseHigh1 , word pPulseLow1  , word pPulseHigh0 , word pPulseLow0 ,  word   pSynchroHigh, word  pSynchroLow  )    
     {
@@ -59,7 +53,7 @@ char* Sstate[] = {
     }
 
     /* result in CurCode */
-    char DecodePwm::decode (word pWidth , byte data)   {
+    sbyte DecodePwm::decode (word pWidth , byte data)   {
         //pulse lsb wil be 10 micros to save computation time
         byte width = TO10(pWidth) ;
 
@@ -114,7 +108,9 @@ char* Sstate[] = {
                            resetDecoder ();
                         break;   
         }
-//        printf( "%2d %2d :%s\n",state , total_bits , Sstate[state]); 
+#ifdef _debug_
+        printf( "%2d %2d :%s\n",state , total_bits , Sstate[state]); 
+#endif
 
         if (total_bits==max_bits)
         {
