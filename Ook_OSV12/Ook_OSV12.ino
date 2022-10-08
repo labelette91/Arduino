@@ -3,62 +3,26 @@
 #endif
 
 
-//type de report serie 
-//si = define  : report serial forma domoticz (binaire)
-#define REPORT_TYPE  REPORT_DOMOTIC
-
-//si =  : report serial format text 
-//#define REPORT_TYPE REPORT_SERIAL 
-#define REPORT_TYPE SERIAL_DEBUG 
-
-#ifndef WIN32
-#define RFM69_ENABLE
-#endif 
-
-//#define OTIO_ENABLE 1
-#define OOK_ENABLE  1
-//#define HAGER_ENABLE 1
-//#define HOMEEASY_ENABLE 1
-//#define MD230_ENABLE 1
-#define RUBICSON_ENABLE 1
-#define  HIDEKI_ENABLE        
-#define  RAIN_ENABLE        
-
-
-#ifndef WIN32
-//#define  BMP180_ENABLE        
-#endif
-
-// Oregon V2 decoder added - Dominique Pierre
-// Oregon V3 decoder revisited - Dominique Pierre
-// New code to decode OOK signals from weather sensors, etc.
-// 2010-04-11 <jcw@equi4.com> http://opensource.org/licenses/mit-license.php
-// $Id: ookDecoder.pde 5331 2010-04-17 10:45:17Z jcw $
+#include "config.h"
 
 #include "domotic.h"
-
 #include "DecodeOOK.h"
-
-#include <HagerDecoder.h>
 #include <HomeEasyTransmitter.h>
-#include "rubicson.h"
-
-#include "OOKDecoder.h"
 
 #ifdef OOK_ENABLE        
+#include "OOKDecoder.h"
 OregonDecoderV2 orscV2;
 #endif
 
 #ifdef HAGER_ENABLE        
+#include <HagerDecoder.h>
 HagerDecoder    hager;
 #endif
 
 #ifdef RUBICSON_ENABLE        
+#include "rubicson.h"
 DecodeRubicson  Rubicson;
 #endif
-/* OregonDecoderV3 orscV3; */
-
-//end oregon 
 
 #ifdef HOMEEASY_ENABLE
 #include "DecodeHomeEasy.h"
@@ -80,12 +44,10 @@ DecodeOTIO Otio(3);
 DecodeRain Rain(1);  
 #endif
 
-
 #include "Fifo.h"
 TFifo  fifo;
 
 #define PORT 2
-//#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1284__) || defined(__AVR_ATmega1284P__) || defined(__AVR_ATmega644__) || defined(__AVR_ATmega644A__) || defined(__AVR_ATmega644P__) || defined(__AVR_ATmega644PA__)
 // #if defined(__AVR_ATmega2560__) 
 // #define ledPin  13 sur UNO
 // #define ledPin  9 sur anarduino
@@ -110,36 +72,6 @@ byte        PulsePinData;
 word        Seconds;
 word        lastSeconds;
 word        lastMinute ;
-
-//le signal du RFM69 entre sur int ext    d3 : int1
-//sur 8266 : interrupt shall be in IRAM
-#ifdef ESP8266
-void ICACHE_RAM_ATTR ext_int_1(void) {
-#else
-void ext_int_1(void) {
-#endif
-
-    static unsigned long  last;
-    byte            pinData;
-    word pulse;
-
-    // determine the pulse length in microseconds, for either polarity
-    pulse = micros() - last;
-    last += pulse;
-
-        pinData = digitalRead(PDATA);
-        
-        //calcul etat du pulse que l'on mesure
-        if (pinData == 1)
-            //tranistion 0--1 : etat pulse = 0 : bit 0 = 0
-            pulse &=0xFFFE ;
-        else
-            //tranistion 1--0 : etat pulse = 1 : bit 0 = 1
-            pulse |= 1 ;
-
-        fifo.put(pulse);
-}
-#include "Oregon.h"
 
 #ifdef RFM69_ENABLE
 #include <RFM69.h>
@@ -166,7 +98,6 @@ Hideki tfa3208;
 #ifdef BMP180_ENABLE
 #include "bmp180.h"
 #endif
-
 
 inline static void write(word w)
 {
@@ -203,6 +134,36 @@ inline static void write(word w)
   
 }
 
+//le signal du RFM69 entre sur int ext    d3 : int1 
+//sur 8266 : interrupt shall be in IRAM
+#ifdef ESP8266
+void ICACHE_RAM_ATTR ext_int_1(void) {
+#else
+void ext_int_1(void) {
+#endif
+
+    static unsigned long  last;
+    byte            pinData;
+    word pulse;
+    unsigned long  micro ;
+
+    // determine the pulse length in microseconds, for either polarity
+    micro = micros() ;
+    pulse = micro - last;
+    last  = micro ;
+
+    pinData = digitalRead(PDATA);
+        
+    //calcul etat du pulse que l'on mesure
+    if (pinData == 1)
+        //tranistion 0--1 : etat pulse = 0 : bit 0 = 0
+        pulse &=0xFFFE ;
+    else
+        //tranistion 1--0 : etat pulse = 1 : bit 0 = 1
+        pulse |= 1 ;
+
+    fifo.put(pulse);
+}
 
 void setup () {
     setReportType(REPORT_TYPE);
@@ -221,19 +182,11 @@ else
 
 #ifdef RFM69_ENABLE
     radio.initialize(RF69_433MHZ,1,100);
-
     radio.setMode(RF69_MODE_RX);
-
-            PulseLed();
     //2400 bauds bit rate 3,4
     radio.writeReg(REG_BITRATEMSB,RF_BITRATEMSB_2400);
     radio.writeReg(REG_BITRATELSB,RF_BITRATELSB_2400);
-    // RegOokPeak : 1b
-//    radio.writeReg(REG_OOKPEAK,RF_OOKPEAK_THRESHTYPE_FIXED+RF_OOKPEAK_PEAKTHRESHDEC_111);
     radio.writeReg(REG_OOKPEAK,RF_OOKPEAK_THRESHTYPE_PEAK +RF_OOKPEAK_PEAKTHRESHDEC_000);
-
-    // REG_OOKFIX  88 au lieu de 70
-//    radio.writeReg(REG_OOKFIX,84 );
     //lna 50 h    
     radio.writeReg(REG_LNA, RF_LNA_ZIN_50);
 #endif     
@@ -271,7 +224,6 @@ void PulseLed()
       else
          digitalWrite(ledPin, LOW);  
 }
-#define HEXTODEC(AH) AH = AH-'0'; if (AH>9) AH = AH -( 7 );if (AH>15) AH = AH - 0x20 ;
 
 //1 = dump pulse len to serial
 byte dumpPulse=0;
@@ -487,13 +439,6 @@ void loop () {
     
   }
 
-}
-void Blink(byte PIN, int DELAY_MS)
-{
-  pinMode(PIN, OUTPUT);
-  digitalWrite(PIN,HIGH);
-  delay(DELAY_MS);
-  digitalWrite(PIN,LOW);
 }
 
 void printRSSI()

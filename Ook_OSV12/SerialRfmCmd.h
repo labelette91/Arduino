@@ -1,4 +1,5 @@
-    
+    #define HEXTODEC(AH) AH = AH-'0'; if (AH>9) AH = AH -( 7 );if (AH>15) AH = AH - 0x20 ;
+
     if (input == 'd') //d=dump all register values
       radio.readAllRegs();
 

@@ -9,6 +9,7 @@
 #include "Types.h"
 #include "DecodeHomeEasy.h"
 #include  "reportSerial.h"
+#include "config.h"
 
 
 tRBUF Cmd ;
@@ -367,6 +368,8 @@ extern byte GetZone(const byte* data);
 #define ECO       0x3
 #define ARRET     0x5
 
+#ifdef HAGER_ENABLE        
+
 void reportHagerDomoticSerial(const byte* data, byte pos) {
     if (isReportSerial())
     {
@@ -414,6 +417,7 @@ void reportHagerDomotic(const byte* data, byte pos) {
         reportHagerDomoticSerial(data, pos);
     }
 }
+#endif
 
 void reportDomoticHomeEasy( byte id1   ,byte id2   ,byte id3   ,byte id4   ,byte group ,byte cmd   ,byte unitcode)
 {
