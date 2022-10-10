@@ -7,7 +7,6 @@
 
 #include "Oregon.h"
 #include "types.h"
-#include "DecodeHomeEasy.h"
 #include  "reportSerial.h"
 #include "Config.h"
 
