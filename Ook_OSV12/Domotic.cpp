@@ -129,7 +129,7 @@ void reportDomoticTemp(const char* Name, int temp, byte id1, byte id2, byte bate
     {
         reportSerial ( Name,  id1, id2, bateryLevel,  temp, INVALID_HUM, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE, INVALID_PRESSURE,INVALID_RAIN, data, pos ) ;
     }
-    else
+    if(isReportDomotic())
     {
         Send.Temp.packetlength = 8;
         Send.Temp.packettype = 0x50;
@@ -159,7 +159,7 @@ void reportDomoticTempHum(const char* Name, int temp, byte hum, byte id1, byte i
     {
         reportSerial ( Name ,  id1, id2, bateryLevel,  temp, hum, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE, INVALID_PRESSURE,INVALID_RAIN,data, pos  ) ;
     }
-    else
+    if(isReportDomotic())
     {
         Send.Temp_Hum.packetlength = sizeof(Send.Temp_Hum) - 1;
         Send.Temp_Hum.packettype = 0x52;   //pTypeTEMP_HUM
@@ -206,7 +206,7 @@ void reportDomoticPower(const char* Name, byte* data, int size ) {
     {
         reportSerial ( Name ,  data[0], data[1], 15 ,  INVALID_TEMP, INVALID_HUM,  getPower(data), ToTalPowerWHeure , INVALID_PRESSURE, INVALID_PRESSURE,INVALID_RAIN,data, size ) ;
     }
-    else
+    if(isReportDomotic())
     {
         tint.Int = getPower(data);
         tlong.Long = ToTalPowerWHeure ;
@@ -240,7 +240,7 @@ void reportDomoticTempBaro (const char* Name, byte id1 , float temp , float baro
     {
          reportSerial ( Name,  id1, 1, 15 ,  temp, INVALID_HUM, INVALID_POWER, INVALID_POWER, baro ,PressureSeaLevel,INVALID_RAIN,  data, pos  ) ;
     }
-    else
+    if(isReportDomotic())
     {
 
         Send._tTempBaro.len = sizeof(Send._tTempBaro) - 1;
@@ -277,7 +277,7 @@ void reportDomoticTempHumBaro (const char* Name,byte id1 , byte unit ,float temp
     {
          reportSerial ( Name ,  id1, 1, 15 ,  temperature, INVALID_HUM, INVALID_POWER, INVALID_POWER, pressure , PressureSeaLevel,INVALID_RAIN,data, pos  ) ;
     }
-    else
+    if(isReportDomotic())
     {
 
         Send.TEMP_HUM_BARO.packetlength = sizeof(Send.TEMP_HUM_BARO) - 1;
@@ -373,7 +373,7 @@ void reportHagerDomoticSerial(const byte* data, byte pos) {
     if (isReportSerial())
     {
     }
-    else
+    if(isReportDomotic())
     {
         Send.LIGHTING2.packetlength = 11;
         Send.LIGHTING2.packettype = pTypeLighting2;
@@ -437,7 +437,7 @@ void reportDomoticHomeEasy( byte id1   ,byte id2   ,byte id3   ,byte id4   ,byte
         Serial.println (cmd);
 
     }
-    else
+    if(isReportDomotic())
     {
 
         Send.LIGHTING2.packetlength = 11;
@@ -474,7 +474,7 @@ void reportDomoticMD230(const byte* data, byte pos) {
     if (isReportSerial())
     {
     }
-    else
+    if(isReportDomotic())
     {
 
         Send.LIGHTING2.packetlength = 11;
@@ -511,7 +511,7 @@ void reportDomoticRain( byte id1   ,byte id2   ,byte id3   ,byte id4   ,word Rai
         RainCounter+=10; // count = FFF6 = -10 = 0 il faut ajouter 10 --> 0 
          reportSerial ( "RAIN",  id2, id3, battery_low ,  INVALID_TEMP, INVALID_HUM, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE , INVALID_PRESSURE, RainCounter ,data, pos  ) ;
     }
-    else
+    if(isReportDomotic())
     {
 	Send.RAIN.packetlength = sizeof(Send.RAIN) - 1;
 	Send.RAIN.packettype = pTypeRAIN;

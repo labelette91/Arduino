@@ -1,10 +1,10 @@
 #pragma once
 
-typedef enum {
-REPORT_DOMOTIC,
-REPORT_SERIAL       ,
-SERIAL_DEBUG 
-} T_REPORTTYPE;
+#define REPORT_DOMOTIC  1  
+#define REPORT_SERIAL   2  
+#define SERIAL_DEBUG    4 
+
+#define T_REPORTTYPE byte
 
 #define INVALID_BYTE 0x7F
 #define INVALID_TEMP  0x7FFF
@@ -19,6 +19,8 @@ SERIAL_DEBUG
 void setReportType(T_REPORTTYPE pReportType );
 T_REPORTTYPE getReportType();
 bool isReportSerial();
+bool isReportDomotic();
+
         
 void registerStdout() ;
 char DectoHex(byte v);

@@ -37,7 +37,15 @@ T_REPORTTYPE getReportType()
 }
 bool isReportSerial()
 {
-    return ReportType !=  REPORT_DOMOTIC ;
+    return ReportType >= REPORT_SERIAL ;
+}
+static inline bool isReportDebugSerial()
+{
+    return ReportType >= SERIAL_DEBUG ;
+}
+bool isReportDomotic()
+{
+    return ( (ReportType & REPORT_DOMOTIC ) == REPORT_DOMOTIC ) ;
 }
 
 

@@ -1,6 +1,6 @@
 //type de report serie 
 //si = define  : report serial forma domoticz (binaire)
-#define REPORT_TYPE  REPORT_DOMOTIC
+//#define REPORT_TYPE  REPORT_DOMOTIC
 
 //si =  : report serial format text 
 //#define REPORT_TYPE REPORT_SERIAL 
