@@ -4,11 +4,9 @@
 
 #define TO10(duree)(duree/10)
 
-#define TEST_PULSE(WIDTH,PULSE_LEN,TOL)((WIDTH> (PULSE_LEN-TOL))&&(WIDTH<(PULSE_LEN+TOL)))
+#define TEST_PULSE(WIDTH,PULSE_LEN,TOL)((WIDTH>= (PULSE_LEN-TOL))&&(WIDTH<=(PULSE_LEN+TOL)))
 
-#define TOLERANCE TO10(100)
-
-#ifdef _debug_
+#ifdef _debugPwm_
 const char* Sstate[] = {
 "UNKNOWN", 
 "T0", 
@@ -28,7 +26,7 @@ const char* Sstate[] = {
 };
 #endif
 
-    void DecodePwm::SetPulseDuration ( word pPulseHigh1 , word pPulseLow1  , word pPulseHigh0 , word pPulseLow0 ,  word   pSynchroHigh, word  pSynchroLow  )    
+    void DecodePwm::SetPulseDuration ( word pPulseHigh1, word pPulseLow1, word pPulseHigh0, word pPulseLow0,  word   pSynchroHigh, word  pSynchroLow, word pTolerance  )    
     {
          PulseHigh1 = TO10(pPulseHigh1 ); 
          PulseLow1  = TO10(pPulseLow1  ); 
@@ -36,6 +34,7 @@ const char* Sstate[] = {
          PulseLow0  = TO10(pPulseLow0  ); 
          SynchroHigh= TO10(pSynchroHigh) ;
          SynchroLow = TO10(pSynchroLow ) ; 
+         Tolerance  = TO10(pTolerance ) ; 
 
     }
     void DecodePwm::resetDecoder () {
@@ -49,7 +48,7 @@ const char* Sstate[] = {
         Name ="P";
         max_bits = 17*4;
 
-        SetPulseDuration(500,250,250,500,750,750);
+        SetPulseDuration(500,250,250,500,750,750, 100 );
     }
 
     /* result in CurCode */
@@ -60,29 +59,29 @@ const char* Sstate[] = {
         switch(state)
         {
         case UNKNOWN :  /* test reception pulse high */
-                        if ( TEST_PULSE(width,SynchroHigh,TOLERANCE)  && (data==1) )
+                        if ( TEST_PULSE(width,SynchroHigh,Tolerance)  && (data==1) )
                             state = WAITSyncLow ;
                         break ;
         case WAITSyncLow :  /* test reception pulse syn low */
-                        if ( TEST_PULSE(width,SynchroLow,TOLERANCE)  && (data==0) )
+                        if ( TEST_PULSE(width,SynchroLow,Tolerance)  && (data==0) )
                             state = WAITBitHigh ;
                         else
                             state = UNKNOWN ;
                         break ;
 
         case WAITBitHigh      :  
-						if ( TEST_PULSE(width,PulseHigh1,TOLERANCE)  && (data==1) )
+						if ( TEST_PULSE(width,PulseHigh1,Tolerance)  && (data==1) )
 							state = WAITBit1Low ;
                         else
-						if ( TEST_PULSE(width,PulseHigh0,TOLERANCE)  && (data==1) )
+						if ( TEST_PULSE(width,PulseHigh0,Tolerance)  && (data==1) )
 							state = WAITBit0Low ;
                         else
-                        if ( TEST_PULSE(width,SynchroHigh,TOLERANCE)  && (data==1) ){
+                        if ( TEST_PULSE(width,SynchroHigh,Tolerance)  && (data==1) ){
                             resetDecoder ();
                             state = WAITSyncLow ;
                         }
                         else
-                        if ( TEST_PULSE(width,SynchroLow,TOLERANCE)  && (data==0) )
+                        if ( TEST_PULSE(width,SynchroLow,Tolerance)  && (data==0) )
                         {
                             resetDecoder ();
                             state = WAITBitHigh ;
@@ -92,7 +91,7 @@ const char* Sstate[] = {
                         break;   
 
         case WAITBit1Low      :  
-						if ( TEST_PULSE(width,PulseLow1,TOLERANCE)  && (data==0) ){
+						if ( TEST_PULSE(width,PulseLow1,Tolerance)  && (data==0) ){
                             gotBit(1);
 							state = WAITBitHigh ;
                         }
@@ -100,7 +99,7 @@ const char* Sstate[] = {
                            resetDecoder ();
                         break;   
         case WAITBit0Low      :  
-						if ( TEST_PULSE(width,PulseLow0,TOLERANCE)  && (data==0) ){
+						if ( TEST_PULSE(width,PulseLow0,Tolerance)  && (data==0) ){
                             gotBit(0);
 							state = WAITBitHigh ;
                         }
@@ -108,7 +107,7 @@ const char* Sstate[] = {
                            resetDecoder ();
                         break;   
         }
-#ifdef _debug_
+#ifdef _debugPwm_
         printf( "%2d %2d :%s\n",state , total_bits , Sstate[state]); 
 #endif
 

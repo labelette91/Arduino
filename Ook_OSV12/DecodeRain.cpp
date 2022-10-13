@@ -96,7 +96,7 @@ uint8_t getRaw08bValue(uint8_t* data, uint8_t offset, uint8_t size);
         Name ="R";
         max_bits = 16*4;
 
-        SetPulseDuration(500,250,250,500,750,750);
+        SetPulseDuration(500,250,250,500,750,750, 120);
     }
  
 void reportDomoticRain( byte id1   ,byte id2   ,byte id3   ,byte id4   ,word rain  ,byte battery_low,  byte* data, byte pos);
