@@ -21,3 +21,6 @@
 #define  RAIN_ENABLE        
 
 // #define RASPBERRY_PI
+
+//offset in micros for pulse duration for RFM69 : 80Micros
+#define OFFSET_DURATION_HIGH 0

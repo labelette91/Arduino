@@ -288,6 +288,13 @@ void Loop ( word p) {
             //get pinData
             PulsePinData = p & 1;
             NbPulse++;
+
+#if   OFFSET_DURATION_HIGH
+            //offset sur pulse high for RFM69
+            if(PulsePinData)
+                p+= OFFSET_DURATION_HIGH;
+#endif
+
             Seconds = millis() / 1000;
             //every seconds
             if (Seconds != lastSeconds)
