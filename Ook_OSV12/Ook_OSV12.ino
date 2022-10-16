@@ -72,6 +72,7 @@ word        Seconds;
 word        lastSeconds;
 word        lastMinute ;
 
+
 #ifdef RFM69_ENABLE
 #include <RFM69.h>
 #include <RFM69registers.h>
@@ -167,6 +168,7 @@ void ext_int_1(void) {
 void Setup (byte pData , byte pClk , byte pLed  ) ;
 
 void setup () {
+    setReportType(REPORT_TYPE);
     Setup ( PDATA , PCLK  , ledPin  );
 
 }
@@ -175,8 +177,6 @@ void Setup (byte pData , byte pClk , byte pLed  ) {
     PDATA = pData;
     PCLK  = pClk ;
     ledPin = pLed;
-
-    setReportType(REPORT_TYPE);
 
 if (isReportSerial() )
     Serial.begin(2000000);
@@ -315,6 +315,8 @@ void Loop ( word p) {
 #endif
                 }
                 lastMinute = Seconds/60;
+
+
             }
 
 
@@ -487,6 +489,7 @@ void printRSSI()
 //if ((millis() - LastPrintRSSI ) > 5000 ) 
 {
 #ifdef RFM69_ENABLE
+      Serial.print(" rssi:");  
       Serial.print(radio.readRSSI());  
 #endif
       LastPrintRSSI = millis() ;
