@@ -7,7 +7,7 @@
 #define REPORT_TYPE SERIAL_DEBUG 
 
 #ifndef WIN32
-//#define RFM69_ENABLE
+#define RFM69_ENABLE
 //#define  BMP180_ENABLE        
 #endif 
 

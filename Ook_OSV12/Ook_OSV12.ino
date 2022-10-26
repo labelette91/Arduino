@@ -99,6 +99,8 @@ Hideki tfa3208;
 #include "bmp180.h"
 #endif
 
+int rssiGetAverage();
+
 inline static void write(word w)
 {
   static byte nbc = 0;
@@ -452,10 +454,7 @@ void Loop ( word p) {
 
         //acknoledge 
         {
-            int rssi = 0  ;
-            #ifdef RFM69_ENABLE
-            rssi = radio.readRSSI() ;  
-            #endif  
+            int rssi = rssiGetAverage()  ;
             Cmd.LIGHTING2.packettype = pTypeUndecoded;
             Cmd.LIGHTING2.packetlength = 7;
             Cmd.LIGHTING2.id1 = rssi >> 8;
@@ -482,6 +481,17 @@ void loop ( ) {
     word p = fifo.get();
     Loop(p);
 }
+
+#ifndef RASPBERRY_PI
+int rssiGetAverage()
+{
+#ifdef RFM69_ENABLE
+      return (radio.readRSSI());
+#else
+        return 0;
+#endif
+}
+#endif
 void printRSSI()
 {
     static long int LastPrintRSSI ;
@@ -490,7 +500,7 @@ void printRSSI()
 {
 #ifdef RFM69_ENABLE
       Serial.print(" rssi:");  
-      Serial.print(radio.readRSSI());  
+      Serial.print(rssiGetAverage());  
 #endif
       LastPrintRSSI = millis() ;
 }

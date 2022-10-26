@@ -165,7 +165,7 @@ void reportSerial(const char* Name, byte id1, byte id2, byte bateryLevel, int te
     printRSSI();
 //     Serial.print(" RSSI:");Serial.print(radio.readRSSI());
 
-    if (getReportType() == SERIAL_DEBUG) {
+    if (getReportType() >= SERIAL_DEBUG) {
         if (data) {
             Serial.print(' ');
 //            printBinary(data, pos, 8);
