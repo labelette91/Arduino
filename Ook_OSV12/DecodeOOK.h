@@ -15,6 +15,26 @@ void reportPrint(const char * mes);
 //#define DEBUG_STATE 
 //#define DEBUG_COUNT 
 
+static const char* Sstate[] = {
+"UNKNOWN", 
+"T0", 
+"T1", 
+"T2", 
+"T3", 
+"OK", 
+"DONE ", 
+"WAITSyncHigh",  
+"WAITSyncLow ", 
+"WAITBitHigh ", 
+"WAITBit0High  ", 
+"WAITBit0Low ", 
+"WAITBit1High ", 
+"WAITBit1Low"
+
+};
+
+
+
 typedef enum {
 	LSB_FIRST = 0,
 	MSB_FIRST = 1,
@@ -95,19 +115,7 @@ public:
             }
 #ifdef  DEBUG_STATE 
         {
-            static byte nbs=0;
-            if (state != UNKNOWN)
-            if (Name[0] == 'H')
-            {
-                Serial.print (Name[0]);
-                Serial.print (state);
-                Serial.print (' ');
-                nbs++;
-                if ((nbs%32)==0 )
-                    Serial.println ();
-                if (state == DONE)
-                    Serial.println ();
-            }
+            printf( "%c = (%4d,%d)  %2d %2d :%s\n", Name[0],width,level, state , total_bits , Sstate[state]); 
         }
 
 #endif

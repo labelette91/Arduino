@@ -111,7 +111,7 @@
     <ClInclude Include="rubicson.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\libraries\tfa\tfaDecoder.h">
+    <ClInclude Include="tfaDecoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

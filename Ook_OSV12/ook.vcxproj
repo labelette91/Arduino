@@ -43,12 +43,12 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;ARDUINO=100;DEBUG_COUNT;_debugPwm_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;ARDUINO=100;DEBUG_COUNT;_debugPwm;DEBUG_STATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Arduino\libraries\DecodeHomeEasy;C:\Arduino\libraries\def;C:\Arduino\libraries\RFM69;C:\Arduino\libraries\RFM69\pi;C:\Arduino\libraries\HagerDecoder;C:\Arduino\libraries\HomeEasyTransmitter;C:\Arduino\libraries\DecodeMD230;C:\Arduino\libraries\tfa;C:\Arduino\libraries\DecodeOTIO;C:\Arduino\Ook_OSV12;C:\Arduino\libraries\DecodeOOK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Arduino\libraries\DecodeHomeEasy;C:\Arduino\libraries\def;C:\Arduino\libraries\RFM69;C:\Arduino\libraries\RFM69\pi;C:\Arduino\libraries\HagerDecoder;C:\Arduino\libraries\HomeEasyTransmitter;C:\Arduino\libraries\DecodeMD230;C:\Arduino\libraries\DecodeOTIO;C:\Arduino\Ook_OSV12;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -96,7 +96,7 @@
     <ClInclude Include="..\libraries\HomeEasyTransmitter\HomeEasyTransmitter.h" />
     <ClInclude Include="..\libraries\RFM69\RFM69.h" />
     <ClInclude Include="..\libraries\RFM69\RFM69registers.h" />
-    <ClInclude Include="..\libraries\tfa\tfaDecoder.h" />
+    <ClInclude Include="tfaDecoder.h" />
     <ClInclude Include="DecodeOOK.h" />
     <ClInclude Include="Domotic.h" />
     <ClInclude Include="fifo.h" />
