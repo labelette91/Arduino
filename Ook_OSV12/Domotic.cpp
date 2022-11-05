@@ -83,7 +83,7 @@ bool DomoticReceptionInProgress()
     return receiveLength != 0 ;
 }
 //reception d'une commande de send domotic
-void DomoticReceive()
+void ReadDomoticCmdFromSerial()
 {
 	//si paquet en cours de traitement 
 	if (DomoticPacketReceived )

@@ -270,9 +270,7 @@ byte dumpPulse=0;
     }
  }
 
-void Loop ( word p) {
-
-
+void ManagePulseReception ( word p) {
         if (p > 00 ) {
             if (dumpPulse)
                 if (p>00)
@@ -382,10 +380,8 @@ void Loop ( word p) {
 #endif
 
     }
-
-    //read serial input & fill receive buffe(
-    DomoticReceive();
-
+}
+void ManageDomoticCmdEmission() {
     //check domotic send command reception
     //attente une secone max pour emetre si emission en cours -80--> -70
     //pas de reception en cours
@@ -415,6 +411,13 @@ void Loop ( word p) {
         )
   {
     PulseLed(HIGH);
+
+     if (isReportSerial()) 
+     {
+         Serial.print("Cmd:");
+         printHexa(&Cmd.ICMND.packetlength, Cmd.ICMND.packetlength );
+         Serial.print("\n");
+     }
     //start receive cmd
     if ( (Cmd.ICMND.packettype == 0)&& (Cmd.ICMND.cmnd==cmdStartRec) ) {  
         DomoticStartReceive();
@@ -473,6 +476,16 @@ void Loop ( word p) {
         DomoticPacketReceived = false;
     
   }
+}
+
+
+void Loop ( word p) {
+
+    ManagePulseReception ( p);
+    //read serial input & fill receive buffe(
+    ReadDomoticCmdFromSerial();
+
+    ManageDomoticCmdEmission();
 
 }
 
@@ -480,6 +493,7 @@ void loop ( ) {
 
     word p = fifo.get();
     Loop(p);
+
 }
 
 #ifndef RASPBERRY_PI

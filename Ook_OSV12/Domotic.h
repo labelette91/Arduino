@@ -329,7 +329,7 @@ extern bool DomoticPacketReceived;
 
 bool DomoticReceptionInProgress();
 
-extern void DomoticReceive();
+extern void ReadDomoticCmdFromSerial();
 extern unsigned long getLightingId ();
 extern void  DomoticInit();
 extern void reportDomoticTemp ( const char* Name,int temp , byte id1 , byte id2 , byte bateryLevel,  byte* data=0, byte pos = 0);
