@@ -157,16 +157,21 @@ byte getDecoderFromName (char *name)
     return 0;
 }
 
-void createDecoderList(char* DecoderList)
+void createDecoderList(const char* DecoderList)
 {
     byte index = 0 ;
-    char* ptb = DecoderList ;
-    char* pte = strchr(ptb,';');
+    char name[10];
+
+    const char* ptb = DecoderList ;
+    const char* pte = strchr(ptb,';');
 
     while( (pte) && (* pte != 0))
     {
         Decoders[index]=0;
-        *pte++ = 0  ;
+        strncpy(name,ptb,pte-ptb);
+        name[pte-ptb]=0;
+        pte++  ;
+        ptb = name;
         if (stricmp(ptb,  "OOK"      )==0) { Decoders[index++] = new   OregonDecoderV2() ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
 //      if (stricmp(ptb,  "OTIO"     )==0) { Decoders[index++] = new   DecodeOTIO(2);    ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
 //      if (stricmp(ptb,  "HAGER"    )==0) { Decoders[index++] = new   HagerDecoder()    ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
@@ -249,14 +254,14 @@ void ext_int_1(void) {
     fifo.put(pulse);
 }
 
-void Setup (byte pData, byte pClk, byte pLed, char* DecoderList  ) ;
+void Setup (byte pData, byte pClk, byte pLed, const char* DecoderList  ) ;
 
 void setup () {
     setReportType(REPORT_TYPE);
     Setup ( PDATA, PCLK, ledPin, DecoderListInit  );
 
 }
-void Setup (byte pData, byte pClk, byte pLed, char* pDecoderList  ) {
+void Setup (byte pData, byte pClk, byte pLed, const char* pDecoderList  ) {
 
     PDATA = pData;
     PCLK  = pClk ;
