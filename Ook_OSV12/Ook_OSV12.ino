@@ -126,6 +126,7 @@ char DecoderListInit[] =
 
 ;
 
+
 const char* DecodersName[] = {
 "",
 "OTIO"     ,
@@ -248,14 +249,14 @@ void ext_int_1(void) {
     fifo.put(pulse);
 }
 
-void Setup (byte pData , byte pClk , byte pLed  ) ;
+void Setup (byte pData, byte pClk, byte pLed, char* DecoderList  ) ;
 
 void setup () {
     setReportType(REPORT_TYPE);
-    Setup ( PDATA , PCLK  , ledPin  );
+    Setup ( PDATA, PCLK, ledPin, DecoderListInit  );
 
 }
-void Setup (byte pData , byte pClk , byte pLed  ) {
+void Setup (byte pData, byte pClk, byte pLed, char* pDecoderList  ) {
 
     PDATA = pData;
     PCLK  = pClk ;
@@ -267,7 +268,7 @@ if (isReportSerial() )
 else
     Serial.begin(38400);
 
-createDecoderList(DecoderListInit);
+createDecoderList(pDecoderList);
 
 // initialize the LED pin as an output:
     pinMode(ledPin, OUTPUT);       
