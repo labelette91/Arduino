@@ -10,8 +10,6 @@
 #include "DecodeOOK.h"
 
 
-#define TEST_PULSE(WIDTH,PULSE_LEN,TOL)((WIDTH> (PULSE_LEN-TOL))&&(WIDTH<(PULSE_LEN+TOL)))
-
 class DecodePwm  : public DecodeOOK{
 //class DecodePwm {
 public:

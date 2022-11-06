@@ -1,7 +1,8 @@
 #ifdef WIN32
 #include "vspde.h"
+#else
+#define stricmp(a, b) strcasecmp(a, b)
 #endif
-
 
 #include "Config.h"
 
@@ -11,7 +12,6 @@
 
 #ifdef OOK_ENABLE        
 #include "OOKDecoder.h"
-OregonDecoderV2 orscV2;
 #endif
 
 #ifdef HAGER_ENABLE        
@@ -21,12 +21,10 @@ HagerDecoder    hager;
 
 #ifdef RUBICSON_ENABLE        
 #include "rubicson.h"
-DecodeRubicson  Rubicson;
 #endif
 
 #ifdef HOMEEASY_ENABLE
 #include "DecodeHomeEasy.h"
-DecodeHomeEasy HEasy ;
 #endif
 
 #ifdef MD230_ENABLE
@@ -41,7 +39,6 @@ DecodeOTIO Otio(3);
 
 #ifdef RAIN_ENABLE        
 #include "DecodeRain.h"
-DecodeRain Rain(1);  
 #endif
 
 #include "fifo.h"
@@ -92,12 +89,96 @@ HomeEasyTransmitter * easy;
 
 #ifdef HIDEKI_ENABLE        
 #include "tfaDecoder.h"
-Hideki tfa3208;
 #endif
 
 #ifdef BMP180_ENABLE
 #include "bmp180.h"
 #endif
+
+//OTIO;OOK;HAGER;HOMEEASY;MD230;RUBICSON;HIDEKI;RAIN;
+
+char DecoderListInit[] = 
+
+#ifdef OTIO_ENABLE        
+                          "OTIO"     ";"
+#endif
+#ifdef OOK_ENABLE         
+                          "OOK"      ";"
+#endif
+#ifdef HAGER_ENABLE       
+                          "HAGER"    ";"
+#endif
+#ifdef HOMEEASY_ENABLE    
+                          "HOMEEASY" ";"
+#endif
+#ifdef MD230_ENABLE       
+                          "MD230"    ";"
+#endif
+#ifdef RUBICSON_ENABLE    
+                          "RUBICSON" ";"
+#endif
+#ifdef HIDEKI_ENABLE      
+                          "HIDEKI"   ";"
+#endif
+#ifdef RAIN_ENABLE        
+                          "RAIN"     ";"
+#endif
+
+;
+
+const char* DecodersName[] = {
+"",
+"OTIO"     ,
+"OOK"      ,
+"HAGER"    ,
+"HOMEEASY" ,
+"MD230"    ,
+"RUBICSON" ,
+"HIDEKI"   ,
+"RAIN"     ,
+0
+
+};
+
+
+
+DecodeOOK* Decoders [sizeof(DecodersName)/sizeof(char*)] ;
+
+
+byte getDecoderFromName (char *name)
+{
+    byte i = 0 ;
+    while(DecodersName[i] != 0)
+    {
+        if (stricmp(name,DecodersName[i])==0)
+            return i;
+    }
+    return 0;
+}
+
+void createDecoderList(char* DecoderList)
+{
+    byte index = 0 ;
+    char* ptb = DecoderList ;
+    char* pte = strchr(ptb,';');
+
+    while( (pte) && (* pte != 0))
+    {
+        Decoders[index]=0;
+        *pte++ = 0  ;
+        if (stricmp(ptb,  "OOK"      )==0) { Decoders[index++] = new   OregonDecoderV2() ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+//      if (stricmp(ptb,  "OTIO"     )==0) { Decoders[index++] = new   DecodeOTIO(2);    ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+//      if (stricmp(ptb,  "HAGER"    )==0) { Decoders[index++] = new   HagerDecoder()    ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+//      if (stricmp(ptb,  "HOMEEASY" )==0) { Decoders[index++] = new   DecodeHomeEasy()  ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+//      if (stricmp(ptb,  "MD230"    )==0) { Decoders[index++] = new   DecodeMD230(2)    ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+        if (stricmp(ptb,  "RUBICSON" )==0) { Decoders[index++] = new   DecodeRubicson()  ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+        if (stricmp(ptb,  "HIDEKI"   )==0) { Decoders[index++] = new   Hideki()          ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+        if (stricmp(ptb,  "RAIN"     )==0) { Decoders[index++] = new   DecodeRain(1)     ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+        ptb=pte ;
+        pte = strchr(ptb,';');
+        Decoders[index]=0;
+    }
+}
 
 int rssiGetAverage();
 
@@ -151,7 +232,7 @@ void ext_int_1(void) {
 
     // determine the pulse length in microseconds, for either polarity
     micro = micros() ;
-    pulse = micro - last;
+    pulse = (word )(micro - last);
     last  = micro ;
 
     pinData = digitalRead(PDATA);
@@ -186,6 +267,8 @@ if (isReportSerial() )
 else
     Serial.begin(38400);
 
+createDecoderList(DecoderListInit);
+
 // initialize the LED pin as an output:
     pinMode(ledPin, OUTPUT);       
     pinMode(PDATA, INPUT);
@@ -193,6 +276,7 @@ else
     attachInterrupt(digitalPinToInterrupt(PDATA) , ext_int_1, CHANGE);
 
 #ifdef RFM69_ENABLE
+    reportPrint("RFM69 Init");
     radio.initialize(RF69_433MHZ,1,100);
     radio.setMode(RF69_MODE_RX);
     //2400 bauds bit rate 3,4
@@ -203,19 +287,10 @@ else
     radio.writeReg(REG_LNA, RF_LNA_ZIN_50);
 #endif     
 
-#ifdef HOMEEASY_ENABLE
-    HEasy.resetDecoder();
-#endif
-#ifdef MD230_ENABLE
-      MD230.resetDecoder();
-#endif
         DomoticInit();
 
 #ifdef BMP180_ENABLE
         bmp180_init();
-#endif
-
-#ifdef RAIN_ENABLE        
 #endif
 
 easy = new HomeEasyTransmitter (PDATA,PCLK,ledPin);
@@ -269,8 +344,9 @@ byte dumpPulse=0;
       }
     }
  }
-
 void ManagePulseReception ( word p) {
+    byte i=0;
+    DecodeOOK* Decoder ;
         if (p > 00 ) {
             if (dumpPulse)
                 if (p>00)
@@ -315,15 +391,12 @@ void ManagePulseReception ( word p) {
 #endif
                 }
                 lastMinute = Seconds/60;
-
-
             }
 
-
-#ifdef OOK_ENABLE        
-                  managedDecoder(&orscV2,p,PulsePinData);
-#endif
-
+            while ( (Decoder=Decoders[i++]) != 0 )
+            {
+                  managedDecoder(Decoder,p,PulsePinData);
+            }
 
 #ifdef OTIO_ENABLE        
             if (Otio.nextPulse(p, PulsePinData)) {
@@ -336,10 +409,6 @@ void ManagePulseReception ( word p) {
                 Otio.resetDecoder();
             }
 #endif          
-
-#ifdef HOMEEASY_ENABLE
-            managedDecoder(&HEasy,p,PulsePinData);
-#endif
 
 #ifdef MD230_ENABLE
             if (MD230.nextPulse(p, PulsePinData)) {
@@ -366,47 +435,29 @@ void ManagePulseReception ( word p) {
             }
 #endif        
 
-
-#ifdef RUBICSON_ENABLE        
-            managedDecoder(&Rubicson,p,PulsePinData);
-#endif          
-
-#ifdef RAIN_ENABLE        
-            managedDecoder(&Rain,p,PulsePinData);
-#endif
-
-#ifdef HIDEKI_ENABLE        
-      managedDecoder(&tfa3208,p,PulsePinData);
-#endif
-
     }
 }
 void ManageDomoticCmdEmission() {
+    byte i = 0 ;
+    DecodeOOK* Decoder ;
+
     //check domotic send command reception
     //attente une secone max pour emetre si emission en cours -80--> -70
     //pas de reception en cours
+
+    if ( DomoticPacketReceived == 0 )
+        return ;
+
+    while ( (Decoder=Decoders[i++]) != 0 )
+    {
+            //si reception en cours , ne traite pas la commande
+            if (Decoder->total_bits != 0 )
+                return ;
+    }
+
     if (   (DomoticPacketReceived)
 #ifdef RFM69_ENABLE
           && (radio.canSend(-70)   )
-#endif
-#ifdef OTIO_ENABLE        
-          && (Otio.total_bits ==0)
-#endif
-#ifdef OOK_ENABLE        
-          && (orscV2.total_bits == 0)
-#endif
-#ifdef RUBICSON_ENABLE        
-          && (Rubicson.total_bits == 0)
-#endif
-
-#ifdef HOMEEASY_ENABLE
-//        && (HEasy.total_bits == 0)
-#endif
-#ifdef MD230_ENABLE
-//        && (MD230.total_bits == 0)
-#endif
-#ifdef HIDEKI_ENABLE        
-          && (tfa3208.total_bits == 0)
 #endif
         )
   {
@@ -477,23 +528,16 @@ void ManageDomoticCmdEmission() {
     
   }
 }
-
-
 void Loop ( word p) {
-
     ManagePulseReception ( p);
     //read serial input & fill receive buffe(
     ReadDomoticCmdFromSerial();
-
     ManageDomoticCmdEmission();
-
 }
 
 void loop ( ) {
-
     word p = fifo.get();
     Loop(p);
-
 }
 
 #ifndef RASPBERRY_PI
