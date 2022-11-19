@@ -5,3 +5,22 @@ https://digistump.com/wiki/digispark/tutorials/connecting
 
 esp8266
 http://arduino.esp8266.com/stable/package_esp8266com_index.json
+
+
+install manuel :
+copier les board dans hardware/attiny.ocm/attiny/ board.txt et variant
+
+install :
+pour dht11 
+json local dans preference pour instal :
+file:/temp/package_damellis_attiny_index.json
+https://github.com/damellis/attiny"
+
+
+pour BME280 : SDA/SCL
+http://drazzy.com/package_drazzy.com_index.json
+
+tiniy digistump
+https://github.com/digistump/DigistumpArduino/releases/download/1.6.7/digistump-avr-1.6.7.zip",
+
+
