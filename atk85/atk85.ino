@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+//#include "DigiKeyboard.h"
 
 
 #include <avr/sleep.h>
@@ -37,11 +38,17 @@ volatile boolean f_wdt = 1;
 #define DHT11PIN PB1
 dht11 DHT11;
 
+#define  SOFT
 
+#ifdef SOFT
 #include <SoftwareSerial.h>
 #define SERIAL_RX PB3 //pin 2 //INPUT
 #define SERIAL_TX PB4 //pin 3 //OUTPUT
 SoftwareSerial TinySerial(SERIAL_RX, SERIAL_TX); // RX, TX
+#else
+#define  TinySerial  DigiKeyboard 
+
+#endif
 
 
 //#define THN132N
@@ -329,7 +336,9 @@ void setup()
   
  
  pinMode(PB4, OUTPUT); //tx
+#ifdef SOFT
   TinySerial.begin(9600);
+#endif
   TinySerial.println("\n[Oregon V2.1 encoder]");
  
   SEND_LOW(); 

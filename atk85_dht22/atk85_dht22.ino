@@ -31,7 +31,7 @@
 
 volatile boolean f_wdt = 1;
 
-#include <dht.h>
+#include "dht22.h"
 dht DHT;
 #define DHT22_PIN 1
 
@@ -300,7 +300,7 @@ void calculateAndSetChecksum(byte* data)
 
  
 /******************************************************************/
- 
+ #define PIN 1
 void setup()
 {
   setup_watchdog(9);
@@ -308,7 +308,7 @@ void setup()
   //digitalWrite(PB3,HIGH);delay(500);
   //digitalWrite(PB3,LOW);delay(500);
   //digitalWrite(PB3,HIGH);
-  //pinMode(TX_PIN, OUTPUT);
+  pinMode(TX_PIN, OUTPUT);
  
  
 //  pinMode(PB4, OUTPUT); //tx
@@ -323,6 +323,8 @@ void setup()
   setType(OregonMessageBuffer, ID);
   setChannel(OregonMessageBuffer, 0x20);
   setId(OregonMessageBuffer, 0xBB);
+
+  pinMode(PIN, OUTPUT);
 }
 
 
@@ -368,7 +370,7 @@ ISR(WDT_vect) {
  
 void loop()
 {
-  int chk = DHT.read22(DHT22_PIN);
+//  int chk = DHT.read22(DHT22_PIN);
 
   setBatteryLevel(OregonMessageBuffer, 1); // 0 : low, 1 : high
   setTemperature(OregonMessageBuffer, DHT.temperature);
@@ -393,12 +395,15 @@ void loop()
   //
   //9 secs * 6 = 54 secs
   system_sleep();
-  system_sleep();
-  system_sleep();
-  system_sleep();
-  system_sleep();
-  system_sleep();
+//  system_sleep();
+//  system_sleep();
+//  system_sleep();
+//  system_sleep();
+//  system_sleep();
   //
   //delay(30000);
- 
+   digitalWrite(PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(1000);               // wait for a second
+  digitalWrite(PIN, LOW);    // turn the LED off by making the voltage LOW
+  delay(1000);               // wait for a second
 }

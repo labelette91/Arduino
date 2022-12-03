@@ -27,7 +27,7 @@
 // Released to the public domain
 //
 
-#include "dht.h"
+#include "dht22.h"
 
 /////////////////////////////////////////////////////
 //
