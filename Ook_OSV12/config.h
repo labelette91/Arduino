@@ -14,7 +14,7 @@
 //#define OTIO_ENABLE        1
   #define OOK_ENABLE         2
 //#define HAGER_ENABLE       3
-//#define HOMEEASY_ENABLE    4
+#define HOMEEASY_ENABLE    4
 //#define MD230_ENABLE       5
   #define RUBICSON_ENABLE    6
   #define HIDEKI_ENABLE      7

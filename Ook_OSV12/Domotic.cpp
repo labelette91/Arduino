@@ -418,7 +418,7 @@ void reportHagerDomotic(const byte* data, byte pos) {
 }
 #endif
 
-void reportDomoticHomeEasy( byte id1   ,byte id2   ,byte id3   ,byte id4   ,byte group ,byte cmd   ,byte unitcode)
+void reportDomoticHomeEasy( byte id1   ,byte id2   ,byte id3   ,byte id4   ,byte group ,byte cmd   ,byte unitcode,  byte* data, byte pos)
 {
 
     if (isReportSerial())
@@ -434,7 +434,19 @@ void reportDomoticHomeEasy( byte id1   ,byte id2   ,byte id3   ,byte id4   ,byte
         Serial.print ( " unitcode:" );
         Serial.print (unitcode);
         Serial.print ( " CMD:" );
-        Serial.println (cmd);
+        Serial.print (cmd);
+//      printRSSI();
+//     Serial.print(" RSSI:");Serial.print(radio.readRSSI());
+
+    if (getReportType() >= SERIAL_DEBUG) {
+        if (data) {
+            Serial.print(' ');
+//            printBinary(data, pos, 8);
+            printHexa(data, pos );
+        }
+    }
+    Serial.println();
+
 
     }
     if(isReportDomotic())

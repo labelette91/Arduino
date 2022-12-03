@@ -338,7 +338,7 @@ void reportDomoticPower(const char* Name,byte* data, int size);
 extern void DomoticStartReceive();
 extern void DomoticStatus();
 void reportHagerDomotic ( const byte* data, byte pos );
-void reportDomoticHomeEasy(byte id1, byte id2, byte id3, byte id4, byte group, byte cmd, byte unitcode);
+void reportDomoticHomeEasy(byte id1, byte id2, byte id3, byte id4, byte group, byte cmd, byte unitcode,  byte* data, byte pos);
 void resetLastSensorValue();
 void reportDomoticTempBaro(const char* Name, byte id1, float temp, float baro, float PressureSeaLevel, float altitude, uint8_t forecast,  byte* data=0, byte pos = 0);
 void reportDomoticTempHumBaro(const char* Name, byte id1, byte unit, float temperature, float pressure, float PressureSeaLevel, uint8_t forecast, byte humidity, byte BatteryLevel, byte RssiLevel,  byte* data=0, byte pos = 0);

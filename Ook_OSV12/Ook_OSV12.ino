@@ -175,7 +175,7 @@ void createDecoderList(const char* DecoderList)
         if (stricmp(ptb,  "OOK"      )==0) { Decoders[index++] = new   OregonDecoderV2() ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
 //      if (stricmp(ptb,  "OTIO"     )==0) { Decoders[index++] = new   DecodeOTIO(2);    ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
 //      if (stricmp(ptb,  "HAGER"    )==0) { Decoders[index++] = new   HagerDecoder()    ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
-//      if (stricmp(ptb,  "HOMEEASY" )==0) { Decoders[index++] = new   DecodeHomeEasy()  ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+        if (stricmp(ptb,  "HOMEEASY" )==0) { Decoders[index++] = new   DecodeHomeEasy()  ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
 //      if (stricmp(ptb,  "MD230"    )==0) { Decoders[index++] = new   DecodeMD230(2)    ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
         if (stricmp(ptb,  "RUBICSON" )==0) { Decoders[index++] = new   DecodeRubicson()  ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
         if (stricmp(ptb,  "HIDEKI"   )==0) { Decoders[index++] = new   Hideki()          ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };

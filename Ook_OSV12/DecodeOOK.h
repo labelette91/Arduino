@@ -132,7 +132,7 @@ public:
         return data; 
     }
     
-    void resetDecoder () {
+    virtual void resetDecoder () {
         total_bits = bits = pos = flip = 0;
         state = UNKNOWN;
     }
