@@ -8,7 +8,7 @@
 
 #endif
 
-void reportDomoticHomeEasy(byte id1, byte id2, byte id3, byte id4, byte group, byte cmd, byte unitcode);
+void reportDomoticHomeEasy(byte id1, byte id2, byte id3, byte id4, byte group, byte cmd, byte unitcode,  byte* data, byte pos);
 uint16_t getRaw16bValue(uint8_t* data, uint8_t offset, uint8_t size);
 uint8_t getRaw08bValue(uint8_t* data, uint8_t offset, uint8_t size);
 
@@ -57,7 +57,7 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
         case UNKNOWN :  /* test reception pulse high */
                         //if ( TEST_PULSE(width,PULSE_HIGH,TOLERANCE)  && (data==1) )
         case T0      :  /* test reception pulse low synchro */
-						if ( TEST_PULSE(width,PULSE_SYNCHRO_LONG,1000)  && (data==0) )
+						if ( (width>=PULSE_SYNCHRO_LONG)  && (data==0) )
 							state = T1 ;/*  synchro receive */
 //                       else
 //                           resetDecoder ();
@@ -144,7 +144,7 @@ const byte* DecodeHomeEasy::getData (byte& count) const {
         byte cmd   = getRaw08bValue((uint8_t*)data,27,1);
         byte unitcode  = getRaw08bValue((uint8_t*)data,28,4);
 
-      reportDomoticHomeEasy(  id1   , id2   , id3   , id4   , group , cmd   , unitcode);
+      reportDomoticHomeEasy(  id1   , id2   , id3   , id4   , group , cmd   , unitcode,   data, pos);
   }
 
 

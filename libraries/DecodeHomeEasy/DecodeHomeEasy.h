@@ -5,14 +5,17 @@
 #include <Arduino.h>            //assumes Arduino IDE v1.0 or greater
 #else
 #include "deftype.h"
+#include <wiringPi.h>
+#include <wiringPiSPI.h>
+
 #endif
 
 #include "DecodeOOK.h"
 
 #define NBBIT  32
-#define PULSE_HIGH 400
+#define PULSE_HIGH 275
 #define PULSE_ONE  1300
-#define PULSE_ZERO 200
+#define PULSE_ZERO 275
 #define PULSE_SYNCHRO 2000
 
 #define PULSE_SYNCHRO_LONG 9000
