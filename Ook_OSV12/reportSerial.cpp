@@ -78,6 +78,13 @@ void printBinary ( byte * data , byte pos, byte space  )
 }
 
 //sump hex
+void printHexaByte ( byte data )
+{
+
+    Serial.print(DectoHex( data >> 4   ));
+    Serial.print(DectoHex( data  & 0x0F));
+}
+
 void printHexa ( byte * data, byte pos)
 {
 

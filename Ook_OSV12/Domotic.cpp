@@ -427,10 +427,10 @@ void reportDomoticHomeEasy( byte id1   ,byte id2   ,byte id3   ,byte id4   ,byte
         reportPrintHeader();
 
         Serial.print (" Id:" );
-        Serial.print (id1,HEX);
-        Serial.print (id2,HEX);
-        Serial.print (id3,HEX);
-        Serial.print (id4,HEX);
+        printHexaByte(id1);
+        printHexaByte(id2);
+        printHexaByte(id3);
+        printHexaByte(id4);
         Serial.print ( " unitcode:" );
         Serial.print (unitcode);
         Serial.print ( " CMD:" );

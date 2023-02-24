@@ -261,10 +261,10 @@ void setup () {
     Setup ( PDATA, PCLK, ledPin, DecoderListInit  );
 
 }
-void Setup (byte pData, byte pClk, byte pLed, const char* pDecoderList  ) {
+void Setup (byte rxPin, byte txPin, byte pLed, const char* pDecoderList  ) {
 
-    PDATA = pData;
-    PCLK  = pClk ;
+    PDATA = rxPin;
+    PCLK  = -1 ;
     ledPin = pLed;
 
 if (isReportSerial() )
@@ -299,7 +299,7 @@ createDecoderList(pDecoderList);
         bmp180_init();
 #endif
 
-easy = new HomeEasyTransmitter (PDATA,PCLK,ledPin);
+easy = new HomeEasyTransmitter (txPin,PCLK,ledPin);
 
 delay(100);
 if (isReportSerial() )

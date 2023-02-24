@@ -25,6 +25,7 @@ bool isReportDomotic();
 void registerStdout() ;
 char DectoHex(byte v);
 void printBinary ( byte * data , byte pos, byte space  );
+void printHexaByte(byte data);
 //sump hex
 void printHexa ( byte * data, byte pos);
 void printTab(byte tab, byte n);
