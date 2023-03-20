@@ -282,9 +282,14 @@ createDecoderList(pDecoderList);
     attachInterrupt(digitalPinToInterrupt(PDATA) , ext_int_1, CHANGE);
 
 #ifdef RFM69_ENABLE
-    reportPrint("RFM69 Init");
+    reportPrint("RFM69 Init\n");
     radio.initialize(RF69_433MHZ,1,100);
-    radio.setMode(RF69_MODE_RX);
+    word wait = radio.setMode(RF69_MODE_RX);
+    if (isReportSerial())
+    {
+        Serial.print("READY:");
+	    Serial.println(wait);
+    }
     //2400 bauds bit rate 3,4
     radio.writeReg(REG_BITRATEMSB,RF_BITRATEMSB_2400);
     radio.writeReg(REG_BITRATELSB,RF_BITRATELSB_2400);

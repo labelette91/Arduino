@@ -73,7 +73,8 @@ public:
         {
             reportPrint ("BADCHK ");          //ReportSerial();
             reportPrint (Name);          //ReportSerial();
-            printHexa(data, pos );
+            if (isReportSerial())
+                printHexa(data, pos );
 
             reportPrint ("\n");          //ReportSerial();
             resetDecoder();

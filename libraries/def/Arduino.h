@@ -249,7 +249,7 @@ public:
 			break;
 		case DEC:  nb=printf("%d", mes);
 			break;
-		case HEX:  nb=printf("%X", mes);
+		case HEX:  nb=printf("%02X", mes);
 			break;
 		default:   nb=printf("%d", mes);
 			break;
