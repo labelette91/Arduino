@@ -108,8 +108,22 @@ extern word 	NbPulsePerSec ;;
 
 void reportPrintHeader()
 {
+    unsigned int secs = millis()/1000;
+    byte sec = secs % 60 ;
+    secs /= 60 ;
+    byte min = secs % 60 ;
+    secs /= 60 ;
+    byte heure = secs % 24 ;
+    secs /= 24 ;
+
     Serial.print(' ');
-    Serial.print(millis() / 1000);
+    Serial.print(secs);
+    Serial.print(':');
+    Serial.print(heure);
+    Serial.print(':');
+    Serial.print(min);
+    Serial.print(':');
+    Serial.print(sec);
 
     Serial.print(" Np:");
     byte nb = Serial.print(NbPulsePerSec);
