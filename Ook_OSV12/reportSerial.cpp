@@ -19,9 +19,22 @@ void registerStdout() {
   fdev_setup_stream (&uartout, uart_putchar, NULL, _FDEV_SETUP_WRITE);
   stdout = &uartout ;
 }
+long getTimeInSec()
+{
+    return millis()/1000;
+}
 #else
 void registerStdout() {};
+#include<time.h>
 
+long getTimeInSec()
+{
+//    clock_t start;
+//    start = clock();
+//    return start ;
+    time_t begin = time( NULL );
+  return begin;
+}
 #endif
 
 static T_REPORTTYPE ReportType =  REPORT_DOMOTIC ;
@@ -108,13 +121,14 @@ extern word 	NbPulsePerSec ;;
 
 void reportPrintHeader()
 {
-    unsigned int secs = millis()/1000;
+    unsigned int secs =getTimeInSec();
     byte sec = secs % 60 ;
     secs /= 60 ;
     byte min = secs % 60 ;
     secs /= 60 ;
     byte heure = secs % 24 ;
     secs /= 24 ;
+    secs %= 31 ;
 
     Serial.print(' ');
     Serial.print(secs);
