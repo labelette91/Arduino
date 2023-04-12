@@ -14,6 +14,25 @@
 #include "VSPDE.h"
 
  typedef std::vector<int> TPulses ;
+ typedef std::vector<std::string> TStringVector  ;
+
+ void SplitString ( char * ptligne , char * separateur , char * concatenator , bool AllowDuplicateSeparator , TStringVector& list )
+{
+     char mot[1024];
+     int nb=0;
+     {
+
+       while (*ptligne)
+       {
+         if (AllowDuplicateSeparator)
+            ptligne = decoupe(ptligne , mot  ,sizeof(mot), separateur , concatenator, true );
+         else
+            ptligne = decoupecsv(ptligne , mot  , sizeof (mot), separateur );
+
+         list.push_back  (mot);
+       }
+     }
+}
 
 /// PulseString = "541 1890 541  " or "541,1890,541 "
  // lit les valeur de pulse a partir chaine 
@@ -702,7 +721,8 @@ void testOOK (TPulses* TestPulse, float coefA=1.0 , float coefB=0   )
 
 //OTIO;OOK;HAGER;HOMEEASY;MD230;RUBICSON;HIDEKI;RAIN;
     setReportType(SERIAL_DEBUG);
-    Setup ( 1, 2, 3, "HOMEEASY;"  );
+//    Setup ( 1, 2, 3, "HOMEEASY;"  );
+    Setup ( 1, 2, 3, "OTIO;OOK;HAGER;HOMEEASY;MD230;RUBICSON;HIDEKI;RAIN;"  );
 
 	for(;;)
 	{
@@ -722,6 +742,38 @@ void testOOK (TPulses* TestPulse, float coefA=1.0 , float coefB=0   )
 	}
 }
 
+
+void testOOK (TStringVector* TestPulse, float coefA=1.0 , float coefB=0   )
+{
+    long PulseNb=0;
+
+//OTIO;OOK;HAGER;HOMEEASY;MD230;RUBICSON;HIDEKI;RAIN;
+    setReportType(SERIAL_DEBUG);
+//    Setup ( 1, 2, 3, "HOMEEASY;"  );
+    Setup ( 1, 2, 3, "OTIO;OOK;HAGER;HOMEEASY;MD230;RUBICSON;HIDEKI;RAIN;"  );
+
+	for(;;)
+	{
+		if (_kbhit())
+		{
+			Serial._append((char)_getch());
+		}
+		loop();
+        if (PulseNb<TestPulse->size())
+        {
+            int pulse = atoi ((*TestPulse)[PulseNb].c_str())  ;
+            if(pulse!=0)
+                pulse = pulse * coefA + coefB ;
+            else
+                Serial.print((*TestPulse)[PulseNb].c_str());
+            fifo.put(pulse);
+            PulseNb++;
+        }
+        else
+            break;
+	}
+}
+
 void testOOK (char* TestString , float coefA=1.0 , float coefB=0   )
 {
     TPulses Pulse ;
@@ -732,8 +784,24 @@ void testOOK (char* TestString , float coefA=1.0 , float coefB=0   )
 }
 void reportDomoticPower(const char* Name, byte* data, int size ) ;
 
+TStringVector  TestPulseStr ;
+char* fileContent ;
 int main(int, char**)
 {
+
+    
+    FILE* f = fopen("test.txt","rb");
+    fseek(f, 0, SEEK_END); // seek to end of file
+    long size = ftell(f); // get current file pointer
+    fseek(f, 0, SEEK_SET); // seek back to beginning of file
+    fileContent = (char*)malloc(size+16);
+    fread(fileContent,1,size,f);
+    fclose(f);
+    SplitString ( fileContent , "," , "" , true , TestPulseStr );
+
+    testOOK (&TestPulseStr  ) ;
+
+
     testOOK (&HomePulsec  ) ;
 
     

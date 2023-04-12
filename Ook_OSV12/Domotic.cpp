@@ -201,7 +201,7 @@ void reportDomoticPower(const char* Name, byte* data, int size ) {
 //    Serial.print(" ");
 //    Serial.print( CummulPowerWMin);
 
-    ToTalPowerWHeure = getTotalPower(data);
+//    ToTalPowerWHeure = getTotalPower(data);
     if (isReportSerial())
     {
         reportSerial ( Name ,  data[0], data[1], 15 ,  INVALID_TEMP, INVALID_HUM,  getPower(data), ToTalPowerWHeure , INVALID_PRESSURE, INVALID_PRESSURE,INVALID_RAIN,data, size ) ;
