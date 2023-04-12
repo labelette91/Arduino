@@ -140,7 +140,7 @@ public:
         }
          
         /* */
-        if (pos >= sizeof data) {
+        if (pos >= sizeof (data))  {
             resetDecoder();
             return;
         }

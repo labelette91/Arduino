@@ -150,6 +150,7 @@ void reportPrint(const char * mes)
 }
 void reportSerial(const char* Name, byte id1, byte id2, byte bateryLevel, int temp, byte hum, word power, unsigned long totalpower, word pressure, word PressureSeaLevel, word Rain ,  byte* data, byte pos) {
 
+//Serial.println();
     printTab(TAB,Serial.print(Name)) ;
     reportPrintHeader();
 
@@ -205,6 +206,7 @@ void reportSerial(const char* Name, byte id1, byte id2, byte bateryLevel, int te
             Serial.print(' ');
 //            printBinary(data, pos, 8);
             printHexa(data, pos );
+            Serial.print(',');
         }
     }
     Serial.println();

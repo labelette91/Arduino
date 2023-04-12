@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string.h>
-//#include  "reportSerial.h"
+#include  "reportSerial.h"
 void printHexa ( byte * data, byte pos);
 
 #ifdef WIN32
