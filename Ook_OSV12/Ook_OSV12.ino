@@ -261,6 +261,27 @@ void setup () {
     Setup ( PDATA, PCLK, ledPin, DecoderListInit  );
 
 }
+void RadioInit()
+{
+#ifdef RFM69_ENABLE
+    reportPrint("RFM69 Init");
+    radio.initialize(RF69_433MHZ,1,100);
+    delay(10);
+    word wait = radio.setMode(RF69_MODE_RX);
+    if (isReportSerial())
+    {
+        Serial.print("READY:");
+	    Serial.println(wait);
+    }
+    //2400 bauds bit rate 3,4
+    radio.writeReg(REG_BITRATEMSB,RF_BITRATEMSB_2400);
+    radio.writeReg(REG_BITRATELSB,RF_BITRATELSB_2400);
+    radio.writeReg(REG_OOKPEAK,RF_OOKPEAK_THRESHTYPE_PEAK +RF_OOKPEAK_PEAKTHRESHDEC_000);
+    //lna 50 h    
+    radio.writeReg(REG_LNA, RF_LNA_ZIN_50);
+#endif     
+
+}
 void Setup (byte rxPin, byte txPin, byte pLed, const char* pDecoderList  ) {
 
     PDATA = rxPin;
@@ -276,26 +297,14 @@ else
 createDecoderList(pDecoderList);
 
 // initialize the LED pin as an output:
-    pinMode(ledPin, OUTPUT);       
+    if(ledPin)
+        pinMode(ledPin, OUTPUT);       
     pinMode(PDATA, INPUT);
    
     attachInterrupt(digitalPinToInterrupt(PDATA) , ext_int_1, CHANGE);
 
 #ifdef RFM69_ENABLE
-    reportPrint("RFM69 Init\n");
-    radio.initialize(RF69_433MHZ,1,100);
-    word wait = radio.setMode(RF69_MODE_RX);
-    if (isReportSerial())
-    {
-        Serial.print("READY:");
-	    Serial.println(wait);
-    }
-    //2400 bauds bit rate 3,4
-    radio.writeReg(REG_BITRATEMSB,RF_BITRATEMSB_2400);
-    radio.writeReg(REG_BITRATELSB,RF_BITRATELSB_2400);
-    radio.writeReg(REG_OOKPEAK,RF_OOKPEAK_THRESHTYPE_PEAK +RF_OOKPEAK_PEAKTHRESHDEC_000);
-    //lna 50 h    
-    radio.writeReg(REG_LNA, RF_LNA_ZIN_50);
+RadioInit();
 #endif     
 
         DomoticInit();
@@ -304,7 +313,7 @@ createDecoderList(pDecoderList);
         bmp180_init();
 #endif
 
-easy = new HomeEasyTransmitter (txPin,PCLK,ledPin);
+easy = new HomeEasyTransmitter (txPin,ledPin);
 
 delay(100);
 if (isReportSerial() )
@@ -327,10 +336,10 @@ void PulseLed(int Level)
 		ledPinLevel = Level;
 
 #ifdef RASPBERRY_PI
-	if (ledPinLevel)
-		system("echo 1 | sudo tee /sys/class/leds/led0/brightness > /dev/null");
-	else
-		system("echo 0 | sudo tee /sys/class/leds/led0/brightness > /dev/null");
+//	if (ledPinLevel)
+//		system("echo 1 | sudo tee /sys/class/leds/led0/brightness > /dev/null");
+//	else
+//		system("echo 0 | sudo tee /sys/class/leds/led0/brightness > /dev/null");
 
 #else
     digitalWrite(ledPin, ledPinLevel);  
@@ -493,7 +502,9 @@ void ManageDomoticCmdEmission() {
     {
         detachInterrupt(digitalPinToInterrupt(PDATA));
 
+#ifndef RASPBERRY_PI
         easy->initPin();
+#endif
 #ifdef RFM69_ENABLE
         radio.setMode(RF69_MODE_TX);
 #endif
@@ -503,7 +514,14 @@ void ManageDomoticCmdEmission() {
         {  //
                 if (Cmd.LIGHTING2.subtype == sTypeHEU)           //if home easy protocol : subtype==1
                 {
-                    easy->setSwitch(Cmd.LIGHTING2.cmnd, getLightingId(), Cmd.LIGHTING2.unitcode);    // turn on device 0
+#ifdef RASPBERRY_PI
+                    extern void sendBuffer(word* transmitBuffer);
+                    word transmitBuffer[256];
+                    easy->SetTransmitBuffer(transmitBuffer,Cmd.LIGHTING2.cmnd, getLightingId(), Cmd.LIGHTING2.unitcode);    // turn on device 0
+                    sendBuffer(transmitBuffer);
+#else
+                 easy->setSwitch(Cmd.LIGHTING2.cmnd, getLightingId(), Cmd.LIGHTING2.unitcode);    // turn on device 0
+#endif
                     Cmd.LIGHTING2.subtype = 1;
                 }
                 else if (Cmd.LIGHTING2.subtype == sTypeAC)           //if hager protocol : subtype==0
@@ -528,9 +546,14 @@ void ManageDomoticCmdEmission() {
             Cmd.LIGHTING2.id4 = NbPulsePerSec & 0x00ff;
             Serial.write((byte*)&Cmd.LIGHTING2, Cmd.LIGHTING2.packetlength + 1);
         }
+#ifndef RASPBERRY_PI
         pinMode(PDATA, INPUT);
+#endif
+
         attachInterrupt(digitalPinToInterrupt(PDATA) , ext_int_1, CHANGE);
 #ifdef RFM69_ENABLE
+        radio.setMode(RF69_MODE_STANDBY);
+        delay(10);
         radio.setMode(RF69_MODE_RX);
 #endif
     }
