@@ -764,8 +764,11 @@ void testOOK (TStringVector* TestPulse, float coefA=1.0 , float coefB=0   )
             int pulse = atoi ((*TestPulse)[PulseNb].c_str())  ;
             if(pulse!=0)
                 pulse = pulse * coefA + coefB ;
-            else
+            else{
+                Serial.print("-->");
                 Serial.print((*TestPulse)[PulseNb].c_str());
+                Serial.println();
+            }
             fifo.put(pulse);
             PulseNb++;
         }
@@ -790,14 +793,14 @@ int main(int, char**)
 {
 
     
-    FILE* f = fopen("test.txt","rb");
+    FILE* f = fopen("d.txt","rb");
     fseek(f, 0, SEEK_END); // seek to end of file
     long size = ftell(f); // get current file pointer
     fseek(f, 0, SEEK_SET); // seek back to beginning of file
     fileContent = (char*)malloc(size+16);
     fread(fileContent,1,size,f);
     fclose(f);
-    SplitString ( fileContent , "," , "" , true , TestPulseStr );
+    SplitString ( fileContent , ",\n" , "" , true , TestPulseStr );
 
     testOOK (&TestPulseStr  ) ;
 

@@ -77,6 +77,9 @@ OWL CM119	0x1A**	Power meter
 #include "Oregon.h"
 #include "Domotic.h"
 
+//#define DEBUG(message) Serial.print(message)
+#define DEBUG(message) 
+
 
 class OregonDecoderV2 : public DecodeOOK {
 public:
@@ -94,6 +97,15 @@ public:
         }
         total_bits++;
         pos = total_bits >> 4;
+
+/*
+        if(total_bits == 4*16)
+        {
+            Serial.println();
+            printHexa(data, pos );
+            Serial.println();
+        }
+*/
         /*compute size of paxket */
         if(pos == 2)
         {
@@ -147,6 +159,7 @@ public:
         state = OK;
     }
     
+
     virtual sbyte decode (word width, byte BitData) {
 //        if (200 <= width && width < 1200) {
         if (200 <= width && width < 1699) {
@@ -161,6 +174,9 @@ public:
                         // Short pulse, start bit
                         flip = 0;
                         state = T0;
+
+                        DEBUG("START ");
+
                     } else {
                       // Reset decoder
                         return -1;
@@ -181,6 +197,7 @@ public:
                         manchester(0);
                     } else {
                         // Reset decoder
+                        DEBUG("RST0 ");
                         return -1;
                     }
                     break;
@@ -188,6 +205,8 @@ public:
         } else if (width >= 2500  && total_bits == max_bits ) {
             return 1;
         } else {
+            if(state)
+            	DEBUG("RST1 ");
             return -1;
         }
         return total_bits == max_bits ? 1: 0;
