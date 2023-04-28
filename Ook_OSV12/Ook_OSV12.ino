@@ -367,7 +367,7 @@ byte dumpPulse=0;
 void ManagePulseReception ( word p) {
     byte i=0;
     DecodeOOK* Decoder ;
-        if (p > 00 ) {
+        if (p > 100 ) {
             if (dumpPulse)
                 if (p>00)
                 {       
@@ -516,7 +516,7 @@ void ManageDomoticCmdEmission() {
                 {
 #ifdef RASPBERRY_PI
                     extern void sendBuffer(word* transmitBuffer);
-                    word transmitBuffer[256];
+                    static word transmitBuffer[256];
                     easy->SetTransmitBuffer(transmitBuffer,Cmd.LIGHTING2.cmnd, getLightingId(), Cmd.LIGHTING2.unitcode);    // turn on device 0
                     sendBuffer(transmitBuffer);
 #else
@@ -552,9 +552,16 @@ void ManageDomoticCmdEmission() {
 
         attachInterrupt(digitalPinToInterrupt(PDATA) , ext_int_1, CHANGE);
 #ifdef RFM69_ENABLE
+
+//        radio.setMode(RF_OPMODE_SLEEP);
+//        delay(1000);
+//        RadioInit();
+
         radio.setMode(RF69_MODE_STANDBY);
         delay(10);
         radio.setMode(RF69_MODE_RX);
+        delay(10);
+        radio.writeReg(REG_PACKETCONFIG2,RF_PACKET2_RXRESTART);
 #endif
     }
     PulseLed(LOW);
